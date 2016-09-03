@@ -1,0 +1,63 @@
+html, body {
+  font-family: 'Roboto', sans-serif;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%; }
+
+.content {
+  display: flex;
+  flex-direction: column;
+  margin: 24px 12.5%; }
+
+.form-map-container {
+  display: flex;
+  width: 100%; }
+
+/** Form ========================================================= */
+.form-container {
+  width: 100%; }
+  @media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .form-container {
+      padding-right: 48px; } }
+  @media only screen and (min-width: 1025px) {
+    .form-container {
+      padding-right: 48px; } }
+
+.slider-container {
+  align-items: center;
+  /*display: flex;*/
+  /* TODO: Enable this when ready to add settings. */
+  display: none; }
+
+.submit-button {
+  margin-top: 32px; }
+
+/** Map ========================================================= */
+.map-container {
+  width: 100%; }
+  @media only screen and (max-width: 767px) {
+    .map-container {
+      display: none; } }
+  @media only screen and (min-width: 1025px) {
+    .map-container {
+      width: 75%; } }
+
+.map-iframe-container {
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 100%;
+  position: relative; }
+
+.map-iframe {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%; }
+
+/** Results ========================================================= */
+.results-container {
+  margin-top: 12px; }
+
+/*# sourceMappingURL=app.css.map */

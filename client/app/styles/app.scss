@@ -1,0 +1,81 @@
+$num_cols: 8;
+$max-width-small: 767px;
+$max-width-medium: 1024px;
+
+@mixin respond-to($mediaList) {
+  @if index($mediaList, small) {
+    @media only screen and (max-width: $max-width-small) { @content; }
+  }
+  @if index($mediaList, medium) {
+    @media only screen and (min-width: $max-width-small + 1) and (max-width: $max-width-medium) { @content; }
+  }
+  @if index($mediaList, large) {
+    @media only screen and (min-width: $max-width-medium + 1) { @content; }
+  }
+}
+
+html, body {
+	font-family: 'Roboto', sans-serif;
+	height: 100%;
+  margin: 0;
+  padding: 0;
+	width: 100%;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+	margin: 24px (100% / $num_cols);
+}
+
+.form-map-container {
+  display: flex;
+  width: 100%;
+}
+
+/** Form ========================================================= */
+
+.form-container {
+  width: 100%;
+  @include respond-to((medium, large)) { padding-right: 48px; }
+}
+
+.slider-container {
+  align-items: center;
+  /*display: flex;*/
+  /* TODO: Enable this when ready to add settings. */
+  display: none;
+}
+
+.submit-button {
+  margin-top: 32px;
+}
+
+/** Map ========================================================= */
+
+.map-container {
+  width: 100%;
+  @include respond-to(small) { display: none; }
+  @include respond-to(large) { width: 75% ; }
+}
+
+.map-iframe-container {
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 100%;
+  position: relative;
+}
+
+.map-iframe {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+/** Results ========================================================= */
+
+.results-container {
+  margin-top: 12px;
+}
