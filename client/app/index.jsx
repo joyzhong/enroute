@@ -1,11 +1,10 @@
 import AppBar from 'material-ui/AppBar';
-import {List, ListItem} from 'material-ui/List';
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Slider from 'material-ui/Slider';
-import Subheader from 'material-ui/Subheader';
 import TextField from 'material-ui/TextField';
 import injectTapEventPlugin from 'react-tap-event-plugin';
  
@@ -158,24 +157,32 @@ const FormSlider = (props) => (
 
 const ResultsComponent = (props) => (
   <div className="results-container">
-    <List>
-      <Subheader>Results</Subheader>
-      {
-        props.results.map((result) => {
-          return <ResultItem key={result.id} result={result} />;
-        })
-      }
-    </List>
+    <Table>
+      <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
+        <TableRow>
+          <TableHeaderColumn>Name</TableHeaderColumn>
+          <TableHeaderColumn>Rating</TableHeaderColumn>
+          <TableHeaderColumn># Reviews</TableHeaderColumn>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {
+          props.results.map((result) => {
+            return <ResultItem key={result.id} result={result} />;
+          })
+        }
+      </TableBody>
+    </Table>
   </div>
 );
 
 
 const ResultItem = (props) => (
-  <ListItem>
-    <div className="result-item">
-      {props.result.name}
-    </div>
-  </ListItem>
+  <TableRow hoverable={true} style={{cursor: 'pointer' }}>
+    <TableRowColumn>{props.result.name}</TableRowColumn>
+    <TableRowColumn>{props.result.rating}</TableRowColumn>
+    <TableRowColumn>{props.result.review_count}</TableRowColumn>
+  </TableRow>
 );
 
 
