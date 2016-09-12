@@ -39,6 +39,8 @@ const RoadtripComponent = React.createClass({
 
   /** Updates the map with the current origin and destination state. */
   updateMap_: function() {
+    this.clearLocationMarker_();
+
     const request = {
       origin: this.state.origin,
       destination: this.state.destination,
@@ -57,6 +59,47 @@ const RoadtripComponent = React.createClass({
     directionsService.route(request, displayDirectionsFn);
   },
 
+  addWaypoint_: function(resultsIndex) {
+    const businessCoordinate = this.state.results[resultsIndex].location.coordinate;
+    const latLng = new google.maps.LatLng(businessCoordinate.latitude, businessCoordinate.longitude);
+    const request = {
+      origin: this.state.origin,
+      destination: this.state.destination,
+      waypoints: [{location: latLng}],
+      travelMode: 'DRIVING'
+    };
+    const displayDirectionsFn = function(result, status) {
+      if (status == 'OK') {
+        const pathCoordinates = result.routes[0].overview_path;
+        const stopCooordinates = pathCoordinates[Math.round(pathCoordinates.length / 2)];
+        directionsDisplay.setDirections(result);
+      }
+      // TODO: Handle error statuses.
+    }.bind(this);
+
+    directionsService.route(request, displayDirectionsFn);
+  },
+
+  updateLocationMarker_: function(resultIndex) {
+    this.clearLocationMarker_();
+
+    // Get the latitude and longitude of the result.
+    const business = this.state.results[resultIndex];
+    locationMarker = new google.maps.Marker({
+        position: new google.maps.LatLng(
+          business.location.coordinate.latitude,
+          business.location.coordinate.longitude
+        ),
+        map: map
+    });
+  },
+
+  clearLocationMarker_: function() {
+    if (locationMarker) {
+      locationMarker.setMap(null);
+    }
+  },
+
   getStopsListFromYelp_: function(latitude, longitude) {
     $.ajax({
       context: this,
@@ -65,6 +108,8 @@ const RoadtripComponent = React.createClass({
       data: { term: this.state.term, latitude: latitude, longitude: longitude },
       success: function(yelpResults) {
         console.log(yelpResults.businesses);
+        const latitude = yelpResults.businesses[0].location.coordinate.latitude;
+        const longitude = yelpResults.businesses[0].location.coordinate.longitude;
         this.setState({results: yelpResults.businesses});
       }
     });
@@ -79,7 +124,10 @@ const RoadtripComponent = React.createClass({
             <FormComponent onSubmit={this.updateMap_} onChange={this.handleChange_} />
             <MapComponent origin={this.state.origin} destination={this.state.destination} />
           </div>
-          <ResultsComponent results={this.state.results} />
+          <ResultsComponent onRowSelection={this.addWaypoint_} 
+              onRowHoverExit={this.clearLocationMarker_}
+              onRowHover={this.updateLocationMarker_} 
+              results={this.state.results} />
         </div>
       </div>
     );
@@ -155,26 +203,45 @@ const FormSlider = (props) => (
 );
 
 
-const ResultsComponent = (props) => (
-  <div className="results-container">
-    <Table>
-      <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
-        <TableRow>
-          <TableHeaderColumn>Name</TableHeaderColumn>
-          <TableHeaderColumn>Rating</TableHeaderColumn>
-          <TableHeaderColumn># Reviews</TableHeaderColumn>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {
-          props.results.map((result) => {
-            return <ResultItem key={result.id} result={result} />;
-          })
-        }
-      </TableBody>
-    </Table>
-  </div>
-);
+const ResultsComponent = React.createClass({
+  handleRowSelection_: function(selectedRows) {
+    if (selectedRows && selectedRows[0] !== undefined) {
+      this.props.onRowSelection(selectedRows[0]);
+    }
+  },
+
+  handleRowHover_: function(rowNumber) {
+    this.props.onRowHover(rowNumber);
+  },
+
+  render: function() {
+    return (
+      <div className="results-container">
+        <Table onRowHover={this.handleRowHover_} onRowHoverExit={this.props.onRowHoverExit} 
+            onRowSelection={this.handleRowSelection_}>
+          <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
+            <TableRow>
+              <TableHeaderColumn>Name</TableHeaderColumn>
+              <TableHeaderColumn>Rating</TableHeaderColumn>
+              <TableHeaderColumn># Reviews</TableHeaderColumn>
+            </TableRow>
+          </TableHeader>
+          <TableBody displayRowCheckbox={false} showRowHover={true}>
+            {
+              this.props.results.map((result) => (
+                <TableRow key={result.id} style={{cursor: 'pointer' }}>
+                  <TableRowColumn>{result.name}</TableRowColumn>
+                  <TableRowColumn>{result.rating}</TableRowColumn>
+                  <TableRowColumn>{result.review_count}</TableRowColumn>
+                </TableRow>
+              ))
+            }
+          </TableBody>
+        </Table>
+      </div>
+    );
+  }
+});
 
 
 const ResultItem = (props) => (
@@ -202,6 +269,7 @@ let autocompleteFinalDest;
 let directionsDisplay;
 const directionsService = new google.maps.DirectionsService();
 let map;
+let locationMarker;
 
 function initMap() {
   directionsDisplay = new google.maps.DirectionsRenderer();
