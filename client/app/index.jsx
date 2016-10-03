@@ -29,7 +29,10 @@ const RoadtripComponent = React.createClass({
       origin: '',
       destination: '',
       term: '',
+      resultsIndex: 0, // Index of the selected stop in the results array.
       results: [],
+      stopFractionInTrip: 0.5,
+      directionsLink: '',
     }
   },
 
@@ -49,7 +52,8 @@ const RoadtripComponent = React.createClass({
     const displayDirectionsFn = function(result, status) {
       if (status == 'OK') {
         const pathCoordinates = result.routes[0].overview_path;
-        const stopCooordinates = pathCoordinates[Math.round(pathCoordinates.length / 2)];
+        const indexInTrip = Math.round((pathCoordinates.length - 1) * this.state.stopFractionInTrip);
+        const stopCooordinates = pathCoordinates[indexInTrip];
         directionsDisplay.setDirections(result);
         this.getStopsListFromYelp_(stopCooordinates.lat(), stopCooordinates.lng());
       }
@@ -59,25 +63,40 @@ const RoadtripComponent = React.createClass({
     directionsService.route(request, displayDirectionsFn);
   },
 
-  addWaypoint_: function(resultsIndex) {
-    const businessCoordinate = this.state.results[resultsIndex].location.coordinate;
-    const latLng = new google.maps.LatLng(businessCoordinate.latitude, businessCoordinate.longitude);
-    const request = {
-      origin: this.state.origin,
-      destination: this.state.destination,
-      waypoints: [{location: latLng}],
-      travelMode: 'DRIVING'
-    };
-    const displayDirectionsFn = function(result, status) {
-      if (status == 'OK') {
-        const pathCoordinates = result.routes[0].overview_path;
-        const stopCooordinates = pathCoordinates[Math.round(pathCoordinates.length / 2)];
-        directionsDisplay.setDirections(result);
-      }
-      // TODO: Handle error statuses.
-    }.bind(this);
+  updateDirectionsLink_: function() {
+    const startAddress = encodeURIComponent(this.state.origin);
+    const destAddress = encodeURIComponent(this.state.destination);
+    const waypoint = this.state.results[this.state.resultsIndex];
+    const waypointAddress = encodeURIComponent(
+        waypoint.name + ',' + waypoint.location.address + ',' +
+        waypoint.location.city + ',' + waypoint.location.country_code);
+    this.state.directionsLink = 
+        `http://maps.google.com/maps/dir/${startAddress}/${waypointAddress}/${destAddress}`;
+  },
 
-    directionsService.route(request, displayDirectionsFn);
+  updateWaypoint_: function(resultsIndex) {
+    this.setState({resultsIndex: resultsIndex}, () => {
+      const businessCoordinate = this.state.results[this.state.resultsIndex].location.coordinate;
+      const latLng = new google.maps.LatLng(businessCoordinate.latitude, businessCoordinate.longitude);
+      const request = {
+        origin: this.state.origin,
+        destination: this.state.destination,
+        waypoints: [{location: latLng}],
+        travelMode: 'DRIVING'
+      };
+      const displayDirectionsFn = function(result, status) {
+        if (status == 'OK') {
+          const pathCoordinates = result.routes[0].overview_path;
+          const stopCooordinates = pathCoordinates[Math.round(pathCoordinates.length / 2)];
+          directionsDisplay.setDirections(result);
+        }
+        // TODO: Handle error statuses.
+      }.bind(this);
+
+      directionsService.route(request, displayDirectionsFn);
+
+      this.updateDirectionsLink_();
+    });
   },
 
   updateLocationMarker_: function(resultIndex) {
@@ -115,16 +134,26 @@ const RoadtripComponent = React.createClass({
     });
   },
 
+  onDirectionsButtonClick_: function() {
+    const win = window.open(this.state.directionsLink, '_blank');
+    if (win) {
+      win.focus();
+    } else {
+      alert('Please disable your popup blocker to view the directions.');
+    }
+  },
+
   render: function() {
     return (
       <div className="container">
         <AppBar title="Roadtrip" />
         <div className="content">
           <div className="form-map-container">
-            <FormComponent onSubmit={this.updateMap_} onChange={this.handleChange_} />
-            <MapComponent origin={this.state.origin} destination={this.state.destination} />
+            <FormComponent onSubmit={this.updateMap_} onChange={this.handleChange_}
+                initialSliderValue={this.state.stopFractionInTrip} />
+            <MapComponent onClick={this.onDirectionsButtonClick_} />
           </div>
-          <ResultsComponent onRowSelection={this.addWaypoint_} 
+          <ResultsComponent onRowSelection={this.updateWaypoint_} 
               onRowHoverExit={this.clearLocationMarker_}
               onRowHover={this.updateLocationMarker_} 
               results={this.state.results} />
@@ -161,6 +190,10 @@ const FormComponent = React.createClass({
     this.props.onChange({term: e.target.value});
   },
 
+  handleSliderDragStop_: function(e, value) {
+    this.props.onChange({stopFractionInTrip: value});
+  },
+
   handleClick_: function() {
     this.props.onSubmit();
   },
@@ -175,10 +208,10 @@ const FormComponent = React.createClass({
         <FormTextField floatingLabelText="Stop for (e.g. lunch, coffee)..." id='Term'
             onChange={this.handleTermChange_} />
 
-        <FormSlider startValue="0" endValue="2h" />
-        <FormSlider startValue="Quality" endValue="Distance" /> 
+        <FormSlider value={this.props.initialSliderValue} onChange={this.handleSliderDragStop_} />
+        {/*<FormSlider startValue="Quality" endValue="Distance" /> */}
 
-        <RaisedButton label="Go" primary={true} className="submit-button" onClick={this.handleClick_} />
+        <RaisedButton label="Go" primary={true} onClick={this.handleClick_} />
       </form>
     );
   }
@@ -195,10 +228,10 @@ const FormTextField = (props) => (
 /** Slider with customized styling. */
 const FormSlider = (props) => (
   <div className="slider-container">
-    <span>{props.startValue}</span>
-    <Slider value={0.5} style={{ width: '100%', margin: '0 8px' }} 
-        sliderStyle={{ marginTop: '18px', marginBottom: '24px' }} />
-    <span>{props.endValue}</span>
+    <div className="slider-header">Stop Distance into Trip</div>
+    <Slider value={props.value} style={{ width: '100%' }} 
+        sliderStyle={{ marginTop: '18px', marginBottom: '24px' }}
+        onChange={props.onChange} />
   </div>
 );
 
@@ -214,6 +247,7 @@ const ResultsComponent = React.createClass({
     this.props.onRowHover(rowNumber);
   },
 
+  // TODO: Bug where the selected row does not appear as selected.
   render: function() {
     return (
       <div className="results-container">
@@ -253,8 +287,15 @@ const ResultItem = (props) => (
 );
 
 
-const MapComponent = () => (
+const MapComponent = (props) => (
   <div className="map-container">
+    <div className="map-header-container">
+      <h2 className="map-header">
+        Route
+      </h2>
+      <RaisedButton label="Directions" primary={true} onClick={props.onClick} />
+    </div>
+
     <div className="map-iframe-container" id="map">
       // Map is inserted here.
     </div>

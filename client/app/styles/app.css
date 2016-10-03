@@ -5,13 +5,29 @@ html, body {
   padding: 0;
   width: 100%; }
 
+.container {
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100%; }
+
 .content {
   display: flex;
   flex-direction: column;
-  margin: 24px 12.5%; }
+  height: 100%;
+  margin: 24px 12.5%;
+  position: absolute; }
+  @media only screen and (min-width: 1025px) {
+    .content {
+      margin: 24px 16.66667%; } }
 
 .form-map-container {
   display: flex;
+  height: 100%;
+  position: relative;
   width: 100%; }
 
 /** Form ========================================================= */
@@ -25,23 +41,26 @@ html, body {
       padding-right: 48px; } }
 
 .slider-container {
-  align-items: center;
-  /*display: flex;*/
+  display: flex;
+  flex-direction: column;
+  margin: 28px 0 8px;
   /* TODO: Enable this when ready to add settings. */
-  display: none; }
-
-.submit-button {
-  margin-top: 32px; }
+  /*display: none;*/ }
 
 /** Map ========================================================= */
 .map-container {
+  max-width: 300px;
   width: 100%; }
   @media only screen and (max-width: 767px) {
     .map-container {
       display: none; } }
-  @media only screen and (min-width: 1025px) {
-    .map-container {
-      width: 75%; } }
+
+.map-header-container {
+  align-items: center;
+  display: flex; }
+
+.map-header {
+  flex: 1 0 auto; }
 
 .map-iframe-container {
   height: 0;
@@ -58,6 +77,8 @@ html, body {
 
 /** Results ========================================================= */
 .results-container {
-  margin-top: 12px; }
+  height: 100%;
+  margin-top: 50px;
+  overflow: scroll; }
 
 /*# sourceMappingURL=app.css.map */

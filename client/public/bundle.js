@@ -109,7 +109,10 @@
 	      origin: '',
 	      destination: '',
 	      term: '',
-	      results: []
+	      resultsIndex: 0, // Index of the selected stop in the results array.
+	      results: [],
+	      stopFractionInTrip: 0.5,
+	      directionsLink: ''
 	    };
 	  },
 	
@@ -129,7 +132,8 @@
 	    var displayDirectionsFn = function (result, status) {
 	      if (status == 'OK') {
 	        var pathCoordinates = result.routes[0].overview_path;
-	        var stopCooordinates = pathCoordinates[Math.round(pathCoordinates.length / 2)];
+	        var indexInTrip = Math.round((pathCoordinates.length - 1) * this.state.stopFractionInTrip);
+	        var stopCooordinates = pathCoordinates[indexInTrip];
 	        directionsDisplay.setDirections(result);
 	        this.getStopsListFromYelp_(stopCooordinates.lat(), stopCooordinates.lng());
 	      }
@@ -139,25 +143,39 @@
 	    directionsService.route(request, displayDirectionsFn);
 	  },
 	
-	  addWaypoint_: function addWaypoint_(resultsIndex) {
-	    var businessCoordinate = this.state.results[resultsIndex].location.coordinate;
-	    var latLng = new google.maps.LatLng(businessCoordinate.latitude, businessCoordinate.longitude);
-	    var request = {
-	      origin: this.state.origin,
-	      destination: this.state.destination,
-	      waypoints: [{ location: latLng }],
-	      travelMode: 'DRIVING'
-	    };
-	    var displayDirectionsFn = function (result, status) {
-	      if (status == 'OK') {
-	        var pathCoordinates = result.routes[0].overview_path;
-	        var stopCooordinates = pathCoordinates[Math.round(pathCoordinates.length / 2)];
-	        directionsDisplay.setDirections(result);
-	      }
-	      // TODO: Handle error statuses.
-	    }.bind(this);
+	  updateDirectionsLink_: function updateDirectionsLink_() {
+	    var startAddress = encodeURIComponent(this.state.origin);
+	    var destAddress = encodeURIComponent(this.state.destination);
+	    var waypoint = this.state.results[this.state.resultsIndex];
+	    var waypointAddress = encodeURIComponent(waypoint.name + ',' + waypoint.location.address + ',' + waypoint.location.city + ',' + waypoint.location.country_code);
+	    this.state.directionsLink = 'http://maps.google.com/maps/dir/' + startAddress + '/' + waypointAddress + '/' + destAddress;
+	  },
 	
-	    directionsService.route(request, displayDirectionsFn);
+	  updateWaypoint_: function updateWaypoint_(resultsIndex) {
+	    var _this = this;
+	
+	    this.setState({ resultsIndex: resultsIndex }, function () {
+	      var businessCoordinate = _this.state.results[_this.state.resultsIndex].location.coordinate;
+	      var latLng = new google.maps.LatLng(businessCoordinate.latitude, businessCoordinate.longitude);
+	      var request = {
+	        origin: _this.state.origin,
+	        destination: _this.state.destination,
+	        waypoints: [{ location: latLng }],
+	        travelMode: 'DRIVING'
+	      };
+	      var displayDirectionsFn = function (result, status) {
+	        if (status == 'OK') {
+	          var pathCoordinates = result.routes[0].overview_path;
+	          var stopCooordinates = pathCoordinates[Math.round(pathCoordinates.length / 2)];
+	          directionsDisplay.setDirections(result);
+	        }
+	        // TODO: Handle error statuses.
+	      }.bind(_this);
+	
+	      directionsService.route(request, displayDirectionsFn);
+	
+	      _this.updateDirectionsLink_();
+	    });
 	  },
 	
 	  updateLocationMarker_: function updateLocationMarker_(resultIndex) {
@@ -192,6 +210,15 @@
 	    });
 	  },
 	
+	  onDirectionsButtonClick_: function onDirectionsButtonClick_() {
+	    var win = window.open(this.state.directionsLink, '_blank');
+	    if (win) {
+	      win.focus();
+	    } else {
+	      alert('Please disable your popup blocker to view the directions.');
+	    }
+	  },
+	
 	  render: function render() {
 	    return _react2.default.createElement(
 	      'div',
@@ -203,10 +230,11 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'form-map-container' },
-	          _react2.default.createElement(FormComponent, { onSubmit: this.updateMap_, onChange: this.handleChange_ }),
-	          _react2.default.createElement(MapComponent, { origin: this.state.origin, destination: this.state.destination })
+	          _react2.default.createElement(FormComponent, { onSubmit: this.updateMap_, onChange: this.handleChange_,
+	            initialSliderValue: this.state.stopFractionInTrip }),
+	          _react2.default.createElement(MapComponent, { onClick: this.onDirectionsButtonClick_ })
 	        ),
-	        _react2.default.createElement(ResultsComponent, { onRowSelection: this.addWaypoint_,
+	        _react2.default.createElement(ResultsComponent, { onRowSelection: this.updateWaypoint_,
 	          onRowHoverExit: this.clearLocationMarker_,
 	          onRowHover: this.updateLocationMarker_,
 	          results: this.state.results })
@@ -243,6 +271,10 @@
 	    this.props.onChange({ term: e.target.value });
 	  },
 	
+	  handleSliderDragStop_: function handleSliderDragStop_(e, value) {
+	    this.props.onChange({ stopFractionInTrip: value });
+	  },
+	
 	  handleClick_: function handleClick_() {
 	    this.props.onSubmit();
 	  },
@@ -257,9 +289,8 @@
 	        onChange: this.handleDestinationChange_, onKeyDown: this.handleDestinationKeyDown_ }),
 	      _react2.default.createElement(FormTextField, { floatingLabelText: 'Stop for (e.g. lunch, coffee)...', id: 'Term',
 	        onChange: this.handleTermChange_ }),
-	      _react2.default.createElement(FormSlider, { startValue: '0', endValue: '2h' }),
-	      _react2.default.createElement(FormSlider, { startValue: 'Quality', endValue: 'Distance' }),
-	      _react2.default.createElement(_RaisedButton2.default, { label: 'Go', primary: true, className: 'submit-button', onClick: this.handleClick_ })
+	      _react2.default.createElement(FormSlider, { value: this.props.initialSliderValue, onChange: this.handleSliderDragStop_ }),
+	      _react2.default.createElement(_RaisedButton2.default, { label: 'Go', primary: true, onClick: this.handleClick_ })
 	    );
 	  }
 	});
@@ -276,17 +307,13 @@
 	    'div',
 	    { className: 'slider-container' },
 	    _react2.default.createElement(
-	      'span',
-	      null,
-	      props.startValue
+	      'div',
+	      { className: 'slider-header' },
+	      'Stop Distance into Trip'
 	    ),
-	    _react2.default.createElement(_Slider2.default, { value: 0.5, style: { width: '100%', margin: '0 8px' },
-	      sliderStyle: { marginTop: '18px', marginBottom: '24px' } }),
-	    _react2.default.createElement(
-	      'span',
-	      null,
-	      props.endValue
-	    )
+	    _react2.default.createElement(_Slider2.default, { value: props.value, style: { width: '100%' },
+	      sliderStyle: { marginTop: '18px', marginBottom: '24px' },
+	      onChange: props.onChange })
 	  );
 	};
 	
@@ -303,6 +330,7 @@
 	    this.props.onRowHover(rowNumber);
 	  },
 	
+	  // TODO: Bug where the selected row does not appear as selected.
 	  render: function render() {
 	    return _react2.default.createElement(
 	      'div',
@@ -386,10 +414,20 @@
 	  );
 	};
 	
-	var MapComponent = function MapComponent() {
+	var MapComponent = function MapComponent(props) {
 	  return _react2.default.createElement(
 	    'div',
 	    { className: 'map-container' },
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'map-header-container' },
+	      _react2.default.createElement(
+	        'h2',
+	        { className: 'map-header' },
+	        'Route'
+	      ),
+	      _react2.default.createElement(_RaisedButton2.default, { label: 'Directions', primary: true, onClick: props.onClick })
+	    ),
 	    _react2.default.createElement(
 	      'div',
 	      { className: 'map-iframe-container', id: 'map' },

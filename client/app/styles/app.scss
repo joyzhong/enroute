@@ -1,4 +1,5 @@
-$num_cols: 8;
+$num_cols_medium: 8;
+$num_cols_large: 6;
 $max-width-small: 767px;
 $max-width-medium: 1024px;
 
@@ -22,14 +23,31 @@ html, body {
 	width: 100%;
 }
 
+.container {
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100%;
+}
+
 .content {
   display: flex;
   flex-direction: column;
-	margin: 24px (100% / $num_cols);
+  height: 100%;
+	margin: 24px (100% / $num_cols_medium);
+  @include respond-to(large) {
+    margin: 24px (100% / $num_cols_large);
+  }
+  position: absolute;
 }
 
 .form-map-container {
   display: flex;
+  height: 100%;
+  position: relative;
   width: 100%;
 }
 
@@ -41,22 +59,31 @@ html, body {
 }
 
 .slider-container {
-  align-items: center;
-  /*display: flex;*/
+  display: flex;
+  flex-direction: column;
+  margin: 28px 0 8px;
   /* TODO: Enable this when ready to add settings. */
-  display: none;
+  /*display: none;*/
 }
 
-.submit-button {
-  margin-top: 32px;
+.slider-header {
 }
 
 /** Map ========================================================= */
 
 .map-container {
+  max-width: 300px;
   width: 100%;
   @include respond-to(small) { display: none; }
-  @include respond-to(large) { width: 75% ; }
+}
+
+.map-header-container {
+  align-items: center;
+  display: flex;
+}
+
+.map-header {
+  flex: 1 0 auto;
 }
 
 .map-iframe-container {
@@ -77,5 +104,7 @@ html, body {
 /** Results ========================================================= */
 
 .results-container {
-  margin-top: 12px;
+  height: 100%;
+  margin-top: 50px;
+  overflow: scroll;
 }
