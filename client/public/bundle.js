@@ -109,7 +109,7 @@
 	      origin: '',
 	      destination: '',
 	      term: '',
-	      resultsIndex: 0, // Index of the selected stop in the results array.
+	      selectedResultIndex: -1, // Index of the selected stop in the results array.
 	      results: [],
 	      stopFractionInTrip: 0.5,
 	      directionsLink: ''
@@ -123,6 +123,7 @@
 	  /** Updates the map with the current origin and destination state. */
 	  updateMap_: function updateMap_() {
 	    this.clearLocationMarker_();
+	    this.clearSelectedResultIndex_();
 	
 	    var request = {
 	      origin: this.state.origin,
@@ -146,16 +147,16 @@
 	  updateDirectionsLink_: function updateDirectionsLink_() {
 	    var startAddress = encodeURIComponent(this.state.origin);
 	    var destAddress = encodeURIComponent(this.state.destination);
-	    var waypoint = this.state.results[this.state.resultsIndex];
+	    var waypoint = this.state.results[this.state.selectedResultIndex];
 	    var waypointAddress = encodeURIComponent(waypoint.name + ',' + waypoint.location.address + ',' + waypoint.location.city + ',' + waypoint.location.country_code);
 	    this.state.directionsLink = 'http://maps.google.com/maps/dir/' + startAddress + '/' + waypointAddress + '/' + destAddress;
 	  },
 	
-	  updateWaypoint_: function updateWaypoint_(resultsIndex) {
+	  updateWaypoint_: function updateWaypoint_(selectedResultIndex) {
 	    var _this = this;
 	
-	    this.setState({ resultsIndex: resultsIndex }, function () {
-	      var businessCoordinate = _this.state.results[_this.state.resultsIndex].location.coordinate;
+	    this.setState({ selectedResultIndex: selectedResultIndex }, function () {
+	      var businessCoordinate = _this.state.results[_this.state.selectedResultIndex].location.coordinate;
 	      var latLng = new google.maps.LatLng(businessCoordinate.latitude, businessCoordinate.longitude);
 	      var request = {
 	        origin: _this.state.origin,
@@ -193,6 +194,10 @@
 	    if (locationMarker) {
 	      locationMarker.setMap(null);
 	    }
+	  },
+	
+	  clearSelectedResultIndex_: function clearSelectedResultIndex_() {
+	    this.setState({ selectedResultIndex: -1 });
 	  },
 	
 	  getStopsListFromYelp_: function getStopsListFromYelp_(latitude, longitude) {
@@ -237,7 +242,8 @@
 	        _react2.default.createElement(ResultsComponent, { onRowSelection: this.updateWaypoint_,
 	          onRowHoverExit: this.clearLocationMarker_,
 	          onRowHover: this.updateLocationMarker_,
-	          results: this.state.results })
+	          results: this.state.results,
+	          selectedResultIndex: this.state.selectedResultIndex })
 	      )
 	    );
 	  }
@@ -321,7 +327,7 @@
 	  displayName: 'ResultsComponent',
 	
 	  handleRowSelection_: function handleRowSelection_(selectedRows) {
-	    if (selectedRows && selectedRows[0] !== undefined) {
+	    if (selectedRows.length > 0) {
 	      this.props.onRowSelection(selectedRows[0]);
 	    }
 	  },
@@ -330,8 +336,9 @@
 	    this.props.onRowHover(rowNumber);
 	  },
 	
-	  // TODO: Bug where the selected row does not appear as selected.
 	  render: function render() {
+	    var _this2 = this;
+	
 	    return _react2.default.createElement(
 	      'div',
 	      { className: 'results-container' },
@@ -364,11 +371,12 @@
 	        ),
 	        _react2.default.createElement(
 	          _Table.TableBody,
-	          { displayRowCheckbox: false, showRowHover: true },
-	          this.props.results.map(function (result) {
+	          { displayRowCheckbox: false, showRowHover: true, deselectOnClickaway: false },
+	          this.props.results.map(function (result, index) {
 	            return _react2.default.createElement(
 	              _Table.TableRow,
-	              { key: result.id, style: { cursor: 'pointer' } },
+	              { key: result.id, style: { cursor: 'pointer' },
+	                selected: index == _this2.props.selectedResultIndex },
 	              _react2.default.createElement(
 	                _Table.TableRowColumn,
 	                null,

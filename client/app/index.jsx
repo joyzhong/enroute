@@ -29,7 +29,7 @@ const RoadtripComponent = React.createClass({
       origin: '',
       destination: '',
       term: '',
-      resultsIndex: 0, // Index of the selected stop in the results array.
+      selectedResultIndex: -1, // Index of the selected stop in the results array.
       results: [],
       stopFractionInTrip: 0.5,
       directionsLink: '',
@@ -43,6 +43,7 @@ const RoadtripComponent = React.createClass({
   /** Updates the map with the current origin and destination state. */
   updateMap_: function() {
     this.clearLocationMarker_();
+    this.clearSelectedResultIndex_();
 
     const request = {
       origin: this.state.origin,
@@ -66,7 +67,7 @@ const RoadtripComponent = React.createClass({
   updateDirectionsLink_: function() {
     const startAddress = encodeURIComponent(this.state.origin);
     const destAddress = encodeURIComponent(this.state.destination);
-    const waypoint = this.state.results[this.state.resultsIndex];
+    const waypoint = this.state.results[this.state.selectedResultIndex];
     const waypointAddress = encodeURIComponent(
         waypoint.name + ',' + waypoint.location.address + ',' +
         waypoint.location.city + ',' + waypoint.location.country_code);
@@ -74,9 +75,9 @@ const RoadtripComponent = React.createClass({
         `http://maps.google.com/maps/dir/${startAddress}/${waypointAddress}/${destAddress}`;
   },
 
-  updateWaypoint_: function(resultsIndex) {
-    this.setState({resultsIndex: resultsIndex}, () => {
-      const businessCoordinate = this.state.results[this.state.resultsIndex].location.coordinate;
+  updateWaypoint_: function(selectedResultIndex) {
+    this.setState({selectedResultIndex: selectedResultIndex}, () => {
+      const businessCoordinate = this.state.results[this.state.selectedResultIndex].location.coordinate;
       const latLng = new google.maps.LatLng(businessCoordinate.latitude, businessCoordinate.longitude);
       const request = {
         origin: this.state.origin,
@@ -119,6 +120,10 @@ const RoadtripComponent = React.createClass({
     }
   },
 
+  clearSelectedResultIndex_: function() {
+    this.setState({selectedResultIndex: -1});
+  },
+
   getStopsListFromYelp_: function(latitude, longitude) {
     $.ajax({
       context: this,
@@ -156,7 +161,8 @@ const RoadtripComponent = React.createClass({
           <ResultsComponent onRowSelection={this.updateWaypoint_} 
               onRowHoverExit={this.clearLocationMarker_}
               onRowHover={this.updateLocationMarker_} 
-              results={this.state.results} />
+              results={this.state.results}
+              selectedResultIndex={this.state.selectedResultIndex} />
         </div>
       </div>
     );
@@ -238,7 +244,7 @@ const FormSlider = (props) => (
 
 const ResultsComponent = React.createClass({
   handleRowSelection_: function(selectedRows) {
-    if (selectedRows && selectedRows[0] !== undefined) {
+    if (selectedRows.length > 0) {
       this.props.onRowSelection(selectedRows[0]);
     }
   },
@@ -247,7 +253,6 @@ const ResultsComponent = React.createClass({
     this.props.onRowHover(rowNumber);
   },
 
-  // TODO: Bug where the selected row does not appear as selected.
   render: function() {
     return (
       <div className="results-container">
@@ -260,10 +265,11 @@ const ResultsComponent = React.createClass({
               <TableHeaderColumn># Reviews</TableHeaderColumn>
             </TableRow>
           </TableHeader>
-          <TableBody displayRowCheckbox={false} showRowHover={true}>
+          <TableBody displayRowCheckbox={false} showRowHover={true} deselectOnClickaway={false}>
             {
-              this.props.results.map((result) => (
-                <TableRow key={result.id} style={{cursor: 'pointer' }}>
+              this.props.results.map((result, index) => (
+                <TableRow key={result.id} style={{cursor: 'pointer' }}
+                    selected={index == this.props.selectedResultIndex}>
                   <TableRowColumn>{result.name}</TableRowColumn>
                   <TableRowColumn>{result.rating}</TableRowColumn>
                   <TableRowColumn>{result.review_count}</TableRowColumn>
