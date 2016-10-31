@@ -1,5 +1,6 @@
 import AppBar from 'material-ui/AppBar';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
+import NavigationArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
+import IconButton from 'material-ui/IconButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import React from 'react';
@@ -7,6 +8,7 @@ import ReactDOM from 'react-dom';
 import Slider from 'material-ui/Slider';
 import TextField from 'material-ui/TextField';
 import injectTapEventPlugin from 'react-tap-event-plugin';
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
  
 // Needed for onTouchTap 
 // http://stackoverflow.com/a/34015469/988941 
@@ -33,6 +35,8 @@ const RoadtripComponent = React.createClass({
       results: [],
       stopFractionInTrip: 0.5,
       directionsLink: '',
+      tripTimeSec: 0, // Time from origin to destination, in seconds.
+      mapMode: false, // Whether the component is in map mode, for mobile screens.
     }
   },
 
@@ -40,7 +44,10 @@ const RoadtripComponent = React.createClass({
     this.setState(data);
   },
 
-  /** Updates the map with the current origin and destination state. */
+  /**
+   * Updates the map with the current origin and destination state,
+   * and makes a Yelp API call to update the waypoints.
+   */
   updateMap_: function() {
     this.clearLocationMarker_();
     this.clearSelectedResultIndex_();
@@ -53,14 +60,23 @@ const RoadtripComponent = React.createClass({
     const displayDirectionsFn = function(result, status) {
       if (status == 'OK') {
         const pathCoordinates = result.routes[0].overview_path;
-        const indexInTrip = Math.round((pathCoordinates.length - 1) * this.state.stopFractionInTrip);
+        const indexInTrip = Math.round(
+            (pathCoordinates.length - 1) * this.state.stopFractionInTrip);
         const stopCooordinates = pathCoordinates[indexInTrip];
         directionsDisplay.setDirections(result);
-        this.getStopsListFromYelp_(stopCooordinates.lat(), stopCooordinates.lng());
+
+        this.setState({
+          tripTime: result.routes[0].legs[0].duration.value,
+          mapMode: true,
+        }, () => {
+          this.getStopsListFromYelp_(
+              stopCooordinates.lat(), stopCooordinates.lng());
+        });
       }
       // TODO: Handle error statuses.
     }.bind(this);
 
+    // Get the directions and then execute displayDirectionsFn.
     directionsService.route(request, displayDirectionsFn);
   },
 
@@ -77,8 +93,10 @@ const RoadtripComponent = React.createClass({
 
   updateWaypoint_: function(selectedResultIndex) {
     this.setState({selectedResultIndex: selectedResultIndex}, () => {
-      const businessCoordinate = this.state.results[this.state.selectedResultIndex].location.coordinate;
-      const latLng = new google.maps.LatLng(businessCoordinate.latitude, businessCoordinate.longitude);
+      const businessCoordinate = 
+          this.state.results[this.state.selectedResultIndex].location.coordinate;
+      const latLng = new google.maps.LatLng(
+          businessCoordinate.latitude, businessCoordinate.longitude);
       const request = {
         origin: this.state.origin,
         destination: this.state.destination,
@@ -88,7 +106,8 @@ const RoadtripComponent = React.createClass({
       const displayDirectionsFn = function(result, status) {
         if (status == 'OK') {
           const pathCoordinates = result.routes[0].overview_path;
-          const stopCooordinates = pathCoordinates[Math.round(pathCoordinates.length / 2)];
+          const stopCooordinates =
+              pathCoordinates[Math.round(pathCoordinates.length / 2)];
           directionsDisplay.setDirections(result);
         }
         // TODO: Handle error statuses.
@@ -124,6 +143,10 @@ const RoadtripComponent = React.createClass({
     this.setState({selectedResultIndex: -1});
   },
 
+  /**
+   * @param {number} latitude
+   * @param {number} longitude
+   */
   getStopsListFromYelp_: function(latitude, longitude) {
     $.ajax({
       context: this,
@@ -132,13 +155,65 @@ const RoadtripComponent = React.createClass({
       data: { term: this.state.term, latitude: latitude, longitude: longitude },
       success: function(yelpResults) {
         console.log(yelpResults.businesses);
-        const latitude = yelpResults.businesses[0].location.coordinate.latitude;
-        const longitude = yelpResults.businesses[0].location.coordinate.longitude;
-        this.setState({results: yelpResults.businesses});
+
+        const businesses = yelpResults.businesses;
+        const midpoints = businesses.map((result) => {
+          return {
+            lat: result.location.coordinate.latitude,
+            lng: result.location.coordinate.longitude,
+          };
+        });
+        const originToMidpointsDists = this.getDirectionsMatrix_(
+            [this.state.origin], midpoints);
+        const midpointsToDestDists = this.getDirectionsMatrix_(
+            midpoints, [this.state.destination]);
+        Promise.all([originToMidpointsDists, midpointsToDestDists])
+            .then((responses) => {
+              const legATimes = responses[0].rows[0].elements;
+              const legBTimes = responses[1].rows.map((row) => {
+                return row.elements[0];
+              });
+
+              businesses.forEach((business, index) => {
+                const totalTripTimeSec = legATimes[index].duration.value +
+                    legBTimes[index].duration.value;
+                business['min_added'] = Math.round(
+                    (totalTripTimeSec - this.state.tripTimeSec) / 60);
+              });
+
+              this.setState({results: yelpResults.businesses});
+            });
       }
     });
   },
 
+  /**
+   * Makes a request via Google Maps Directions Matrix API.
+   * or rejects if the request fails.
+   * @param {!Array<string|!Object>} origins
+   * @param {!Array<string|!Object>} destinations
+   * @return {!Promise} Promise that resolves with the successful response,
+   *    or rejects if the request fails.
+   */
+  getDirectionsMatrix_: function(origins, destinations) {
+    const promise = new Promise((resolve, reject) => {
+      distanceMatrixService.getDistanceMatrix({
+        origins: origins,
+        destinations: destinations,
+        travelMode: google.maps.DirectionsTravelMode.DRIVING,
+      }, (response, status) => {
+        if (status == 'OK') {
+          resolve(response);
+        } else {
+          reject('Directions matrix request failed.');
+        }
+      });
+    });
+
+    return promise;
+  },
+
+ // TODO: Investigate just making this an href?
   onDirectionsButtonClick_: function() {
     const win = window.open(this.state.directionsLink, '_blank');
     if (win) {
@@ -148,21 +223,32 @@ const RoadtripComponent = React.createClass({
     }
   },
 
+  onBackButtonClick_: function() {
+    this.setState({
+      mapMode: false
+    });
+  },
+
   render: function() {
+    const contentClassName = this.state.mapMode ? 'content map-mode' : 'content';
+
     return (
       <div className="container">
         <AppBar title="Roadtrip" />
-        <div className="content">
+        <div className={contentClassName}>
           <div className="form-map-container">
-            <FormComponent onSubmit={this.updateMap_} onChange={this.handleChange_}
+            <FormComponent onSubmit={this.updateMap_}
+                onChange={this.handleChange_}
                 initialSliderValue={this.state.stopFractionInTrip} />
-            <MapComponent onClick={this.onDirectionsButtonClick_} />
+            <MapComponent onDirectionsClick={this.onDirectionsButtonClick_}
+                onBackButtonClick={this.onBackButtonClick_} />
           </div>
           <ResultsComponent onRowSelection={this.updateWaypoint_} 
               onRowHoverExit={this.clearLocationMarker_}
               onRowHover={this.updateLocationMarker_} 
               results={this.state.results}
-              selectedResultIndex={this.state.selectedResultIndex} />
+              selectedResultIndex={this.state.selectedResultIndex}
+              tripTimeSec={this.state.tripTimeSec} />
         </div>
       </div>
     );
@@ -207,14 +293,20 @@ const FormComponent = React.createClass({
   render: function() {
     return (
       <form className="form-container">
-        <FormTextField floatingLabelText="Start Location" id={TEXT_FIELD_START_DEST}
-            onChange={this.handleOriginChange_} onKeyDown={this.handleOriginKeyDown_} />
-        <FormTextField floatingLabelText="Final Destination" id={TEXT_FIELD_FINAL_DEST}
-            onChange={this.handleDestinationChange_} onKeyDown={this.handleDestinationKeyDown_} />
-        <FormTextField floatingLabelText="Stop for (e.g. lunch, coffee)..." id='Term'
+        <FormTextField floatingLabelText="Start Location" 
+            id={TEXT_FIELD_START_DEST}
+            onChange={this.handleOriginChange_}
+            onKeyDown={this.handleOriginKeyDown_} />
+        <FormTextField floatingLabelText="Final Destination"
+            id={TEXT_FIELD_FINAL_DEST}
+            onChange={this.handleDestinationChange_}
+            onKeyDown={this.handleDestinationKeyDown_} />
+        <FormTextField floatingLabelText="Stop for (e.g. lunch, coffee)..."
+            id='Term'
             onChange={this.handleTermChange_} />
 
-        <FormSlider value={this.props.initialSliderValue} onChange={this.handleSliderDragStop_} />
+        <FormSlider value={this.props.initialSliderValue}
+            onChange={this.handleSliderDragStop_} />
         {/*<FormSlider startValue="Quality" endValue="Distance" /> */}
 
         <RaisedButton label="Go" primary={true} onClick={this.handleClick_} />
@@ -226,8 +318,10 @@ const FormComponent = React.createClass({
 
 /** Text field with customized styling. */
 const FormTextField = (props) => (
-  <TextField floatingLabelText={props.floatingLabelText} placeholder="" id={props.id}
-      style={{ display: 'block', width: '100%' }} onKeyDown={props.onKeyDown} onChange={props.onChange} />
+  <TextField floatingLabelText={props.floatingLabelText}
+      placeholder="" id={props.id}
+      style={{ display: 'block', width: '100%' }}
+      onKeyDown={props.onKeyDown} onChange={props.onChange} />
 );
 
 
@@ -253,30 +347,60 @@ const ResultsComponent = React.createClass({
     this.props.onRowHover(rowNumber);
   },
 
+  /**
+  * Called when a business link is clicked, to open the Yelp business page.
+  * @param {!Object} event
+  */
+  handleLinkClick_: function(event) {
+    // Prevent bubbling up, so that the row is not selected.
+    event.stopPropagation();
+  },
+
   render: function() {
     return (
       <div className="results-container">
-        <Table onRowHover={this.handleRowHover_} onRowHoverExit={this.props.onRowHoverExit} 
+        <Table onRowHover={this.handleRowHover_}
+            onRowHoverExit={this.props.onRowHoverExit} 
             onRowSelection={this.handleRowSelection_}>
-          <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
-            <TableRow>
-              <TableHeaderColumn>Name</TableHeaderColumn>
-              <TableHeaderColumn>Rating</TableHeaderColumn>
-              <TableHeaderColumn># Reviews</TableHeaderColumn>
-            </TableRow>
-          </TableHeader>
-          <TableBody displayRowCheckbox={false} showRowHover={true} deselectOnClickaway={false}>
+
+          {this.props.results.length > 0 &&
+            <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
+              <TableRow>
+                <TableHeaderColumn>Name</TableHeaderColumn>
+                <TableHeaderColumn>Rating / # Reviews</TableHeaderColumn>
+                <TableHeaderColumn>
+                  Time (from <TimeFormatSpan 
+                      timeInMin={Math.round(this.props.tripTimeSec / 60)} />)
+                </TableHeaderColumn>
+              </TableRow>
+            </TableHeader>
+          }
+
+          <TableBody displayRowCheckbox={false}
+              showRowHover={true}
+              deselectOnClickaway={false}>
             {
               this.props.results.map((result, index) => (
                 <TableRow key={result.id} style={{cursor: 'pointer' }}
                     selected={index == this.props.selectedResultIndex}>
-                  <TableRowColumn>{result.name}</TableRowColumn>
-                  <TableRowColumn>{result.rating}</TableRowColumn>
-                  <TableRowColumn>{result.review_count}</TableRowColumn>
+                  <TableRowColumn>
+                    <a href={result.url} target="_blank"
+                        onClick={this.handleLinkClick_}>{result.name}</a>
+                  </TableRowColumn>
+                  <TableRowColumn>
+                    <img src={result.rating_img_url}
+                        style={{ verticalAlign: 'middle' }} />
+                        {' '}/{' '}
+                        {result.review_count}
+                  </TableRowColumn>
+                  <TableRowColumn>
+                    +<TimeFormatSpan timeInMin={result.min_added} />
+                  </TableRowColumn>
                 </TableRow>
               ))
             }
           </TableBody>
+
         </Table>
       </div>
     );
@@ -296,16 +420,37 @@ const ResultItem = (props) => (
 const MapComponent = (props) => (
   <div className="map-container">
     <div className="map-header-container">
-      <h2 className="map-header">
+      <div className="back-button-container">
+        <IconButton onClick={props.onBackButtonClick}>
+          <NavigationArrowBack />
+        </IconButton>
+      </div>
+      <h2 className="map-title">
         Route
       </h2>
-      <RaisedButton label="Directions" primary={true} onClick={props.onClick} />
+      <RaisedButton label="Directions" primary={true}
+          onClick={props.onDirectionsClick} />
     </div>
 
     <div className="map-iframe-container" id="map">
       // Map is inserted here.
     </div>
   </div>
+);
+
+
+const TimeFormatSpan = (props) => (
+  <span>
+  {
+    props.timeInMin >= 60 ?
+      <span>
+        {Math.floor(props.timeInMin / 60)}h {props.timeInMin % 60}min
+      </span> :
+      <span>
+        {props.timeInMin} min
+      </span>
+  }
+  </span>
 );
 
 
@@ -317,6 +462,8 @@ let directionsDisplay;
 const directionsService = new google.maps.DirectionsService();
 let map;
 let locationMarker;
+
+const distanceMatrixService = new google.maps.DistanceMatrixService();
 
 function initMap() {
   directionsDisplay = new google.maps.DirectionsRenderer();
@@ -331,13 +478,15 @@ function initMap() {
 
 function initAutocomplete() {
   autocompleteStartDest = new google.maps.places.Autocomplete(
-    /** @type {!HTMLInputElement} */(document.getElementById(TEXT_FIELD_START_DEST)));
+    /** @type {!HTMLInputElement} */
+    (document.getElementById(TEXT_FIELD_START_DEST)));
   autocompleteFinalDest = new google.maps.places.Autocomplete(
-    /** @type {!HTMLInputElement} */(document.getElementById(TEXT_FIELD_FINAL_DEST)));
+    /** @type {!HTMLInputElement} */
+    (document.getElementById(TEXT_FIELD_FINAL_DEST)));
 };
 
 
-function main() {
+function init() {
   ReactDOM.render(
     <App />,
     document.getElementById('app')
@@ -347,4 +496,4 @@ function main() {
   initMap();
 };
 
-main();
+init();

@@ -44,9 +44,26 @@ html, body {
   position: absolute;
 }
 
+.content.map-mode .map-container {
+  @include respond-to(small) { display: initial; }
+}
+
+.content.map-mode .form-container {
+  @include respond-to(small) { display: none; }
+}
+
+.content .results-container {
+  @include respond-to(small) { visibility: hidden; }
+}
+
+.content.map-mode .results-container {
+  @include respond-to(small) { visibility: initial; }
+}
+
 .form-map-container {
   display: flex;
-  height: 100%;
+  flex: 0 0 auto;
+  justify-content: center;
   position: relative;
   width: 100%;
 }
@@ -82,7 +99,13 @@ html, body {
   display: flex;
 }
 
-.map-header {
+.back-button-container {
+  @include respond-to((medium, large)) { display: none; }
+  flex: 1 0 auto;
+}
+
+.map-title {
+  @include respond-to(small) { display: none; }
   flex: 1 0 auto;
 }
 
@@ -105,6 +128,6 @@ html, body {
 
 .results-container {
   height: 100%;
-  margin-top: 50px;
+  margin: 20px 0 100px;
   overflow: scroll;
 }

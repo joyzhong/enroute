@@ -24,9 +24,26 @@ html, body {
     .content {
       margin: 24px 16.66667%; } }
 
+@media only screen and (max-width: 767px) {
+  .content.map-mode .map-container {
+    display: initial; } }
+
+@media only screen and (max-width: 767px) {
+  .content.map-mode .form-container {
+    display: none; } }
+
+@media only screen and (max-width: 767px) {
+  .content .results-container {
+    visibility: hidden; } }
+
+@media only screen and (max-width: 767px) {
+  .content.map-mode .results-container {
+    visibility: initial; } }
+
 .form-map-container {
   display: flex;
-  height: 100%;
+  flex: 0 0 auto;
+  justify-content: center;
   position: relative;
   width: 100%; }
 
@@ -59,8 +76,20 @@ html, body {
   align-items: center;
   display: flex; }
 
-.map-header {
+.back-button-container {
   flex: 1 0 auto; }
+  @media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .back-button-container {
+      display: none; } }
+  @media only screen and (min-width: 1025px) {
+    .back-button-container {
+      display: none; } }
+
+.map-title {
+  flex: 1 0 auto; }
+  @media only screen and (max-width: 767px) {
+    .map-title {
+      display: none; } }
 
 .map-iframe-container {
   height: 0;
@@ -78,7 +107,7 @@ html, body {
 /** Results ========================================================= */
 .results-container {
   height: 100%;
-  margin-top: 50px;
+  margin: 20px 0 100px;
   overflow: scroll; }
 
 /*# sourceMappingURL=app.css.map */
