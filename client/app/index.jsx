@@ -1,6 +1,7 @@
 import AppBar from 'material-ui/AppBar';
-import NavigationArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
+import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
+import NavigationArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import React from 'react';
@@ -66,7 +67,7 @@ const RoadtripComponent = React.createClass({
         directionsDisplay.setDirections(result);
 
         this.setState({
-          tripTime: result.routes[0].legs[0].duration.value,
+          tripTimeSec: result.routes[0].legs[0].duration.value,
           mapMode: true,
         }, () => {
           this.getStopsListFromYelp_(
@@ -234,7 +235,10 @@ const RoadtripComponent = React.createClass({
 
     return (
       <div className="container">
-        <AppBar title="Roadtrip" />
+        <div className="app-title">
+          <span>Roadtrip</span>
+        </div>
+        {/*<AppBar title="Roadtrip" />*/}
         <div className={contentClassName}>
           <div className="form-map-container">
             <FormComponent onSubmit={this.updateMap_}
@@ -320,7 +324,7 @@ const FormComponent = React.createClass({
 const FormTextField = (props) => (
   <TextField floatingLabelText={props.floatingLabelText}
       placeholder="" id={props.id}
-      style={{ display: 'block', width: '100%' }}
+      style={{ display: 'block', marginTop: '-6px', width: '100%' }}
       onKeyDown={props.onKeyDown} onChange={props.onChange} />
 );
 
@@ -330,7 +334,7 @@ const FormSlider = (props) => (
   <div className="slider-container">
     <div className="slider-header">Stop Distance into Trip</div>
     <Slider value={props.value} style={{ width: '100%' }} 
-        sliderStyle={{ marginTop: '18px', marginBottom: '24px' }}
+        sliderStyle={{ marginTop: '14px', marginBottom: '16px' }}
         onChange={props.onChange} />
   </div>
 );
@@ -366,7 +370,9 @@ const ResultsComponent = React.createClass({
           {this.props.results.length > 0 &&
             <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
               <TableRow>
-                <TableHeaderColumn>Name</TableHeaderColumn>
+                <TableHeaderColumn className="results-column-short">
+                  Name
+                </TableHeaderColumn>
                 <TableHeaderColumn>Rating / # Reviews</TableHeaderColumn>
                 <TableHeaderColumn>
                   Time (from <TimeFormatSpan 
@@ -383,17 +389,18 @@ const ResultsComponent = React.createClass({
               this.props.results.map((result, index) => (
                 <TableRow key={result.id} style={{cursor: 'pointer' }}
                     selected={index == this.props.selectedResultIndex}>
-                  <TableRowColumn>
+                  <TableRowColumn className="results-column-short">
                     <a href={result.url} target="_blank"
                         onClick={this.handleLinkClick_}>{result.name}</a>
                   </TableRowColumn>
                   <TableRowColumn>
                     <img src={result.rating_img_url}
+                        className="yelp-star-img"
                         style={{ verticalAlign: 'middle' }} />
                         {' '}/{' '}
                         {result.review_count}
                   </TableRowColumn>
-                  <TableRowColumn>
+                  <TableRowColumn className="results-column-short">
                     +<TimeFormatSpan timeInMin={result.min_added} />
                   </TableRowColumn>
                 </TableRow>
@@ -428,7 +435,7 @@ const MapComponent = (props) => (
       <h2 className="map-title">
         Route
       </h2>
-      <RaisedButton label="Directions" primary={true}
+      <FlatButton label="Directions" secondary={true}
           onClick={props.onDirectionsClick} />
     </div>
 
