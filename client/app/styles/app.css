@@ -90,6 +90,12 @@ html, body {
   /* TODO: Enable this when ready to add settings. */
   /*display: none;*/ }
 
+.yelp-image {
+  float: right; }
+
+.yelp-image img {
+  width: 65px; }
+
 /** Map ========================================================= */
 .map-container {
   max-width: 300px;

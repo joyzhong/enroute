@@ -413,7 +413,12 @@
 	        onChange: this.handleTermChange_ }),
 	      _react2.default.createElement(FormSlider, { value: this.props.initialSliderValue,
 	        onChange: this.handleSliderDragStop_ }),
-	      _react2.default.createElement(_RaisedButton2.default, { label: 'Go', primary: true, onClick: this.handleClick_ })
+	      _react2.default.createElement(_RaisedButton2.default, { label: 'Go', primary: true, onClick: this.handleClick_ }),
+	      _react2.default.createElement(
+	        'a',
+	        { className: 'yelp-image', href: 'https://www.yelp.com', target: '_blank' },
+	        _react2.default.createElement('img', { src: 'https://s3-media2.fl.yelpcdn.com/assets/srv0/developer_pages/95212dafe621/assets/img/yelp-2c.png' })
+	      )
 	    );
 	  }
 	});

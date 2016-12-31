@@ -322,6 +322,9 @@ const FormComponent = React.createClass({
         {/*<FormSlider startValue="Quality" endValue="Distance" /> */}
 
         <RaisedButton label="Go" primary={true} onClick={this.handleClick_} />
+        <a className="yelp-image" href="https://www.yelp.com" target="_blank">
+          <img src="https://s3-media2.fl.yelpcdn.com/assets/srv0/developer_pages/95212dafe621/assets/img/yelp-2c.png" />
+        </a>
       </form>
     );
   }
