@@ -4,11 +4,11 @@ $max-width-xsmall: 480px;
 $max-width-small: 767px;
 $max-width-medium: 1024px;
 
-$primary-color: rgb(0, 188, 212);
-$secondary-color: rgb(255, 64, 129);
-$tertiary-color: #eee;
+$primary-color: #3F51B5; /* Indigo 500 */
+$secondary-color: #F4511E; /* Deep Orange 600 */
+$tertiary-color: #E8EAF6; /* Indigo 50 */
 
-$header-font: 'Dancing Script' , cursive;
+$header-font: 'Lato' , cursive;
 $body-font: 'Roboto', sans-serif;
 
 @mixin respond-to($mediaList) {
@@ -168,6 +168,7 @@ html, body {
 
 .results-container {
   height: 100%;
+  margin-top: 6px;
   overflow: scroll;
 }
 

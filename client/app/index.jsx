@@ -9,8 +9,10 @@ import ReactDOM from 'react-dom';
 import Slider from 'material-ui/Slider';
 import TextField from 'material-ui/TextField';
 import injectTapEventPlugin from 'react-tap-event-plugin';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
- 
+import {indigo500, deepOrange600} from 'material-ui/styles/colors';
+
 // Needed for onTouchTap 
 // http://stackoverflow.com/a/34015469/988941 
 injectTapEventPlugin();
@@ -19,8 +21,14 @@ const TEXT_FIELD_START_DEST = 'textFieldStartDest';
 const TEXT_FIELD_FINAL_DEST = 'textFieldFinalDest';
 const TEXT_FIELD_TERM = 'textFieldTerm';
 
+const muiTheme = getMuiTheme({
+  palette: {
+    primary1Color: indigo500,
+    accent1Color: deepOrange600,
+  },
+});
 const App = () => (
-  <MuiThemeProvider>
+  <MuiThemeProvider muiTheme={muiTheme}>
     <RoadtripComponent />
   </MuiThemeProvider>
 );

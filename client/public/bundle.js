@@ -93,7 +93,13 @@
 	
 	var _reactTapEventPlugin2 = _interopRequireDefault(_reactTapEventPlugin);
 	
+	var _getMuiTheme = __webpack_require__(/*! material-ui/styles/getMuiTheme */ 224);
+	
+	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
+	
 	var _Table = __webpack_require__(/*! material-ui/Table */ 395);
+	
+	var _colors = __webpack_require__(/*! material-ui/styles/colors */ 339);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -105,10 +111,16 @@
 	var TEXT_FIELD_FINAL_DEST = 'textFieldFinalDest';
 	var TEXT_FIELD_TERM = 'textFieldTerm';
 	
+	var muiTheme = (0, _getMuiTheme2.default)({
+	  palette: {
+	    primary1Color: _colors.indigo500,
+	    accent1Color: _colors.deepOrange600
+	  }
+	});
 	var App = function App() {
 	  return _react2.default.createElement(
 	    _MuiThemeProvider2.default,
-	    null,
+	    { muiTheme: muiTheme },
 	    _react2.default.createElement(RoadtripComponent, null)
 	  );
 	};

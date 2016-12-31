@@ -1,3 +1,6 @@
+/* Indigo 500 */
+/* Deep Orange 600 */
+/* Indigo 50 */
 html, body {
   font-family: "Roboto", sans-serif;
   height: 100%;
@@ -7,7 +10,7 @@ html, body {
 
 .app-title {
   display: flex;
-  font-family: "Dancing Script", cursive;
+  font-family: "Lato", cursive;
   font-size: 2.5em;
   font-weight: 700;
   justify-content: center;
@@ -23,7 +26,7 @@ html, body {
       margin: 0px 16.66667%; } }
 
 .container {
-  background-color: #eee;
+  background-color: #E8EAF6;
   bottom: 0;
   left: 0;
   height: 100%;
@@ -33,11 +36,11 @@ html, body {
   width: 100%; }
 
 .container a {
-  color: #ff4081;
+  color: #F4511E;
   text-decoration: none; }
 
 .container a:hover {
-  color: #00bcd4; }
+  color: #3F51B5; }
 
 .content {
   background-color: white;
@@ -98,7 +101,7 @@ html, body {
 .map-header-container {
   align-items: center;
   display: flex;
-  font-family: "Dancing Script", cursive; }
+  font-family: "Lato", cursive; }
 
 .back-button-container {
   flex: 1 0 auto; }
@@ -132,6 +135,7 @@ html, body {
 /** Results ========================================================= */
 .results-container {
   height: 100%;
+  margin-top: 6px;
   overflow: scroll; }
 
 .yelp-star-img {
