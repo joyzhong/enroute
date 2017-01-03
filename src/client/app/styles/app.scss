@@ -185,3 +185,19 @@ html, body {
 .results-column-short {
   @include respond-to(small) { width: 25%; }
 }
+
+/** Onboarding ======================================================= */
+.onboarding-container {
+  display: flex;
+  justify-content: center;
+  visibility: initial;
+}
+
+.onboarding-container p {
+  color: $primary-color;
+  cursor: pointer;
+}
+
+.onboarding-container p:hover {
+  color: $secondary-color;
+}

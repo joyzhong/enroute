@@ -251,7 +251,9 @@ const RoadtripComponent = React.createClass({
           <div className="form-map-container">
             <FormComponent onSubmit={this.updateMap_}
                 onChange={this.handleChange_}
-                initialSliderValue={this.state.stopFractionInTrip} />
+                initialSliderValue={this.state.stopFractionInTrip}
+                origin={this.state.origin} destination={this.state.destination}
+                term={this.state.term} />
             <MapComponent onDirectionsClick={this.onDirectionsButtonClick_}
                 onBackButtonClick={this.onBackButtonClick_} />
           </div>
@@ -260,7 +262,8 @@ const RoadtripComponent = React.createClass({
               onRowHover={this.updateLocationMarker_} 
               results={this.state.results}
               selectedResultIndex={this.state.selectedResultIndex}
-              tripTimeSec={this.state.tripTimeSec} />
+              tripTimeSec={this.state.tripTimeSec}
+              onOnboardingSelection={this.handleChange_} />
         </div>
       </div>
     );
@@ -308,13 +311,15 @@ const FormComponent = React.createClass({
         <FormTextField floatingLabelText="Start Location" 
             id={TEXT_FIELD_START_DEST}
             onChange={this.handleOriginChange_}
-            onKeyDown={this.handleOriginKeyDown_} />
+            onKeyDown={this.handleOriginKeyDown_} 
+            value={this.props.origin} />
         <FormTextField floatingLabelText="Final Destination"
             id={TEXT_FIELD_FINAL_DEST}
             onChange={this.handleDestinationChange_}
-            onKeyDown={this.handleDestinationKeyDown_} />
+            onKeyDown={this.handleDestinationKeyDown_}
+            value={this.props.destination} />
         <FormTextField floatingLabelText="Stop for (e.g. lunch, coffee)..."
-            id='Term'
+            id='Term' value={this.props.term}
             onChange={this.handleTermChange_} />
 
         <FormSlider value={this.props.initialSliderValue}
@@ -336,7 +341,8 @@ const FormTextField = (props) => (
   <TextField floatingLabelText={props.floatingLabelText}
       placeholder="" id={props.id}
       style={{ display: 'block', marginTop: '-6px', width: '100%' }}
-      onKeyDown={props.onKeyDown} onChange={props.onChange} />
+      onKeyDown={props.onKeyDown} onChange={props.onChange}
+      value={props.value} />
 );
 
 
@@ -349,6 +355,42 @@ const FormSlider = (props) => (
         onChange={props.onChange} />
   </div>
 );
+
+
+const OnboardingComponent = React.createClass({
+
+  handleOnboarding1_: function() {
+    this.props.onOnboardingSelection({
+      origin: 'San Francisco, CA, USA',
+      destination: 'Los Angeles, CA, USA',
+      term: 'lunch',
+    });
+  },
+
+  handleOnboarding2_: function() {
+    this.props.onOnboardingSelection({
+      origin: 'New York City, NY, USA',
+      destination: 'Boston, MA, USA',
+      term: 'coffee',
+    });
+  },
+
+  render: function() {
+    return (
+      <div className="onboarding-container">
+        <span className="onboarding-summary">
+          Try it out!
+          <p onClick={this.handleOnboarding1_}>
+            Stop for lunch on a road trip from SF to LA
+          </p>
+          <p onClick={this.handleOnboarding2_}>
+            Grab coffee on the drive from NYC to Boston
+          </p>
+        </span>
+      </div>
+    )
+  }
+});
 
 
 const ResultsComponent = React.createClass({
@@ -374,6 +416,11 @@ const ResultsComponent = React.createClass({
   render: function() {
     return (
       <div className="results-container">
+
+        {this.props.results.length == 0 &&
+          <OnboardingComponent 
+              onOnboardingSelection={this.props.onOnboardingSelection} />}
+
         <Table onRowHover={this.handleRowHover_}
             onRowHoverExit={this.props.onRowHoverExit} 
             onRowSelection={this.handleRowSelection_}>

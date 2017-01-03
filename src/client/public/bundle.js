@@ -345,7 +345,9 @@
 	          { className: 'form-map-container' },
 	          _react2.default.createElement(FormComponent, { onSubmit: this.updateMap_,
 	            onChange: this.handleChange_,
-	            initialSliderValue: this.state.stopFractionInTrip }),
+	            initialSliderValue: this.state.stopFractionInTrip,
+	            origin: this.state.origin, destination: this.state.destination,
+	            term: this.state.term }),
 	          _react2.default.createElement(MapComponent, { onDirectionsClick: this.onDirectionsButtonClick_,
 	            onBackButtonClick: this.onBackButtonClick_ })
 	        ),
@@ -354,7 +356,8 @@
 	          onRowHover: this.updateLocationMarker_,
 	          results: this.state.results,
 	          selectedResultIndex: this.state.selectedResultIndex,
-	          tripTimeSec: this.state.tripTimeSec })
+	          tripTimeSec: this.state.tripTimeSec,
+	          onOnboardingSelection: this.handleChange_ })
 	      )
 	    );
 	  }
@@ -403,13 +406,15 @@
 	      _react2.default.createElement(FormTextField, { floatingLabelText: 'Start Location',
 	        id: TEXT_FIELD_START_DEST,
 	        onChange: this.handleOriginChange_,
-	        onKeyDown: this.handleOriginKeyDown_ }),
+	        onKeyDown: this.handleOriginKeyDown_,
+	        value: this.props.origin }),
 	      _react2.default.createElement(FormTextField, { floatingLabelText: 'Final Destination',
 	        id: TEXT_FIELD_FINAL_DEST,
 	        onChange: this.handleDestinationChange_,
-	        onKeyDown: this.handleDestinationKeyDown_ }),
+	        onKeyDown: this.handleDestinationKeyDown_,
+	        value: this.props.destination }),
 	      _react2.default.createElement(FormTextField, { floatingLabelText: 'Stop for (e.g. lunch, coffee)...',
-	        id: 'Term',
+	        id: 'Term', value: this.props.term,
 	        onChange: this.handleTermChange_ }),
 	      _react2.default.createElement(FormSlider, { value: this.props.initialSliderValue,
 	        onChange: this.handleSliderDragStop_ }),
@@ -428,7 +433,8 @@
 	  return _react2.default.createElement(_TextField2.default, { floatingLabelText: props.floatingLabelText,
 	    placeholder: '', id: props.id,
 	    style: { display: 'block', marginTop: '-6px', width: '100%' },
-	    onKeyDown: props.onKeyDown, onChange: props.onChange });
+	    onKeyDown: props.onKeyDown, onChange: props.onChange,
+	    value: props.value });
 	};
 	
 	/** Slider with customized styling. */
@@ -446,6 +452,49 @@
 	      onChange: props.onChange })
 	  );
 	};
+	
+	var OnboardingComponent = _react2.default.createClass({
+	  displayName: 'OnboardingComponent',
+	
+	
+	  handleOnboarding1_: function handleOnboarding1_() {
+	    this.props.onOnboardingSelection({
+	      origin: 'San Francisco, CA, USA',
+	      destination: 'Los Angeles, CA, USA',
+	      term: 'lunch'
+	    });
+	  },
+	
+	  handleOnboarding2_: function handleOnboarding2_() {
+	    this.props.onOnboardingSelection({
+	      origin: 'New York City, NY, USA',
+	      destination: 'Boston, MA, USA',
+	      term: 'coffee'
+	    });
+	  },
+	
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'div',
+	      { className: 'onboarding-container' },
+	      _react2.default.createElement(
+	        'span',
+	        { className: 'onboarding-summary' },
+	        'Try it out!',
+	        _react2.default.createElement(
+	          'p',
+	          { onClick: this.handleOnboarding1_ },
+	          'Stop for lunch on a road trip from SF to LA'
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          { onClick: this.handleOnboarding2_ },
+	          'Grab coffee on the drive from NYC to Boston'
+	        )
+	      )
+	    );
+	  }
+	});
 	
 	var ResultsComponent = _react2.default.createClass({
 	  displayName: 'ResultsComponent',
@@ -475,6 +524,8 @@
 	    return _react2.default.createElement(
 	      'div',
 	      { className: 'results-container' },
+	      this.props.results.length == 0 && _react2.default.createElement(OnboardingComponent, {
+	        onOnboardingSelection: this.props.onOnboardingSelection }),
 	      _react2.default.createElement(
 	        _Table.Table,
 	        { onRowHover: this.handleRowHover_,

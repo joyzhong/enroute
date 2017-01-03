@@ -154,4 +154,17 @@ html, body {
   .results-column-short {
     width: 25%; } }
 
+/** Onboarding ======================================================= */
+.onboarding-container {
+  display: flex;
+  justify-content: center;
+  visibility: initial; }
+
+.onboarding-container p {
+  color: #3F51B5;
+  cursor: pointer; }
+
+.onboarding-container p:hover {
+  color: #F4511E; }
+
 /*# sourceMappingURL=app.css.map */
