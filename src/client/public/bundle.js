@@ -480,7 +480,7 @@
 	      _react2.default.createElement(
 	        'span',
 	        { className: 'onboarding-summary' },
-	        'Try it out!',
+	        'Enroute helps you find the best places to stop when you travel. Try it out!',
 	        _react2.default.createElement(
 	          'p',
 	          { onClick: this.handleOnboarding1_ },

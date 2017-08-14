@@ -9,18 +9,27 @@ html, body {
   width: 100%; }
 
 .app-title {
-  display: flex;
+  display: none;
   font-family: "Lato", cursive;
   font-size: 2.5em;
   font-weight: 700;
   justify-content: center;
   padding: 8px 0; }
+  @media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .app-title {
+      display: flex; } }
+  @media only screen and (min-width: 1025px) {
+    .app-title {
+      display: flex; } }
 
 .app-title, .content {
   margin: 0px 12.5%; }
   @media only screen and (max-width: 480px) {
     .app-title, .content {
-      margin: 0px 16px; } }
+      margin: 0; } }
+  @media only screen and (max-width: 767px) {
+    .app-title, .content {
+      margin: 0; } }
   @media only screen and (min-width: 1025px) {
     .app-title, .content {
       margin: 0px 16.66667%; } }
@@ -49,6 +58,21 @@ html, body {
   flex-direction: column;
   height: calc(100% - 100px);
   padding: 8px 24px 4px; }
+  @media only screen and (max-width: 480px) {
+    .content {
+      align-items: center; } }
+  @media only screen and (max-width: 767px) {
+    .content {
+      align-items: center; } }
+  @media only screen and (max-width: 480px) {
+    .content {
+      height: 100%; } }
+  @media only screen and (max-width: 767px) {
+    .content {
+      height: 100%; } }
+  @media only screen and (max-width: 480px) {
+    .content {
+      padding: 8px 12px 4px; } }
 
 @media only screen and (max-width: 767px) {
   .content.map-mode .map-container {
@@ -72,6 +96,9 @@ html, body {
   justify-content: center;
   position: relative;
   width: 100%; }
+  @media only screen and (max-width: 767px) {
+    .form-map-container {
+      max-width: 550px; } }
 
 /** Form ========================================================= */
 .form-container {
@@ -158,6 +185,7 @@ html, body {
 .onboarding-container {
   display: flex;
   justify-content: center;
+  margin-top: 24px;
   visibility: initial; }
 
 .onboarding-container p {

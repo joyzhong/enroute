@@ -379,6 +379,7 @@ const OnboardingComponent = React.createClass({
     return (
       <div className="onboarding-container">
         <span className="onboarding-summary">
+          Enroute helps you find the best places to stop when you travel.
           Try it out!
           <p onClick={this.handleOnboarding1_}>
             Stop for lunch on a road trip from SF to LA
@@ -533,7 +534,7 @@ const distanceMatrixService = new google.maps.DistanceMatrixService();
 function initMap() {
   directionsDisplay = new google.maps.DirectionsRenderer();
   const chicago = new google.maps.LatLng(41.850033, -87.6500523);
-  var mapOptions = {
+  const mapOptions = {
     zoom: 7,
     center: chicago
   }
