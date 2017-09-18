@@ -168,7 +168,7 @@ html, body {
 /** Results ========================================================= */
 .results-container {
   height: 100%;
-  margin-top: 6px;
+  margin-top: 12px;
   overflow: scroll; }
 
 .yelp-star-img {
@@ -181,7 +181,7 @@ html, body {
   overflow: hidden; }
 
 @media only screen and (max-width: 767px) {
-  .results-column-short {
+  .column-short {
     width: 25%; } }
 
 /** Onboarding ======================================================= */

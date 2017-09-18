@@ -33,7 +33,6 @@ const App = () => (
   </MuiThemeProvider>
 );
 
-
 const RoadtripComponent = React.createClass({
   getInitialState: function() {
     return {
@@ -270,7 +269,6 @@ const RoadtripComponent = React.createClass({
   }
 });
 
-
 const FormComponent = React.createClass({
   // TODO: Refactor, DRY!
   handleOriginChange_: function(e) {
@@ -335,7 +333,6 @@ const FormComponent = React.createClass({
   }
 });
 
-
 /** Text field with customized styling. */
 const FormTextField = (props) => (
   <TextField floatingLabelText={props.floatingLabelText}
@@ -344,7 +341,6 @@ const FormTextField = (props) => (
       onKeyDown={props.onKeyDown} onChange={props.onChange}
       value={props.value} />
 );
-
 
 /** Slider with customized styling. */
 const FormSlider = (props) => (
@@ -356,9 +352,7 @@ const FormSlider = (props) => (
   </div>
 );
 
-
 const OnboardingComponent = React.createClass({
-
   handleOnboarding1_: function() {
     this.props.onOnboardingSelection({
       origin: 'San Francisco, CA, USA',
@@ -392,7 +386,6 @@ const OnboardingComponent = React.createClass({
     )
   }
 });
-
 
 const ResultsComponent = React.createClass({
   handleRowSelection_: function(selectedRows) {
@@ -430,13 +423,16 @@ const ResultsComponent = React.createClass({
             <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
               <TableRow>
                 <TableHeaderColumn 
-                    className="results-column-short header-column">
+                    style={{paddingLeft: '12px', paddingRight: '12px'}}
+                    className="header-column">
                   Name
                 </TableHeaderColumn>
-                <TableHeaderColumn className="header-column">
+                <TableHeaderColumn className="header-column"
+                    style={{paddingLeft: '12px', paddingRight: '12px'}}>
                     Rating / # Reviews
                 </TableHeaderColumn>
-                <TableHeaderColumn className="header-column">
+                <TableHeaderColumn className="column-short header-column"
+                    style={{paddingLeft: '12px', paddingRight: '12px'}}>
                   Time (from <TimeFormatSpan 
                       timeInMin={Math.round(this.props.tripTimeSec / 60)} />)
                 </TableHeaderColumn>
@@ -451,18 +447,19 @@ const ResultsComponent = React.createClass({
               this.props.results.map((result, index) => (
                 <TableRow key={result.id} style={{cursor: 'pointer' }}
                     selected={index == this.props.selectedResultIndex}>
-                  <TableRowColumn className="results-column-short">
+                  <TableRowColumn style={{paddingLeft: '12px', paddingRight: '12px'}}>
                     <a href={result.url} target="_blank"
                         onClick={this.handleLinkClick_}>{result.name}</a>
                   </TableRowColumn>
-                  <TableRowColumn>
+                  <TableRowColumn style={{paddingLeft: '12px', paddingRight: '12px'}}>
                     <img src={result.rating_img_url}
                         className="yelp-star-img"
                         style={{ verticalAlign: 'middle' }} />
                         {' '}/{' '}
                         {result.review_count}
                   </TableRowColumn>
-                  <TableRowColumn className="results-column-short">
+                  <TableRowColumn className="column-short"
+                      style={{paddingLeft: '12px', paddingRight: '12px'}}>
                     +<TimeFormatSpan timeInMin={result.min_added} />
                   </TableRowColumn>
                 </TableRow>
@@ -476,15 +473,12 @@ const ResultsComponent = React.createClass({
   }
 });
 
-
-const ResultItem = (props) => (
-  <TableRow hoverable={true} style={{cursor: 'pointer' }}>
-    <TableRowColumn>{props.result.name}</TableRowColumn>
-    <TableRowColumn>{props.result.rating}</TableRowColumn>
-    <TableRowColumn>{props.result.review_count}</TableRowColumn>
-  </TableRow>
+const TableRowColumnDefault = (props) => (
+  <TableRowColumn className={props.className}
+      style={{paddingLeft: '12px', paddingRight: '12px'}}>
+    {props.content}
+  </TableRowColumn>
 );
-
 
 const MapComponent = (props) => (
   <div className="map-container">
@@ -506,7 +500,6 @@ const MapComponent = (props) => (
     </div>
   </div>
 );
-
 
 const TimeFormatSpan = (props) => (
   <span>

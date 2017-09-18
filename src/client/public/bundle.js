@@ -456,7 +456,6 @@
 	var OnboardingComponent = _react2.default.createClass({
 	  displayName: 'OnboardingComponent',
 	
-	
 	  handleOnboarding1_: function handleOnboarding1_() {
 	    this.props.onOnboardingSelection({
 	      origin: 'San Francisco, CA, USA',
@@ -540,17 +539,20 @@
 	            _react2.default.createElement(
 	              _Table.TableHeaderColumn,
 	              {
-	                className: 'results-column-short header-column' },
+	                style: { paddingLeft: '12px', paddingRight: '12px' },
+	                className: 'header-column' },
 	              'Name'
 	            ),
 	            _react2.default.createElement(
 	              _Table.TableHeaderColumn,
-	              { className: 'header-column' },
+	              { className: 'header-column',
+	                style: { paddingLeft: '12px', paddingRight: '12px' } },
 	              'Rating / # Reviews'
 	            ),
 	            _react2.default.createElement(
 	              _Table.TableHeaderColumn,
-	              { className: 'header-column' },
+	              { className: 'column-short header-column',
+	                style: { paddingLeft: '12px', paddingRight: '12px' } },
 	              'Time (from ',
 	              _react2.default.createElement(TimeFormatSpan, {
 	                timeInMin: Math.round(this.props.tripTimeSec / 60) }),
@@ -570,7 +572,7 @@
 	                selected: index == _this4.props.selectedResultIndex },
 	              _react2.default.createElement(
 	                _Table.TableRowColumn,
-	                { className: 'results-column-short' },
+	                { style: { paddingLeft: '12px', paddingRight: '12px' } },
 	                _react2.default.createElement(
 	                  'a',
 	                  { href: result.url, target: '_blank',
@@ -580,7 +582,7 @@
 	              ),
 	              _react2.default.createElement(
 	                _Table.TableRowColumn,
-	                null,
+	                { style: { paddingLeft: '12px', paddingRight: '12px' } },
 	                _react2.default.createElement('img', { src: result.rating_img_url,
 	                  className: 'yelp-star-img',
 	                  style: { verticalAlign: 'middle' } }),
@@ -591,7 +593,8 @@
 	              ),
 	              _react2.default.createElement(
 	                _Table.TableRowColumn,
-	                { className: 'results-column-short' },
+	                { className: 'column-short',
+	                  style: { paddingLeft: '12px', paddingRight: '12px' } },
 	                '+',
 	                _react2.default.createElement(TimeFormatSpan, { timeInMin: result.min_added })
 	              )
@@ -603,25 +606,12 @@
 	  }
 	});
 	
-	var ResultItem = function ResultItem(props) {
+	var TableRowColumnDefault = function TableRowColumnDefault(props) {
 	  return _react2.default.createElement(
-	    _Table.TableRow,
-	    { hoverable: true, style: { cursor: 'pointer' } },
-	    _react2.default.createElement(
-	      _Table.TableRowColumn,
-	      null,
-	      props.result.name
-	    ),
-	    _react2.default.createElement(
-	      _Table.TableRowColumn,
-	      null,
-	      props.result.rating
-	    ),
-	    _react2.default.createElement(
-	      _Table.TableRowColumn,
-	      null,
-	      props.result.review_count
-	    )
+	    _Table.TableRowColumn,
+	    { className: props.className,
+	      style: { paddingLeft: '12px', paddingRight: '12px' } },
+	    props.content
 	  );
 	};
 	
