@@ -429,11 +429,14 @@ const ResultsComponent = React.createClass({
           {this.props.results.length > 0 &&
             <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
               <TableRow>
-                <TableHeaderColumn className="results-column-short">
+                <TableHeaderColumn 
+                    className="results-column-short header-column">
                   Name
                 </TableHeaderColumn>
-                <TableHeaderColumn>Rating / # Reviews</TableHeaderColumn>
-                <TableHeaderColumn>
+                <TableHeaderColumn className="header-column">
+                    Rating / # Reviews
+                </TableHeaderColumn>
+                <TableHeaderColumn className="header-column">
                   Time (from <TimeFormatSpan 
                       timeInMin={Math.round(this.props.tripTimeSec / 60)} />)
                 </TableHeaderColumn>

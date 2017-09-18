@@ -188,6 +188,10 @@ html, body {
   vertical-align: middle;
 }
 
+.header-column {
+  overflow: hidden;
+}
+
 .results-column-short {
   @include respond-to(small) { width: 25%; }
 }

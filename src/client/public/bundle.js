@@ -539,17 +539,18 @@
 	            null,
 	            _react2.default.createElement(
 	              _Table.TableHeaderColumn,
-	              { className: 'results-column-short' },
+	              {
+	                className: 'results-column-short header-column' },
 	              'Name'
 	            ),
 	            _react2.default.createElement(
 	              _Table.TableHeaderColumn,
-	              null,
+	              { className: 'header-column' },
 	              'Rating / # Reviews'
 	            ),
 	            _react2.default.createElement(
 	              _Table.TableHeaderColumn,
-	              null,
+	              { className: 'header-column' },
 	              'Time (from ',
 	              _react2.default.createElement(TimeFormatSpan, {
 	                timeInMin: Math.round(this.props.tripTimeSec / 60) }),

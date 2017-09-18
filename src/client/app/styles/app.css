@@ -177,6 +177,9 @@ html, body {
     .yelp-star-img {
       max-width: 60px; } }
 
+.header-column {
+  overflow: hidden; }
+
 @media only screen and (max-width: 767px) {
   .results-column-short {
     width: 25%; } }
