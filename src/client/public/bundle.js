@@ -109,7 +109,6 @@
 	
 	var TEXT_FIELD_START_DEST = 'textFieldStartDest';
 	var TEXT_FIELD_FINAL_DEST = 'textFieldFinalDest';
-	var TEXT_FIELD_TERM = 'textFieldTerm';
 	
 	var muiTheme = (0, _getMuiTheme2.default)({
 	  palette: {
@@ -117,6 +116,14 @@
 	    accent1Color: _colors.deepOrange600
 	  }
 	});
+	
+	// Google Maps global variables.
+	var directionsDisplay = void 0;
+	var map = void 0;
+	var locationMarker = void 0;
+	var directionsService = new google.maps.DirectionsService();
+	var distanceMatrixService = new google.maps.DistanceMatrixService();
+	
 	var App = function App() {
 	  return _react2.default.createElement(
 	    _MuiThemeProvider2.default,
@@ -133,12 +140,62 @@
 	      origin: '',
 	      destination: '',
 	      term: '',
+	
 	      selectedResultIndex: -1, // Index of the selected stop in the results array.
 	      results: [],
 	      stopFractionInTrip: 0.5,
 	      directionsLink: '',
 	      tripTimeSec: 0, // Time from origin to destination, in seconds.
+	
+	      map: null,
 	      mapMode: false };
+	  },
+	
+	  componentDidMount: function componentDidMount() {
+	    this.initializeMapsAutocomplete_();
+	    this.initializeMap_();
+	  },
+	
+	  initializeMap_: function initializeMap_() {
+	    directionsDisplay = new google.maps.DirectionsRenderer();
+	    var nycCoord = new google.maps.LatLng(40.7128, -74.0060);
+	    var options = {
+	      zoom: 7,
+	      center: nycCoord
+	    };
+	    map = new google.maps.Map(document.getElementById('map'), options);
+	    directionsDisplay.setMap(map);
+	  },
+	
+	
+	  initializeMapsAutocomplete_: function initializeMapsAutocomplete_() {
+	    var _this = this;
+	
+	    var options = {
+	      placeIdOnly: true
+	    };
+	
+	    var /** @type {!HTMLInputElement} */startDestTextField = document.getElementById(TEXT_FIELD_START_DEST);
+	    var autocompleteStartDest = new google.maps.places.Autocomplete(startDestTextField, options);
+	    autocompleteStartDest.addListener('place_changed', function () {
+	      _this.handleChange_({
+	        origin: _this.getAutocompleteAddress_(autocompleteStartDest)
+	      });
+	    });
+	
+	    var /** @type {!HTMLInputElement} */finalDestTextField = document.getElementById(TEXT_FIELD_FINAL_DEST);
+	    var autocompleteFinalDest = new google.maps.places.Autocomplete(finalDestTextField, options);
+	    autocompleteFinalDest.addListener('place_changed', function () {
+	      _this.handleChange_({
+	        destination: _this.getAutocompleteAddress_(autocompleteFinalDest)
+	      });
+	    });
+	  },
+	
+	  /** @return {string} */
+	  getAutocompleteAddress_: function getAutocompleteAddress_(autocomplete) {
+	    var place = autocomplete.getPlace();
+	    return place['name'];
 	  },
 	
 	  handleChange_: function handleChange_(data) {
@@ -150,6 +207,8 @@
 	   * and makes a Yelp API call to update the waypoints.
 	   */
 	  updateMap_: function updateMap_() {
+	    var _this2 = this;
+	
 	    this.clearLocationMarker_();
 	    this.clearSelectedResultIndex_();
 	
@@ -158,26 +217,24 @@
 	      destination: this.state.destination,
 	      travelMode: 'DRIVING'
 	    };
-	    var displayDirectionsFn = function (result, status) {
-	      var _this = this;
-	
+	    var displayDirectionsFn = function displayDirectionsFn(result, status) {
 	      if (status == 'OK') {
 	        (function () {
 	          var pathCoordinates = result.routes[0].overview_path;
-	          var indexInTrip = Math.round((pathCoordinates.length - 1) * _this.state.stopFractionInTrip);
+	          var indexInTrip = Math.round((pathCoordinates.length - 1) * _this2.state.stopFractionInTrip);
 	          var stopCooordinates = pathCoordinates[indexInTrip];
 	          directionsDisplay.setDirections(result);
 	
-	          _this.setState({
+	          _this2.setState({
 	            tripTimeSec: result.routes[0].legs[0].duration.value,
 	            mapMode: true
 	          }, function () {
-	            _this.getStopsListFromYelp_(stopCooordinates.lat(), stopCooordinates.lng());
+	            _this2.getStopsListFromYelp_(stopCooordinates.lat(), stopCooordinates.lng());
 	          });
 	        })();
 	      }
 	      // TODO: Handle error statuses.
-	    }.bind(this);
+	    };
 	
 	    // Get the directions and then execute displayDirectionsFn.
 	    directionsService.route(request, displayDirectionsFn);
@@ -192,14 +249,14 @@
 	  },
 	
 	  updateWaypoint_: function updateWaypoint_(selectedResultIndex) {
-	    var _this2 = this;
+	    var _this3 = this;
 	
 	    this.setState({ selectedResultIndex: selectedResultIndex }, function () {
-	      var businessCoordinate = _this2.state.results[_this2.state.selectedResultIndex].location.coordinate;
+	      var businessCoordinate = _this3.state.results[_this3.state.selectedResultIndex].location.coordinate;
 	      var latLng = new google.maps.LatLng(businessCoordinate.latitude, businessCoordinate.longitude);
 	      var request = {
-	        origin: _this2.state.origin,
-	        destination: _this2.state.destination,
+	        origin: _this3.state.origin,
+	        destination: _this3.state.destination,
 	        waypoints: [{ location: latLng }],
 	        travelMode: 'DRIVING'
 	      };
@@ -210,11 +267,11 @@
 	          directionsDisplay.setDirections(result);
 	        }
 	        // TODO: Handle error statuses.
-	      }.bind(_this2);
+	      }.bind(_this3);
 	
 	      directionsService.route(request, displayDirectionsFn);
 	
-	      _this2.updateDirectionsLink_();
+	      _this3.updateDirectionsLink_();
 	    });
 	  },
 	
@@ -250,7 +307,7 @@
 	      url: '/yelp',
 	      data: { term: this.state.term, latitude: latitude, longitude: longitude },
 	      success: function success(yelpResults) {
-	        var _this3 = this;
+	        var _this4 = this;
 	
 	        console.log(yelpResults.businesses);
 	
@@ -271,10 +328,10 @@
 	
 	          businesses.forEach(function (business, index) {
 	            var totalTripTimeSec = legATimes[index].duration.value + legBTimes[index].duration.value;
-	            business['min_added'] = Math.round((totalTripTimeSec - _this3.state.tripTimeSec) / 60);
+	            business['min_added'] = Math.round((totalTripTimeSec - _this4.state.tripTimeSec) / 60);
 	          });
 	
-	          _this3.setState({ results: yelpResults.businesses });
+	          _this4.setState({ results: yelpResults.businesses });
 	        });
 	      }
 	    });
@@ -371,20 +428,8 @@
 	    this.props.onChange({ origin: e.target.value });
 	  },
 	
-	  handleOriginKeyDown_: function handleOriginKeyDown_(e) {
-	    if (e.keyCode == 13 /* Enter */) {
-	        this.props.onChange({ origin: e.target.value });
-	      }
-	  },
-	
 	  handleDestinationChange_: function handleDestinationChange_(e) {
 	    this.props.onChange({ destination: e.target.value });
-	  },
-	
-	  handleDestinationKeyDown_: function handleDestinationKeyDown_(e) {
-	    if (e.keyCode == 13 /* Enter */) {
-	        this.props.onChange({ destination: e.target.value });
-	      }
 	  },
 	
 	  handleTermChange_: function handleTermChange_(e) {
@@ -406,12 +451,10 @@
 	      _react2.default.createElement(FormTextField, { floatingLabelText: 'Start Location',
 	        id: TEXT_FIELD_START_DEST,
 	        onChange: this.handleOriginChange_,
-	        onKeyDown: this.handleOriginKeyDown_,
 	        value: this.props.origin }),
 	      _react2.default.createElement(FormTextField, { floatingLabelText: 'Final Destination',
 	        id: TEXT_FIELD_FINAL_DEST,
 	        onChange: this.handleDestinationChange_,
-	        onKeyDown: this.handleDestinationKeyDown_,
 	        value: this.props.destination }),
 	      _react2.default.createElement(FormTextField, { floatingLabelText: 'Stop for (e.g. lunch, coffee)...',
 	        id: 'Term', value: this.props.term,
@@ -433,7 +476,7 @@
 	  return _react2.default.createElement(_TextField2.default, { floatingLabelText: props.floatingLabelText,
 	    placeholder: '', id: props.id,
 	    style: { display: 'block', marginTop: '-6px', width: '100%' },
-	    onKeyDown: props.onKeyDown, onChange: props.onChange,
+	    onChange: props.onChange,
 	    value: props.value });
 	};
 	
@@ -518,7 +561,7 @@
 	  },
 	
 	  render: function render() {
-	    var _this4 = this;
+	    var _this5 = this;
 	
 	    return _react2.default.createElement(
 	      'div',
@@ -569,14 +612,14 @@
 	            return _react2.default.createElement(
 	              _Table.TableRow,
 	              { key: result.id, style: { cursor: 'pointer' },
-	                selected: index == _this4.props.selectedResultIndex },
+	                selected: index == _this5.props.selectedResultIndex },
 	              _react2.default.createElement(
 	                _Table.TableRowColumn,
 	                { style: { paddingLeft: '12px', paddingRight: '12px' } },
 	                _react2.default.createElement(
 	                  'a',
 	                  { href: result.url, target: '_blank',
-	                    onClick: _this4.handleLinkClick_ },
+	                    onClick: _this5.handleLinkClick_ },
 	                  result.name
 	                )
 	              ),
@@ -667,45 +710,11 @@
 	  );
 	};
 	
-	// TODO: Refactor map stuff into new file?
-	var autocompleteStartDest = void 0;
-	var autocompleteFinalDest = void 0;
-	
-	var directionsDisplay = void 0;
-	var directionsService = new google.maps.DirectionsService();
-	var map = void 0;
-	var locationMarker = void 0;
-	
-	var distanceMatrixService = new google.maps.DistanceMatrixService();
-	
-	function initMap() {
-	  directionsDisplay = new google.maps.DirectionsRenderer();
-	  var chicago = new google.maps.LatLng(41.850033, -87.6500523);
-	  var mapOptions = {
-	    zoom: 7,
-	    center: chicago
-	  };
-	  map = new google.maps.Map(document.getElementById('map'), mapOptions);
-	  directionsDisplay.setMap(map);
-	}
-	
-	function initAutocomplete() {
-	  autocompleteStartDest = new google.maps.places.Autocomplete(
-	  /** @type {!HTMLInputElement} */
-	  document.getElementById(TEXT_FIELD_START_DEST));
-	  autocompleteFinalDest = new google.maps.places.Autocomplete(
-	  /** @type {!HTMLInputElement} */
-	  document.getElementById(TEXT_FIELD_FINAL_DEST));
-	};
-	
-	function init() {
+	var runApp = function runApp() {
 	  _reactDom2.default.render(_react2.default.createElement(App, null), document.getElementById('app'));
-	
-	  initAutocomplete();
-	  initMap();
 	};
 	
-	init();
+	runApp();
 
 /***/ },
 /* 1 */

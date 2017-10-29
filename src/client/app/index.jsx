@@ -19,7 +19,6 @@ injectTapEventPlugin();
 
 const TEXT_FIELD_START_DEST = 'textFieldStartDest';
 const TEXT_FIELD_FINAL_DEST = 'textFieldFinalDest';
-const TEXT_FIELD_TERM = 'textFieldTerm';
 
 const muiTheme = getMuiTheme({
   palette: {
@@ -27,6 +26,14 @@ const muiTheme = getMuiTheme({
     accent1Color: deepOrange600,
   },
 });
+
+// Google Maps global variables.
+let directionsDisplay;
+let map;
+let locationMarker;
+const directionsService = new google.maps.DirectionsService();
+const distanceMatrixService = new google.maps.DistanceMatrixService();
+
 const App = () => (
   <MuiThemeProvider muiTheme={muiTheme}>
     <RoadtripComponent />
@@ -39,13 +46,65 @@ const RoadtripComponent = React.createClass({
       origin: '',
       destination: '',
       term: '',
+
       selectedResultIndex: -1, // Index of the selected stop in the results array.
       results: [],
       stopFractionInTrip: 0.5,
       directionsLink: '',
       tripTimeSec: 0, // Time from origin to destination, in seconds.
+
+      map: null,
       mapMode: false, // Whether the component is in map mode, for mobile screens.
     }
+  },
+
+  componentDidMount: function() {
+    this.initializeMapsAutocomplete_();
+    this.initializeMap_();
+  },
+
+  initializeMap_() {
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    const nycCoord = new google.maps.LatLng(40.7128, -74.0060);
+    const options = {
+      zoom: 7,
+      center: nycCoord,
+    }
+    map = new google.maps.Map(document.getElementById('map'), options);
+    directionsDisplay.setMap(map);
+  },
+
+
+  initializeMapsAutocomplete_: function() {
+    const options = {
+      placeIdOnly: true,
+    };
+
+    const /** @type {!HTMLInputElement} */ startDestTextField =
+        (document.getElementById(TEXT_FIELD_START_DEST));
+    const autocompleteStartDest =
+        new google.maps.places.Autocomplete(startDestTextField, options);
+    autocompleteStartDest.addListener('place_changed', () => {
+      this.handleChange_({
+        origin: this.getAutocompleteAddress_(autocompleteStartDest),
+      });
+    });
+
+    const /** @type {!HTMLInputElement} */ finalDestTextField =
+        (document.getElementById(TEXT_FIELD_FINAL_DEST));
+    const autocompleteFinalDest =
+        new google.maps.places.Autocomplete(finalDestTextField, options);
+    autocompleteFinalDest.addListener('place_changed', () => {
+      this.handleChange_({
+        destination: this.getAutocompleteAddress_(autocompleteFinalDest),
+      });
+    });
+  },
+
+  /** @return {string} */
+  getAutocompleteAddress_: function(autocomplete) {
+    const place = autocomplete.getPlace();
+    return place['name'];
   },
 
   handleChange_: function(data) {
@@ -65,7 +124,7 @@ const RoadtripComponent = React.createClass({
       destination: this.state.destination,
       travelMode: 'DRIVING'
     };
-    const displayDirectionsFn = function(result, status) {
+    const displayDirectionsFn = (result, status) => {
       if (status == 'OK') {
         const pathCoordinates = result.routes[0].overview_path;
         const indexInTrip = Math.round(
@@ -82,7 +141,7 @@ const RoadtripComponent = React.createClass({
         });
       }
       // TODO: Handle error statuses.
-    }.bind(this);
+    };
 
     // Get the directions and then execute displayDirectionsFn.
     directionsService.route(request, displayDirectionsFn);
@@ -275,20 +334,8 @@ const FormComponent = React.createClass({
     this.props.onChange({origin: e.target.value});
   },
 
-  handleOriginKeyDown_: function(e) {
-    if (e.keyCode == 13 /* Enter */) {
-      this.props.onChange({origin: e.target.value});
-    }
-  },
-
   handleDestinationChange_: function(e) {
     this.props.onChange({destination: e.target.value});
-  },
-
-  handleDestinationKeyDown_: function(e) {
-    if (e.keyCode == 13 /* Enter */) {
-      this.props.onChange({destination: e.target.value});
-    }
   },
 
   handleTermChange_: function(e) {
@@ -309,12 +356,10 @@ const FormComponent = React.createClass({
         <FormTextField floatingLabelText="Start Location" 
             id={TEXT_FIELD_START_DEST}
             onChange={this.handleOriginChange_}
-            onKeyDown={this.handleOriginKeyDown_} 
             value={this.props.origin} />
         <FormTextField floatingLabelText="Final Destination"
             id={TEXT_FIELD_FINAL_DEST}
             onChange={this.handleDestinationChange_}
-            onKeyDown={this.handleDestinationKeyDown_}
             value={this.props.destination} />
         <FormTextField floatingLabelText="Stop for (e.g. lunch, coffee)..."
             id='Term' value={this.props.term}
@@ -338,7 +383,7 @@ const FormTextField = (props) => (
   <TextField floatingLabelText={props.floatingLabelText}
       placeholder="" id={props.id}
       style={{ display: 'block', marginTop: '-6px', width: '100%' }}
-      onKeyDown={props.onKeyDown} onChange={props.onChange}
+      onChange={props.onChange}
       value={props.value} />
 );
 
@@ -516,46 +561,11 @@ const TimeFormatSpan = (props) => (
 );
 
 
-// TODO: Refactor map stuff into new file?
-let autocompleteStartDest;
-let autocompleteFinalDest;
-
-let directionsDisplay;
-const directionsService = new google.maps.DirectionsService();
-let map;
-let locationMarker;
-
-const distanceMatrixService = new google.maps.DistanceMatrixService();
-
-function initMap() {
-  directionsDisplay = new google.maps.DirectionsRenderer();
-  const chicago = new google.maps.LatLng(41.850033, -87.6500523);
-  const mapOptions = {
-    zoom: 7,
-    center: chicago
-  }
-  map = new google.maps.Map(document.getElementById('map'), mapOptions);
-  directionsDisplay.setMap(map);
-}
-
-function initAutocomplete() {
-  autocompleteStartDest = new google.maps.places.Autocomplete(
-    /** @type {!HTMLInputElement} */
-    (document.getElementById(TEXT_FIELD_START_DEST)));
-  autocompleteFinalDest = new google.maps.places.Autocomplete(
-    /** @type {!HTMLInputElement} */
-    (document.getElementById(TEXT_FIELD_FINAL_DEST)));
-};
-
-
-function init() {
+const runApp = () => {
   ReactDOM.render(
     <App />,
     document.getElementById('app')
   );
-
-  initAutocomplete();
-  initMap();
 };
 
-init();
+runApp();
