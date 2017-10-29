@@ -134,7 +134,6 @@
 	
 	var RoadtripComponent = _react2.default.createClass({
 	  displayName: 'RoadtripComponent',
-	
 	  getInitialState: function getInitialState() {
 	    return {
 	      origin: '',
@@ -146,16 +145,12 @@
 	      stopFractionInTrip: 0.5,
 	      directionsLink: '',
 	      tripTimeSec: 0, // Time from origin to destination, in seconds.
-	
-	      map: null,
 	      mapMode: false };
 	  },
-	
 	  componentDidMount: function componentDidMount() {
 	    this.initializeMapsAutocomplete_();
 	    this.initializeMap_();
 	  },
-	
 	  initializeMap_: function initializeMap_() {
 	    directionsDisplay = new google.maps.DirectionsRenderer();
 	    var nycCoord = new google.maps.LatLng(40.7128, -74.0060);
@@ -166,8 +161,6 @@
 	    map = new google.maps.Map(document.getElementById('map'), options);
 	    directionsDisplay.setMap(map);
 	  },
-	
-	
 	  initializeMapsAutocomplete_: function initializeMapsAutocomplete_() {
 	    var _this = this;
 	
@@ -192,15 +185,16 @@
 	    });
 	  },
 	
+	
 	  /** @return {string} */
 	  getAutocompleteAddress_: function getAutocompleteAddress_(autocomplete) {
 	    var place = autocomplete.getPlace();
 	    return place['name'];
 	  },
-	
 	  handleChange_: function handleChange_(data) {
 	    this.setState(data);
 	  },
+	
 	
 	  /**
 	   * Updates the map with the current origin and destination state,
@@ -239,7 +233,6 @@
 	    // Get the directions and then execute displayDirectionsFn.
 	    directionsService.route(request, displayDirectionsFn);
 	  },
-	
 	  updateDirectionsLink_: function updateDirectionsLink_() {
 	    var startAddress = encodeURIComponent(this.state.origin);
 	    var destAddress = encodeURIComponent(this.state.destination);
@@ -247,7 +240,6 @@
 	    var waypointAddress = encodeURIComponent(waypoint.name + ',' + waypoint.location.address + ',' + waypoint.location.city + ',' + waypoint.location.country_code);
 	    this.state.directionsLink = 'http://maps.google.com/maps/dir/' + startAddress + '/' + waypointAddress + '/' + destAddress;
 	  },
-	
 	  updateWaypoint_: function updateWaypoint_(selectedResultIndex) {
 	    var _this3 = this;
 	
@@ -260,21 +252,20 @@
 	        waypoints: [{ location: latLng }],
 	        travelMode: 'DRIVING'
 	      };
-	      var displayDirectionsFn = function (result, status) {
+	      var displayDirectionsFn = function displayDirectionsFn(result, status) {
 	        if (status == 'OK') {
 	          var pathCoordinates = result.routes[0].overview_path;
 	          var stopCooordinates = pathCoordinates[Math.round(pathCoordinates.length / 2)];
 	          directionsDisplay.setDirections(result);
 	        }
 	        // TODO: Handle error statuses.
-	      }.bind(_this3);
+	      };
 	
 	      directionsService.route(request, displayDirectionsFn);
 	
 	      _this3.updateDirectionsLink_();
 	    });
 	  },
-	
 	  updateLocationMarker_: function updateLocationMarker_(resultIndex) {
 	    this.clearLocationMarker_();
 	
@@ -285,30 +276,29 @@
 	      map: map
 	    });
 	  },
-	
 	  clearLocationMarker_: function clearLocationMarker_() {
 	    if (locationMarker) {
 	      locationMarker.setMap(null);
 	    }
 	  },
-	
 	  clearSelectedResultIndex_: function clearSelectedResultIndex_() {
 	    this.setState({ selectedResultIndex: -1 });
 	  },
+	
 	
 	  /**
 	   * @param {number} latitude
 	   * @param {number} longitude
 	   */
 	  getStopsListFromYelp_: function getStopsListFromYelp_(latitude, longitude) {
+	    var _this4 = this;
+	
 	    $.ajax({
 	      context: this,
 	      type: 'POST',
 	      url: '/yelp',
 	      data: { term: this.state.term, latitude: latitude, longitude: longitude },
 	      success: function success(yelpResults) {
-	        var _this4 = this;
-	
 	        console.log(yelpResults.businesses);
 	
 	        var businesses = yelpResults.businesses;
@@ -318,8 +308,8 @@
 	            lng: result.location.coordinate.longitude
 	          };
 	        });
-	        var originToMidpointsDists = this.getDirectionsMatrix_([this.state.origin], midpoints);
-	        var midpointsToDestDists = this.getDirectionsMatrix_(midpoints, [this.state.destination]);
+	        var originToMidpointsDists = _this4.getDirectionsMatrix_([_this4.state.origin], midpoints);
+	        var midpointsToDestDists = _this4.getDirectionsMatrix_(midpoints, [_this4.state.destination]);
 	        Promise.all([originToMidpointsDists, midpointsToDestDists]).then(function (responses) {
 	          var legATimes = responses[0].rows[0].elements;
 	          var legBTimes = responses[1].rows.map(function (row) {
@@ -336,6 +326,7 @@
 	      }
 	    });
 	  },
+	
 	
 	  /**
 	   * Makes a request via Google Maps Directions Matrix API.
@@ -363,6 +354,7 @@
 	    return promise;
 	  },
 	
+	
 	  // TODO: Investigate just making this an href?
 	  onDirectionsButtonClick_: function onDirectionsButtonClick_() {
 	    var win = window.open(this.state.directionsLink, '_blank');
@@ -372,13 +364,11 @@
 	      alert('Please disable your popup blocker to view the directions.');
 	    }
 	  },
-	
 	  onBackButtonClick_: function onBackButtonClick_() {
 	    this.setState({
 	      mapMode: false
 	    });
 	  },
-	
 	  render: function render() {
 	    var contentClassName = this.state.mapMode ? 'content map-mode' : 'content';
 	
@@ -427,23 +417,18 @@
 	  handleOriginChange_: function handleOriginChange_(e) {
 	    this.props.onChange({ origin: e.target.value });
 	  },
-	
 	  handleDestinationChange_: function handleDestinationChange_(e) {
 	    this.props.onChange({ destination: e.target.value });
 	  },
-	
 	  handleTermChange_: function handleTermChange_(e) {
 	    this.props.onChange({ term: e.target.value });
 	  },
-	
 	  handleSliderDragStop_: function handleSliderDragStop_(e, value) {
 	    this.props.onChange({ stopFractionInTrip: value });
 	  },
-	
 	  handleClick_: function handleClick_() {
 	    this.props.onSubmit();
 	  },
-	
 	  render: function render() {
 	    return _react2.default.createElement(
 	      'form',
@@ -498,7 +483,6 @@
 	
 	var OnboardingComponent = _react2.default.createClass({
 	  displayName: 'OnboardingComponent',
-	
 	  handleOnboarding1_: function handleOnboarding1_() {
 	    this.props.onOnboardingSelection({
 	      origin: 'San Francisco, CA, USA',
@@ -506,7 +490,6 @@
 	      term: 'lunch'
 	    });
 	  },
-	
 	  handleOnboarding2_: function handleOnboarding2_() {
 	    this.props.onOnboardingSelection({
 	      origin: 'New York City, NY, USA',
@@ -514,7 +497,6 @@
 	      term: 'coffee'
 	    });
 	  },
-	
 	  render: function render() {
 	    return _react2.default.createElement(
 	      'div',
@@ -540,16 +522,15 @@
 	
 	var ResultsComponent = _react2.default.createClass({
 	  displayName: 'ResultsComponent',
-	
 	  handleRowSelection_: function handleRowSelection_(selectedRows) {
 	    if (selectedRows.length > 0) {
 	      this.props.onRowSelection(selectedRows[0]);
 	    }
 	  },
-	
 	  handleRowHover_: function handleRowHover_(rowNumber) {
 	    this.props.onRowHover(rowNumber);
 	  },
+	
 	
 	  /**
 	  * Called when a business link is clicked, to open the Yelp business page.
@@ -559,7 +540,6 @@
 	    // Prevent bubbling up, so that the row is not selected.
 	    event.stopPropagation();
 	  },
-	
 	  render: function render() {
 	    var _this5 = this;
 	

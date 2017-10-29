@@ -41,7 +41,7 @@ const App = () => (
 );
 
 const RoadtripComponent = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return {
       origin: '',
       destination: '',
@@ -52,13 +52,11 @@ const RoadtripComponent = React.createClass({
       stopFractionInTrip: 0.5,
       directionsLink: '',
       tripTimeSec: 0, // Time from origin to destination, in seconds.
-
-      map: null,
       mapMode: false, // Whether the component is in map mode, for mobile screens.
     }
   },
 
-  componentDidMount: function() {
+  componentDidMount() {
     this.initializeMapsAutocomplete_();
     this.initializeMap_();
   },
@@ -75,7 +73,7 @@ const RoadtripComponent = React.createClass({
   },
 
 
-  initializeMapsAutocomplete_: function() {
+  initializeMapsAutocomplete_() {
     const options = {
       placeIdOnly: true,
     };
@@ -102,12 +100,12 @@ const RoadtripComponent = React.createClass({
   },
 
   /** @return {string} */
-  getAutocompleteAddress_: function(autocomplete) {
+  getAutocompleteAddress_(autocomplete) {
     const place = autocomplete.getPlace();
     return place['name'];
   },
 
-  handleChange_: function(data) {
+  handleChange_(data) {
     this.setState(data);
   },
 
@@ -115,7 +113,7 @@ const RoadtripComponent = React.createClass({
    * Updates the map with the current origin and destination state,
    * and makes a Yelp API call to update the waypoints.
    */
-  updateMap_: function() {
+  updateMap_() {
     this.clearLocationMarker_();
     this.clearSelectedResultIndex_();
 
@@ -147,7 +145,7 @@ const RoadtripComponent = React.createClass({
     directionsService.route(request, displayDirectionsFn);
   },
 
-  updateDirectionsLink_: function() {
+  updateDirectionsLink_() {
     const startAddress = encodeURIComponent(this.state.origin);
     const destAddress = encodeURIComponent(this.state.destination);
     const waypoint = this.state.results[this.state.selectedResultIndex];
@@ -158,7 +156,7 @@ const RoadtripComponent = React.createClass({
         `http://maps.google.com/maps/dir/${startAddress}/${waypointAddress}/${destAddress}`;
   },
 
-  updateWaypoint_: function(selectedResultIndex) {
+  updateWaypoint_(selectedResultIndex) {
     this.setState({selectedResultIndex: selectedResultIndex}, () => {
       const businessCoordinate = 
           this.state.results[this.state.selectedResultIndex].location.coordinate;
@@ -170,7 +168,7 @@ const RoadtripComponent = React.createClass({
         waypoints: [{location: latLng}],
         travelMode: 'DRIVING'
       };
-      const displayDirectionsFn = function(result, status) {
+      const displayDirectionsFn = (result, status) => {
         if (status == 'OK') {
           const pathCoordinates = result.routes[0].overview_path;
           const stopCooordinates =
@@ -178,7 +176,7 @@ const RoadtripComponent = React.createClass({
           directionsDisplay.setDirections(result);
         }
         // TODO: Handle error statuses.
-      }.bind(this);
+      };
 
       directionsService.route(request, displayDirectionsFn);
 
@@ -186,7 +184,7 @@ const RoadtripComponent = React.createClass({
     });
   },
 
-  updateLocationMarker_: function(resultIndex) {
+  updateLocationMarker_(resultIndex) {
     this.clearLocationMarker_();
 
     // Get the latitude and longitude of the result.
@@ -200,13 +198,13 @@ const RoadtripComponent = React.createClass({
     });
   },
 
-  clearLocationMarker_: function() {
+  clearLocationMarker_() {
     if (locationMarker) {
       locationMarker.setMap(null);
     }
   },
 
-  clearSelectedResultIndex_: function() {
+  clearSelectedResultIndex_() {
     this.setState({selectedResultIndex: -1});
   },
 
@@ -214,13 +212,13 @@ const RoadtripComponent = React.createClass({
    * @param {number} latitude
    * @param {number} longitude
    */
-  getStopsListFromYelp_: function(latitude, longitude) {
+  getStopsListFromYelp_(latitude, longitude) {
     $.ajax({
       context: this,
       type: 'POST',
       url: '/yelp', 
       data: { term: this.state.term, latitude: latitude, longitude: longitude },
-      success: function(yelpResults) {
+      success: (yelpResults) => {
         console.log(yelpResults.businesses);
 
         const businesses = yelpResults.businesses;
@@ -262,7 +260,7 @@ const RoadtripComponent = React.createClass({
    * @return {!Promise} Promise that resolves with the successful response,
    *    or rejects if the request fails.
    */
-  getDirectionsMatrix_: function(origins, destinations) {
+  getDirectionsMatrix_(origins, destinations) {
     const promise = new Promise((resolve, reject) => {
       distanceMatrixService.getDistanceMatrix({
         origins: origins,
@@ -281,7 +279,7 @@ const RoadtripComponent = React.createClass({
   },
 
  // TODO: Investigate just making this an href?
-  onDirectionsButtonClick_: function() {
+  onDirectionsButtonClick_() {
     const win = window.open(this.state.directionsLink, '_blank');
     if (win) {
       win.focus();
@@ -290,13 +288,13 @@ const RoadtripComponent = React.createClass({
     }
   },
 
-  onBackButtonClick_: function() {
+  onBackButtonClick_() {
     this.setState({
       mapMode: false
     });
   },
 
-  render: function() {
+  render() {
     const contentClassName = this.state.mapMode ? 'content map-mode' : 'content';
 
     return (
@@ -330,27 +328,27 @@ const RoadtripComponent = React.createClass({
 
 const FormComponent = React.createClass({
   // TODO: Refactor, DRY!
-  handleOriginChange_: function(e) {
+  handleOriginChange_(e) {
     this.props.onChange({origin: e.target.value});
   },
 
-  handleDestinationChange_: function(e) {
+  handleDestinationChange_(e) {
     this.props.onChange({destination: e.target.value});
   },
 
-  handleTermChange_: function(e) {
+  handleTermChange_(e) {
     this.props.onChange({term: e.target.value});
   },
 
-  handleSliderDragStop_: function(e, value) {
+  handleSliderDragStop_(e, value) {
     this.props.onChange({stopFractionInTrip: value});
   },
 
-  handleClick_: function() {
+  handleClick_() {
     this.props.onSubmit();
   },
 
-  render: function() {
+  render() {
     return (
       <form className="form-container">
         <FormTextField floatingLabelText="Start Location" 
@@ -398,7 +396,7 @@ const FormSlider = (props) => (
 );
 
 const OnboardingComponent = React.createClass({
-  handleOnboarding1_: function() {
+  handleOnboarding1_() {
     this.props.onOnboardingSelection({
       origin: 'San Francisco, CA, USA',
       destination: 'Los Angeles, CA, USA',
@@ -406,7 +404,7 @@ const OnboardingComponent = React.createClass({
     });
   },
 
-  handleOnboarding2_: function() {
+  handleOnboarding2_() {
     this.props.onOnboardingSelection({
       origin: 'New York City, NY, USA',
       destination: 'Boston, MA, USA',
@@ -414,7 +412,7 @@ const OnboardingComponent = React.createClass({
     });
   },
 
-  render: function() {
+  render() {
     return (
       <div className="onboarding-container">
         <span className="onboarding-summary">
@@ -433,13 +431,13 @@ const OnboardingComponent = React.createClass({
 });
 
 const ResultsComponent = React.createClass({
-  handleRowSelection_: function(selectedRows) {
+  handleRowSelection_(selectedRows) {
     if (selectedRows.length > 0) {
       this.props.onRowSelection(selectedRows[0]);
     }
   },
 
-  handleRowHover_: function(rowNumber) {
+  handleRowHover_(rowNumber) {
     this.props.onRowHover(rowNumber);
   },
 
@@ -447,12 +445,12 @@ const ResultsComponent = React.createClass({
   * Called when a business link is clicked, to open the Yelp business page.
   * @param {!Object} event
   */
-  handleLinkClick_: function(event) {
+  handleLinkClick_(event) {
     // Prevent bubbling up, so that the row is not selected.
     event.stopPropagation();
   },
 
-  render: function() {
+  render() {
     return (
       <div className="results-container">
 
