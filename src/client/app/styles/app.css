@@ -88,7 +88,7 @@ html, body {
 
 @media only screen and (max-width: 767px) {
   .content.map-mode .results-container {
-    visibility: initial; } }
+    visibility: visible; } }
 
 .form-map-container {
   display: flex;

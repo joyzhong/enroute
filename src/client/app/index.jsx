@@ -72,7 +72,6 @@ const RoadtripComponent = React.createClass({
     directionsDisplay.setMap(map);
   },
 
-
   initializeMapsAutocomplete_() {
     const options = {
       placeIdOnly: true,
@@ -84,7 +83,7 @@ const RoadtripComponent = React.createClass({
         new google.maps.places.Autocomplete(startDestTextField, options);
     autocompleteStartDest.addListener('place_changed', () => {
       this.handleChange_({
-        origin: this.getAutocompleteAddress_(autocompleteStartDest),
+        origin: autocompleteStartDest.getPlace()['name'],
       });
     });
 
@@ -94,15 +93,9 @@ const RoadtripComponent = React.createClass({
         new google.maps.places.Autocomplete(finalDestTextField, options);
     autocompleteFinalDest.addListener('place_changed', () => {
       this.handleChange_({
-        destination: this.getAutocompleteAddress_(autocompleteFinalDest),
+        destination: autocompleteFinalDest.getPlace()['name'],
       });
     });
-  },
-
-  /** @return {string} */
-  getAutocompleteAddress_(autocomplete) {
-    const place = autocomplete.getPlace();
-    return place['name'];
   },
 
   handleChange_(data) {
@@ -134,6 +127,10 @@ const RoadtripComponent = React.createClass({
           tripTimeSec: result.routes[0].legs[0].duration.value,
           mapMode: true,
         }, () => {
+          // Trigger 'resize' event after displaying map on small screens,
+          // so directions render correctly.
+          google.maps.event.trigger(map, 'resize');
+          
           this.getStopsListFromYelp_(
               stopCooordinates.lat(), stopCooordinates.lng());
         });

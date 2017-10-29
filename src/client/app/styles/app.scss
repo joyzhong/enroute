@@ -101,7 +101,7 @@ html, body {
 }
 
 .content.map-mode .results-container {
-  @include respond-to(small) { visibility: initial; }
+  @include respond-to(small) { visibility: visible; }
 }
 
 .form-map-container {

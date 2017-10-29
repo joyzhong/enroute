@@ -172,7 +172,7 @@
 	    var autocompleteStartDest = new google.maps.places.Autocomplete(startDestTextField, options);
 	    autocompleteStartDest.addListener('place_changed', function () {
 	      _this.handleChange_({
-	        origin: _this.getAutocompleteAddress_(autocompleteStartDest)
+	        origin: autocompleteStartDest.getPlace()['name']
 	      });
 	    });
 	
@@ -180,16 +180,9 @@
 	    var autocompleteFinalDest = new google.maps.places.Autocomplete(finalDestTextField, options);
 	    autocompleteFinalDest.addListener('place_changed', function () {
 	      _this.handleChange_({
-	        destination: _this.getAutocompleteAddress_(autocompleteFinalDest)
+	        destination: autocompleteFinalDest.getPlace()['name']
 	      });
 	    });
-	  },
-	
-	
-	  /** @return {string} */
-	  getAutocompleteAddress_: function getAutocompleteAddress_(autocomplete) {
-	    var place = autocomplete.getPlace();
-	    return place['name'];
 	  },
 	  handleChange_: function handleChange_(data) {
 	    this.setState(data);
@@ -223,6 +216,10 @@
 	            tripTimeSec: result.routes[0].legs[0].duration.value,
 	            mapMode: true
 	          }, function () {
+	            // Trigger 'resize' event after displaying map on small screens,
+	            // so directions render correctly.
+	            google.maps.event.trigger(map, 'resize');
+	
 	            _this2.getStopsListFromYelp_(stopCooordinates.lat(), stopCooordinates.lng());
 	          });
 	        })();
