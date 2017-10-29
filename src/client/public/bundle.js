@@ -443,7 +443,8 @@
 	        onChange: this.handleTermChange_ }),
 	      _react2.default.createElement(FormSlider, { value: this.props.initialSliderValue,
 	        onChange: this.handleSliderDragStop_ }),
-	      _react2.default.createElement(_RaisedButton2.default, { label: 'Go', primary: true, onClick: this.handleClick_ }),
+	      _react2.default.createElement(_RaisedButton2.default, { label: 'Go', primary: true, onClick: this.handleClick_,
+	        disabled: this.props.origin == '' || this.props.destination == '' }),
 	      _react2.default.createElement(
 	        'a',
 	        { className: 'yelp-image', href: 'https://www.yelp.com', target: '_blank' },

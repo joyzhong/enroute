@@ -130,7 +130,7 @@ const RoadtripComponent = React.createClass({
           // Trigger 'resize' event after displaying map on small screens,
           // so directions render correctly.
           google.maps.event.trigger(map, 'resize');
-          
+
           this.getStopsListFromYelp_(
               stopCooordinates.lat(), stopCooordinates.lng());
         });
@@ -364,7 +364,8 @@ const FormComponent = React.createClass({
             onChange={this.handleSliderDragStop_} />
         {/*<FormSlider startValue="Quality" endValue="Distance" /> */}
 
-        <RaisedButton label="Go" primary={true} onClick={this.handleClick_} />
+        <RaisedButton label="Go" primary={true} onClick={this.handleClick_}
+            disabled={this.props.origin == '' || this.props.destination == ''} />
         <a className="yelp-image" href="https://www.yelp.com" target="_blank">
           <img src="https://s3-media2.fl.yelpcdn.com/assets/srv0/developer_pages/95212dafe621/assets/img/yelp-2c.png" />
         </a>
