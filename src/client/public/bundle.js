@@ -560,7 +560,8 @@
 	      { className: resultsClass },
 	      this.props.results.length == 0 && !this.props.isLoading && _react2.default.createElement(OnboardingComponent, {
 	        onOnboardingSelection: this.props.onOnboardingSelection }),
-	      this.props.isLoading && _react2.default.createElement(_CircularProgress2.default, { className: 'circular-progress', style: { position: 'absolute' } }),
+	      this.props.isLoading && _react2.default.createElement(_CircularProgress2.default, { className: 'circular-progress',
+	        style: { position: 'absolute', margin: '0' } }),
 	      _react2.default.createElement(
 	        _Table.Table,
 	        { onRowHover: this.handleRowHover_,

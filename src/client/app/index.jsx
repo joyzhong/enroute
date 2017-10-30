@@ -468,7 +468,8 @@ const ResultsComponent = React.createClass({
               onOnboardingSelection={this.props.onOnboardingSelection} />}
 
         {this.props.isLoading &&
-          <CircularProgress className="circular-progress" style={{position: 'absolute'}} />}
+          <CircularProgress className="circular-progress"
+              style={{position: 'absolute', margin: '0'}} />}
 
         <Table onRowHover={this.handleRowHover_}
             onRowHoverExit={this.props.onRowHoverExit} 
