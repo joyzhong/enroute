@@ -182,7 +182,15 @@ html, body {
 .results-container {
   height: 100%;
   margin-top: 12px;
-  overflow: scroll;
+  overflow: auto;
+}
+
+.results-table {
+  display: table;
+}
+
+.results-container.loading .results-table {
+  display: none;
 }
 
 .yelp-star-img {

@@ -1,6 +1,7 @@
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
+import LinearProgress from 'material-ui/LinearProgress';
 import NavigationArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -52,7 +53,9 @@ const RoadtripComponent = React.createClass({
       stopFractionInTrip: 0.5,
       directionsLink: '',
       tripTimeSec: 0, // Time from origin to destination, in seconds.
+
       mapMode: false, // Whether the component is in map mode, for mobile screens.
+      isLoading: false, // Whether the component is loading Map/Yelp results.
     }
   },
 
@@ -107,6 +110,11 @@ const RoadtripComponent = React.createClass({
    * and makes a Yelp API call to update the waypoints.
    */
   updateMap_() {
+    this.setState({
+      isLoading: true,
+      mapMode: true,
+    });
+
     this.clearLocationMarker_();
     this.clearSelectedResultIndex_();
 
@@ -125,7 +133,6 @@ const RoadtripComponent = React.createClass({
 
         this.setState({
           tripTimeSec: result.routes[0].legs[0].duration.value,
-          mapMode: true,
         }, () => {
           // Trigger 'resize' event after displaying map on small screens,
           // so directions render correctly.
@@ -243,7 +250,10 @@ const RoadtripComponent = React.createClass({
                     (totalTripTimeSec - this.state.tripTimeSec) / 60);
               });
 
-              this.setState({results: yelpResults.businesses});
+              this.setState({
+                results: yelpResults.businesses,
+                isLoading: false,
+              });
             });
       }
     });
@@ -293,6 +303,7 @@ const RoadtripComponent = React.createClass({
 
   render() {
     const contentClassName = this.state.mapMode ? 'content map-mode' : 'content';
+    const linearProgressStyle = this.state.isLoading ? 'block' : 'none';
 
     return (
       <div className="container">
@@ -310,10 +321,17 @@ const RoadtripComponent = React.createClass({
             <MapComponent onDirectionsClick={this.onDirectionsButtonClick_}
                 onBackButtonClick={this.onBackButtonClick_} />
           </div>
+          <LinearProgress mode="indeterminate"
+              style={{
+                display: linearProgressStyle,
+                height: '8px',
+                marginTop: '4px',
+              }} />
           <ResultsComponent onRowSelection={this.updateWaypoint_} 
               onRowHoverExit={this.clearLocationMarker_}
               onRowHover={this.updateLocationMarker_} 
               results={this.state.results}
+              isLoading={this.state.isLoading}
               selectedResultIndex={this.state.selectedResultIndex}
               tripTimeSec={this.state.tripTimeSec}
               onOnboardingSelection={this.handleChange_} />
@@ -449,16 +467,18 @@ const ResultsComponent = React.createClass({
   },
 
   render() {
+    const resultsClass = this.props.isLoading ?
+        'results-container loading' : 'results-container';
     return (
-      <div className="results-container">
-
-        {this.props.results.length == 0 &&
+      <div className={resultsClass}>
+        {this.props.results.length == 0 && !this.props.isLoading &&
           <OnboardingComponent 
               onOnboardingSelection={this.props.onOnboardingSelection} />}
 
         <Table onRowHover={this.handleRowHover_}
             onRowHoverExit={this.props.onRowHoverExit} 
-            onRowSelection={this.handleRowSelection_}>
+            onRowSelection={this.handleRowSelection_}
+            className="results-table">
 
           {this.props.results.length > 0 &&
             <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
