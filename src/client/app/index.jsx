@@ -11,7 +11,7 @@ import TextField from 'material-ui/TextField';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
-import {indigo500, deepOrange600} from 'material-ui/styles/colors';
+import {blueGrey600, cyan400} from 'material-ui/styles/colors';
 
 // Needed for onTouchTap 
 // http://stackoverflow.com/a/34015469/988941 
@@ -22,8 +22,8 @@ const TEXT_FIELD_FINAL_DEST = 'textFieldFinalDest';
 
 const muiTheme = getMuiTheme({
   palette: {
-    primary1Color: indigo500,
-    accent1Color: deepOrange600,
+    primary1Color: cyan400,
+    accent1Color: blueGrey600,
   },
 });
 

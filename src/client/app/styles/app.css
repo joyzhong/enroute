@@ -1,6 +1,7 @@
-/* Indigo 500 */
-/* Deep Orange 600 */
-/* Indigo 50 */
+/* Cyan 400 */
+/* blueGrey600 */
+/* Cyan 50 */
+/*$header-font: 'Lato', cursive;*/
 html, body {
   font-family: "Roboto", sans-serif;
   height: 100%;
@@ -10,9 +11,9 @@ html, body {
 
 .app-title {
   display: none;
-  font-family: "Lato", cursive;
+  font-family: "Open Sans", cursive;
   font-size: 2.5em;
-  font-weight: 700;
+  font-weight: 400;
   justify-content: center;
   padding: 8px 0; }
   @media only screen and (min-width: 768px) and (max-width: 1024px) {
@@ -35,7 +36,7 @@ html, body {
       margin: 0px 16.66667%; } }
 
 .container {
-  background-color: #E8EAF6;
+  background-color: #E0F7FA;
   bottom: 0;
   left: 0;
   height: 100%;
@@ -45,11 +46,11 @@ html, body {
   width: 100%; }
 
 .container a {
-  color: #F4511E;
+  color: #546E7A;
   text-decoration: none; }
 
 .container a:hover {
-  color: #3F51B5; }
+  color: #26C6DA; }
 
 .content {
   background-color: white;
@@ -134,7 +135,8 @@ html, body {
 .map-header-container {
   align-items: center;
   display: flex;
-  font-family: "Lato", cursive; }
+  font-family: "Open Sans", cursive;
+  font-weight: 400; }
 
 .back-button-container {
   flex: 1 0 auto; }
@@ -192,10 +194,10 @@ html, body {
   visibility: initial; }
 
 .onboarding-container p {
-  color: #3F51B5;
+  color: #26C6DA;
   cursor: pointer; }
 
 .onboarding-container p:hover {
-  color: #F4511E; }
+  color: #546E7A; }
 
 /*# sourceMappingURL=app.css.map */

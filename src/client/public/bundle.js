@@ -112,8 +112,8 @@
 	
 	var muiTheme = (0, _getMuiTheme2.default)({
 	  palette: {
-	    primary1Color: _colors.indigo500,
-	    accent1Color: _colors.deepOrange600
+	    primary1Color: _colors.cyan400,
+	    accent1Color: _colors.blueGrey600
 	  }
 	});
 	

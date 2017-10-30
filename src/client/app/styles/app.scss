@@ -4,11 +4,12 @@ $max-width-xsmall: 480px;
 $max-width-small: 767px;
 $max-width-medium: 1024px;
 
-$primary-color: #3F51B5; /* Indigo 500 */
-$secondary-color: #F4511E; /* Deep Orange 600 */
-$tertiary-color: #E8EAF6; /* Indigo 50 */
+$primary-color: #26C6DA; /* Cyan 400 */
+$secondary-color: #546E7A; /* blueGrey600 */
+$tertiary-color: #E0F7FA; /* Cyan 50 */
 
-$header-font: 'Lato' , cursive;
+/*$header-font: 'Lato', cursive;*/
+$header-font: 'Open Sans', cursive;
 $body-font: 'Roboto', sans-serif;
 
 @mixin respond-to($mediaList) {
@@ -41,7 +42,7 @@ html, body {
   display: none;
   font-family: $header-font;
   font-size: 2.5em;
-  font-weight: 700;
+  font-weight: 400;
   justify-content: center;
   padding: 8px 0;
 }
@@ -148,6 +149,7 @@ html, body {
   align-items: center;
   display: flex;
   font-family: $header-font;
+  font-weight: 400;
 }
 
 .back-button-container {
