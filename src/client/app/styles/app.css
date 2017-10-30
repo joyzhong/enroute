@@ -171,13 +171,20 @@ html, body {
 .results-container {
   height: 100%;
   margin-top: 12px;
-  overflow: auto; }
+  overflow: auto;
+  position: relative;
+  width: 100%; }
 
 .results-table {
   display: table; }
 
 .results-container.loading .results-table {
   display: none; }
+
+.circular-progress {
+  left: 50%;
+  padding-top: 48px;
+  transform: translateX(-50%); }
 
 .yelp-star-img {
   vertical-align: middle; }

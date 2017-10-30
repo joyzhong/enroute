@@ -183,6 +183,8 @@ html, body {
   height: 100%;
   margin-top: 12px;
   overflow: auto;
+  position: relative;
+  width: 100%;
 }
 
 .results-table {
@@ -191,6 +193,12 @@ html, body {
 
 .results-container.loading .results-table {
   display: none;
+}
+
+.circular-progress {
+  left: 50%;
+  padding-top: 48px;
+  transform: translateX(-50%);
 }
 
 .yelp-star-img {

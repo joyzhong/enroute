@@ -1,7 +1,7 @@
 import AppBar from 'material-ui/AppBar';
+import CircularProgress from 'material-ui/CircularProgress';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
-import LinearProgress from 'material-ui/LinearProgress';
 import NavigationArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -303,8 +303,6 @@ const RoadtripComponent = React.createClass({
 
   render() {
     const contentClassName = this.state.mapMode ? 'content map-mode' : 'content';
-    const linearProgressStyle = this.state.isLoading ? 'block' : 'none';
-
     return (
       <div className="container">
         <div className="app-title">
@@ -321,12 +319,6 @@ const RoadtripComponent = React.createClass({
             <MapComponent onDirectionsClick={this.onDirectionsButtonClick_}
                 onBackButtonClick={this.onBackButtonClick_} />
           </div>
-          <LinearProgress mode="indeterminate"
-              style={{
-                display: linearProgressStyle,
-                height: '8px',
-                marginTop: '4px',
-              }} />
           <ResultsComponent onRowSelection={this.updateWaypoint_} 
               onRowHoverExit={this.clearLocationMarker_}
               onRowHover={this.updateLocationMarker_} 
@@ -474,6 +466,9 @@ const ResultsComponent = React.createClass({
         {this.props.results.length == 0 && !this.props.isLoading &&
           <OnboardingComponent 
               onOnboardingSelection={this.props.onOnboardingSelection} />}
+
+        {this.props.isLoading &&
+          <CircularProgress className="circular-progress" style={{position: 'absolute'}} />}
 
         <Table onRowHover={this.handleRowHover_}
             onRowHoverExit={this.props.onRowHoverExit} 

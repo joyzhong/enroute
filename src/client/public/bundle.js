@@ -53,6 +53,10 @@
 	
 	var _AppBar2 = _interopRequireDefault(_AppBar);
 	
+	var _CircularProgress = __webpack_require__(/*! material-ui/CircularProgress */ 411);
+	
+	var _CircularProgress2 = _interopRequireDefault(_CircularProgress);
+	
 	var _FlatButton = __webpack_require__(/*! material-ui/FlatButton */ 218);
 	
 	var _FlatButton2 = _interopRequireDefault(_FlatButton);
@@ -60,10 +64,6 @@
 	var _IconButton = __webpack_require__(/*! material-ui/IconButton */ 38);
 	
 	var _IconButton2 = _interopRequireDefault(_IconButton);
-	
-	var _LinearProgress = __webpack_require__(/*! material-ui/LinearProgress */ 409);
-	
-	var _LinearProgress2 = _interopRequireDefault(_LinearProgress);
 	
 	var _arrowBack = __webpack_require__(/*! material-ui/svg-icons/navigation/arrow-back */ 222);
 	
@@ -381,8 +381,6 @@
 	  },
 	  render: function render() {
 	    var contentClassName = this.state.mapMode ? 'content map-mode' : 'content';
-	    var linearProgressStyle = this.state.isLoading ? 'block' : 'none';
-	
 	    return _react2.default.createElement(
 	      'div',
 	      { className: 'container' },
@@ -409,12 +407,6 @@
 	          _react2.default.createElement(MapComponent, { onDirectionsClick: this.onDirectionsButtonClick_,
 	            onBackButtonClick: this.onBackButtonClick_ })
 	        ),
-	        _react2.default.createElement(_LinearProgress2.default, { mode: 'indeterminate',
-	          style: {
-	            display: linearProgressStyle,
-	            height: '8px',
-	            marginTop: '4px'
-	          } }),
 	        _react2.default.createElement(ResultsComponent, { onRowSelection: this.updateWaypoint_,
 	          onRowHoverExit: this.clearLocationMarker_,
 	          onRowHover: this.updateLocationMarker_,
@@ -568,6 +560,7 @@
 	      { className: resultsClass },
 	      this.props.results.length == 0 && !this.props.isLoading && _react2.default.createElement(OnboardingComponent, {
 	        onOnboardingSelection: this.props.onOnboardingSelection }),
+	      this.props.isLoading && _react2.default.createElement(_CircularProgress2.default, { className: 'circular-progress', style: { position: 'absolute' } }),
 	      _react2.default.createElement(
 	        _Table.Table,
 	        { onRowHover: this.handleRowHover_,
@@ -40439,10 +40432,12 @@
 	exports.default = TableRow;
 
 /***/ },
-/* 409 */
-/*!***********************************************!*\
-  !*** ./~/material-ui/LinearProgress/index.js ***!
-  \***********************************************/
+/* 409 */,
+/* 410 */,
+/* 411 */
+/*!*************************************************!*\
+  !*** ./~/material-ui/CircularProgress/index.js ***!
+  \*************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40452,19 +40447,19 @@
 	});
 	exports.default = undefined;
 	
-	var _LinearProgress = __webpack_require__(/*! ./LinearProgress */ 410);
+	var _CircularProgress = __webpack_require__(/*! ./CircularProgress */ 412);
 	
-	var _LinearProgress2 = _interopRequireDefault(_LinearProgress);
+	var _CircularProgress2 = _interopRequireDefault(_CircularProgress);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	exports.default = _LinearProgress2.default;
+	exports.default = _CircularProgress2.default;
 
 /***/ },
-/* 410 */
-/*!********************************************************!*\
-  !*** ./~/material-ui/LinearProgress/LinearProgress.js ***!
-  \********************************************************/
+/* 412 */
+/*!************************************************************!*\
+  !*** ./~/material-ui/CircularProgress/CircularProgress.js ***!
+  \************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40485,6 +40480,10 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _autoPrefix = __webpack_require__(/*! ../utils/autoPrefix */ 190);
+	
+	var _autoPrefix2 = _interopRequireDefault(_autoPrefix);
+	
 	var _transitions = __webpack_require__(/*! ../styles/transitions */ 40);
 	
 	var _transitions2 = _interopRequireDefault(_transitions);
@@ -40502,125 +40501,140 @@
 	function getRelativeValue(value, min, max) {
 	  var clampedValue = Math.min(Math.max(min, value), max);
 	  var rangeValue = max - min;
-	  var relValue = Math.round((clampedValue - min) / rangeValue * 10000) / 10000;
+	  var relValue = Math.round(clampedValue / rangeValue * 10000) / 10000;
 	  return relValue * 100;
 	}
 	
 	function getStyles(props, context) {
 	  var max = props.max;
 	  var min = props.min;
+	  var size = props.size;
 	  var value = props.value;
 	  var palette = context.muiTheme.baseTheme.palette;
 	
+	  var zoom = size * 1.4;
+	  var baseSize = 50;
+	  var margin = Math.round((50 * zoom - 50) / 2);
+	
+	  if (margin < 0) margin = 0;
 	
 	  var styles = {
 	    root: {
 	      position: 'relative',
-	      height: 4,
-	      display: 'block',
-	      width: '100%',
-	      backgroundColor: palette.primary3Color,
-	      borderRadius: 2,
-	      margin: 0,
-	      overflow: 'hidden'
+	      margin: margin,
+	      display: 'inline-block',
+	      width: baseSize,
+	      height: baseSize
 	    },
-	    bar: {
-	      height: '100%'
+	    wrapper: {
+	      width: baseSize,
+	      height: baseSize,
+	      display: 'inline-block',
+	      transition: _transitions2.default.create('transform', '20s', null, 'linear'),
+	      transitionTimingFunction: 'linear'
 	    },
-	    barFragment1: {},
-	    barFragment2: {}
+	    svg: {
+	      height: baseSize,
+	      position: 'relative',
+	      transform: 'scale(' + zoom + ')',
+	      width: baseSize
+	    },
+	    path: {
+	      strokeDasharray: '89, 200',
+	      strokeDashoffset: 0,
+	      stroke: props.color || palette.primary1Color,
+	      strokeLinecap: 'round',
+	      transition: _transitions2.default.create('all', '1.5s', null, 'ease-in-out')
+	    }
 	  };
 	
-	  if (props.mode === 'indeterminate') {
-	    styles.barFragment1 = {
-	      position: 'absolute',
-	      backgroundColor: props.color || palette.primary1Color,
-	      top: 0,
-	      left: 0,
-	      bottom: 0,
-	      transition: _transitions2.default.create('all', '840ms', null, 'cubic-bezier(0.650, 0.815, 0.735, 0.395)')
-	    };
-	
-	    styles.barFragment2 = {
-	      position: 'absolute',
-	      backgroundColor: props.color || palette.primary1Color,
-	      top: 0,
-	      left: 0,
-	      bottom: 0,
-	      transition: _transitions2.default.create('all', '840ms', null, 'cubic-bezier(0.165, 0.840, 0.440, 1.000)')
-	    };
-	  } else {
-	    styles.bar.backgroundColor = props.color || palette.primary1Color;
-	    styles.bar.transition = _transitions2.default.create('width', '.3s', null, 'linear');
-	    styles.bar.width = getRelativeValue(value, min, max) + '%';
+	  if (props.mode === 'determinate') {
+	    var relVal = getRelativeValue(value, min, max);
+	    styles.path.transition = _transitions2.default.create('all', '0.3s', null, 'linear');
+	    styles.path.strokeDasharray = Math.round(relVal * 1.25) + ', 200';
 	  }
 	
 	  return styles;
 	}
 	
-	var LinearProgress = function (_Component) {
-	  _inherits(LinearProgress, _Component);
+	var CircularProgress = function (_Component) {
+	  _inherits(CircularProgress, _Component);
 	
-	  function LinearProgress() {
-	    _classCallCheck(this, LinearProgress);
+	  function CircularProgress() {
+	    _classCallCheck(this, CircularProgress);
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(LinearProgress).apply(this, arguments));
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(CircularProgress).apply(this, arguments));
 	  }
 	
-	  _createClass(LinearProgress, [{
+	  _createClass(CircularProgress, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      var _this2 = this;
-	
-	      this.timers = {};
-	
-	      this.timers.bar1 = this.barUpdate('bar1', 0, this.refs.bar1, [[-35, 100], [100, -90]]);
-	
-	      this.timers.bar2 = setTimeout(function () {
-	        _this2.barUpdate('bar2', 0, _this2.refs.bar2, [[-200, 100], [107, -8]]);
-	      }, 850);
+	      this.scalePath(this.refs.path);
+	      this.rotateWrapper(this.refs.wrapper);
 	    }
 	  }, {
 	    key: 'componentWillUnmount',
 	    value: function componentWillUnmount() {
-	      clearTimeout(this.timers.bar1);
-	      clearTimeout(this.timers.bar2);
+	      clearTimeout(this.scalePathTimer);
+	      clearTimeout(this.rotateWrapperTimer);
 	    }
 	  }, {
-	    key: 'barUpdate',
-	    value: function barUpdate(id, step, barElement, stepValues) {
-	      var _this3 = this;
+	    key: 'scalePath',
+	    value: function scalePath(path, step) {
+	      var _this2 = this;
 	
 	      if (this.props.mode !== 'indeterminate') return;
 	
 	      step = step || 0;
-	      step %= 4;
-	
-	      var right = this.context.muiTheme.isRtl ? 'left' : 'right';
-	      var left = this.context.muiTheme.isRtl ? 'right' : 'left';
+	      step %= 3;
 	
 	      if (step === 0) {
-	        barElement.style[left] = stepValues[0][0] + '%';
-	        barElement.style[right] = stepValues[0][1] + '%';
+	        path.style.strokeDasharray = '1, 200';
+	        path.style.strokeDashoffset = 0;
+	        path.style.transitionDuration = '0ms';
 	      } else if (step === 1) {
-	        barElement.style.transitionDuration = '840ms';
-	      } else if (step === 2) {
-	        barElement.style[left] = stepValues[1][0] + '%';
-	        barElement.style[right] = stepValues[1][1] + '%';
-	      } else if (step === 3) {
-	        barElement.style.transitionDuration = '0ms';
+	        path.style.strokeDasharray = '89, 200';
+	        path.style.strokeDashoffset = -35;
+	        path.style.transitionDuration = '750ms';
+	      } else {
+	        path.style.strokeDasharray = '89, 200';
+	        path.style.strokeDashoffset = -124;
+	        path.style.transitionDuration = '850ms';
 	      }
-	      this.timers[id] = setTimeout(function () {
-	        return _this3.barUpdate(id, step + 1, barElement, stepValues);
-	      }, 420);
+	
+	      this.scalePathTimer = setTimeout(function () {
+	        return _this2.scalePath(path, step + 1);
+	      }, step ? 750 : 250);
+	    }
+	  }, {
+	    key: 'rotateWrapper',
+	    value: function rotateWrapper(wrapper) {
+	      var _this3 = this;
+	
+	      if (this.props.mode !== 'indeterminate') return;
+	
+	      _autoPrefix2.default.set(wrapper.style, 'transform', 'rotate(0deg)');
+	      _autoPrefix2.default.set(wrapper.style, 'transitionDuration', '0ms');
+	
+	      setTimeout(function () {
+	        _autoPrefix2.default.set(wrapper.style, 'transform', 'rotate(1800deg)');
+	        _autoPrefix2.default.set(wrapper.style, 'transitionDuration', '10s');
+	        _autoPrefix2.default.set(wrapper.style, 'transitionTimingFunction', 'linear');
+	      }, 50);
+	
+	      this.rotateWrapperTimer = setTimeout(function () {
+	        return _this3.rotateWrapper(wrapper);
+	      }, 10050);
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var _props = this.props;
 	      var style = _props.style;
+	      var innerStyle = _props.innerStyle;
+	      var size = _props.size;
 	
-	      var other = _objectWithoutProperties(_props, ['style']);
+	      var other = _objectWithoutProperties(_props, ['style', 'innerStyle', 'size']);
 	
 	      var prepareStyles = this.context.muiTheme.prepareStyles;
 	
@@ -40631,23 +40645,38 @@
 	        _extends({}, other, { style: prepareStyles((0, _simpleAssign2.default)(styles.root, style)) }),
 	        _react2.default.createElement(
 	          'div',
-	          { style: prepareStyles(styles.bar) },
-	          _react2.default.createElement('div', { ref: 'bar1', style: prepareStyles(styles.barFragment1) }),
-	          _react2.default.createElement('div', { ref: 'bar2', style: prepareStyles(styles.barFragment2) })
+	          { ref: 'wrapper', style: prepareStyles((0, _simpleAssign2.default)(styles.wrapper, innerStyle)) },
+	          _react2.default.createElement(
+	            'svg',
+	            { style: prepareStyles(styles.svg) },
+	            _react2.default.createElement('circle', {
+	              ref: 'path',
+	              style: prepareStyles(styles.path),
+	              cx: '25',
+	              cy: '25',
+	              r: '20',
+	              fill: 'none',
+	              strokeWidth: '2.5',
+	              strokeMiterlimit: '20'
+	            })
+	          )
 	        )
 	      );
 	    }
 	  }]);
 	
-	  return LinearProgress;
+	  return CircularProgress;
 	}(_react.Component);
 	
-	LinearProgress.propTypes = {
+	CircularProgress.propTypes = {
 	  /**
-	   * The mode of show your progress, indeterminate for
-	   * when there is no value for progress.
+	   * Override the progress's color.
 	   */
 	  color: _react.PropTypes.string,
+	  /**
+	   * Style for inner wrapper div.
+	   */
+	  innerStyle: _react.PropTypes.object,
 	  /**
 	   * The max value of progress, only works in determinate mode.
 	   */
@@ -40657,10 +40686,14 @@
 	   */
 	  min: _react.PropTypes.number,
 	  /**
-	   * The mode of show your progress, indeterminate for when
-	   * there is no value for progress.
+	   * The mode of show your progress, indeterminate
+	   * for when there is no value for progress.
 	   */
 	  mode: _react.PropTypes.oneOf(['determinate', 'indeterminate']),
+	  /**
+	   * The size of the progress.
+	   */
+	  size: _react.PropTypes.number,
 	  /**
 	   * Override the inline-styles of the root element.
 	   */
@@ -40670,16 +40703,17 @@
 	   */
 	  value: _react.PropTypes.number
 	};
-	LinearProgress.defaultProps = {
+	CircularProgress.defaultProps = {
 	  mode: 'indeterminate',
 	  value: 0,
 	  min: 0,
-	  max: 100
+	  max: 100,
+	  size: 1
 	};
-	LinearProgress.contextTypes = {
+	CircularProgress.contextTypes = {
 	  muiTheme: _react.PropTypes.object.isRequired
 	};
-	exports.default = LinearProgress;
+	exports.default = CircularProgress;
 
 /***/ }
 /******/ ]);
