@@ -30,6 +30,9 @@ app.post('/yelp', function(request, response) {
   });
 });
 
-app.use('/', express.static(__dirname + '/src/client'));
+// Serve `index.html`.
+app.use('/', express.static(__dirname + '/src/client/public'));
+// Serve CSS.
+app.use('/styles', express.static(__dirname + '/src/client/app/styles'));
 
 server.listen(process.env.PORT || 3000);

@@ -1,9 +1,19 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const path = require('path');
 
-const BUILD_DIR = path.resolve(__dirname, 'src/client/public');
 const APP_DIR = path.resolve(__dirname, 'src/client/app');
+const BUILD_DIR = path.resolve(__dirname, 'src/client/public');
+const MAIN_DIR = path.resolve(__dirname, 'src/client');
 const PROD = process.env.NODE_ENV === 'production';
+
+const commonPlugins = [
+  new HtmlWebpackPlugin({
+    filename: "index.html", // Writes to `config.out.path`.
+    inject: 'body',
+    template: MAIN_DIR + '/index.html',
+  })
+];
 
 const config = {
   entry: APP_DIR + '/index.jsx',
@@ -20,11 +30,17 @@ const config = {
       }
     ]
   },
-  plugins: PROD ? [
-    new webpack.optimize.UglifyJsPlugin({
-      compress: { warnings: false }
-    })
-  ] : []
+  plugins:
+    PROD ? [
+      new webpack.optimize.UglifyJsPlugin({
+        compress: { warnings: false }
+      }),
+      new webpack.DefinePlugin({
+        'process.env': {
+          'NODE_ENV': JSON.stringify('production')
+        }
+      })
+    ].concat(commonPlugins) : commonPlugins
 };
 
 module.exports = config;
