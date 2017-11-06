@@ -308,8 +308,6 @@
 	      url: '/yelp',
 	      data: { term: this.state.term, latitude: latitude, longitude: longitude },
 	      success: function success(yelpResults) {
-	        console.log(yelpResults.businesses);
-	
 	        var businesses = yelpResults.businesses;
 	        var midpoints = businesses.map(function (result) {
 	          return {
@@ -529,17 +527,12 @@
 	var OnboardingCard = function OnboardingCard(props) {
 	  return _react2.default.createElement(
 	    _Card.Card,
-	    { className: 'onboarding-card' },
+	    { className: 'onboarding-card', onClick: props.onClick },
 	    _react2.default.createElement(
 	      _Card.CardMedia,
 	      {
 	        overlay: _react2.default.createElement(_Card.CardTitle, { title: props.title, subtitle: props.subtitle }) },
 	      _react2.default.createElement('img', { src: props.image, alt: '' })
-	    ),
-	    _react2.default.createElement(
-	      _Card.CardActions,
-	      null,
-	      _react2.default.createElement(_FlatButton2.default, { label: 'Try it out', onClick: props.onClick })
 	    )
 	  );
 	};
@@ -571,7 +564,7 @@
 	    return _react2.default.createElement(
 	      'div',
 	      { className: resultsClass },
-	      this.props.results.length == 0 && !this.props.isLoading && _react2.default.createElement(OnboardingComponent, {
+	      !this.props.isLoading && _react2.default.createElement(OnboardingComponent, {
 	        onOnboardingSelection: this.props.onOnboardingSelection }),
 	      this.props.isLoading && _react2.default.createElement(_CircularProgress2.default, { className: 'circular-progress',
 	        style: { position: 'absolute', margin: '0' } }),

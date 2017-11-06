@@ -224,8 +224,6 @@ const RoadtripComponent = React.createClass({
       url: '/yelp', 
       data: { term: this.state.term, latitude: latitude, longitude: longitude },
       success: (yelpResults) => {
-        console.log(yelpResults.businesses);
-
         const businesses = yelpResults.businesses;
         const midpoints = businesses.map((result) => {
           return {
@@ -438,14 +436,11 @@ const OnboardingComponent = React.createClass({
 });
 
 const OnboardingCard = (props) => (
-  <Card className="onboarding-card">
+  <Card className="onboarding-card" onClick={props.onClick}>
     <CardMedia
         overlay={<CardTitle title={props.title} subtitle={props.subtitle} />}>
       <img src={props.image} alt="" />
     </CardMedia>
-    <CardActions>
-      <FlatButton label="Try it out" onClick={props.onClick} />
-    </CardActions>
   </Card>
 );
 
@@ -474,7 +469,7 @@ const ResultsComponent = React.createClass({
         'results-container loading' : 'results-container';
     return (
       <div className={resultsClass}>
-        {this.props.results.length == 0 && !this.props.isLoading &&
+        {!this.props.isLoading &&
           <OnboardingComponent 
               onOnboardingSelection={this.props.onOnboardingSelection} />}
 
