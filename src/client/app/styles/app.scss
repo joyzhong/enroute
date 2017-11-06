@@ -86,7 +86,9 @@ html, body {
   }
   flex-direction: column;
   height: calc(100% - 80px);
-  @include respond-to((xsmall, small)) { height: 100%; }
+  @include respond-to((xsmall, small)) {
+    height: calc(100% - 50px);
+  }
   padding: 8px 24px 4px;
   @include respond-to(xsmall) { padding: 8px 12px 4px; }
   @include respond-to((xsmall, small)) { padding-top: 0px; }
