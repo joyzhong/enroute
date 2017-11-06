@@ -11,6 +11,7 @@ import Slider from 'material-ui/Slider';
 import TextField from 'material-ui/TextField';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import {blueGrey600, cyan400} from 'material-ui/styles/colors';
 
@@ -302,14 +303,14 @@ const RoadtripComponent = React.createClass({
   },
 
   render() {
-    const contentClassName = this.state.mapMode ? 'content map-mode' : 'content';
+    const containerClassName =
+        this.state.mapMode ? 'container map-mode' : 'container';
     return (
-      <div className="container">
+      <div className={containerClassName}>
         <div className="app-title">
           <span>Enroute</span>
         </div>
-        {/*<AppBar title="Roadtrip" />*/}
-        <div className={contentClassName}>
+        <div className="content">
           <div className="form-map-container">
             <FormComponent onSubmit={this.updateMap_}
                 onChange={this.handleChange_}
@@ -408,6 +409,7 @@ const OnboardingComponent = React.createClass({
     this.props.onOnboardingSelection({
       origin: 'San Francisco, CA, USA',
       destination: 'Los Angeles, CA, USA',
+      stopFractionInTrip: 0.5,
       term: 'lunch',
     });
   },
@@ -416,6 +418,7 @@ const OnboardingComponent = React.createClass({
     this.props.onOnboardingSelection({
       origin: 'New York City, NY, USA',
       destination: 'Boston, MA, USA',
+      stopFractionInTrip: 0.9,
       term: 'coffee',
     });
   },
@@ -423,20 +426,28 @@ const OnboardingComponent = React.createClass({
   render() {
     return (
       <div className="onboarding-container">
-        <span className="onboarding-summary">
-          Enroute helps you find the best places to stop when you travel.
-          Try it out!
-          <p onClick={this.handleOnboarding1_}>
-            Stop for lunch on a road trip from SF to LA
-          </p>
-          <p onClick={this.handleOnboarding2_}>
-            Grab coffee on the drive from NYC to Boston
-          </p>
-        </span>
+        <OnboardingCard image="images/lunch.jpg" title="SF to LA"
+            subtitle="Stop for lunch midway"
+            onClick={this.handleOnboarding1_} />
+        <OnboardingCard image="images/coffee.jpg" title="NYC to Boston" 
+            subtitle="Grab coffee at the end"
+            onClick={this.handleOnboarding2_} />
       </div>
     )
   }
 });
+
+const OnboardingCard = (props) => (
+  <Card className="onboarding-card">
+    <CardMedia
+        overlay={<CardTitle title={props.title} subtitle={props.subtitle} />}>
+      <img src={props.image} alt="" />
+    </CardMedia>
+    <CardActions>
+      <FlatButton label="Try it out" onClick={props.onClick} />
+    </CardActions>
+  </Card>
+);
 
 const ResultsComponent = React.createClass({
   handleRowSelection_(selectedRows) {
@@ -529,13 +540,6 @@ const ResultsComponent = React.createClass({
     );
   }
 });
-
-const TableRowColumnDefault = (props) => (
-  <TableRowColumn className={props.className}
-      style={{paddingLeft: '12px', paddingRight: '12px'}}>
-    {props.content}
-  </TableRowColumn>
-);
 
 const MapComponent = (props) => (
   <div className="map-container">

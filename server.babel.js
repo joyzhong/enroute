@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import http from 'http';
 
+const BASE_URL = '/src/client';
 const app = express();
 const server = http.createServer(app);
 
@@ -31,8 +32,9 @@ app.post('/yelp', function(request, response) {
 });
 
 // Serve `index.html`.
-app.use('/', express.static(__dirname + '/src/client/public'));
-// Serve CSS.
-app.use('/styles', express.static(__dirname + '/src/client/app/styles'));
+app.use('/', express.static(__dirname + BASE_URL + '/public'));
+// Serve CSS and images.
+app.use('/styles', express.static(__dirname + BASE_URL + '/app/styles'));
+app.use('/images', express.static(__dirname + BASE_URL + '/app/images'));
 
 server.listen(process.env.PORT || 3000);
