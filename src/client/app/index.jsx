@@ -316,7 +316,8 @@ const RoadtripComponent = React.createClass({
                 origin={this.state.origin} destination={this.state.destination}
                 term={this.state.term} />
             <MapComponent onDirectionsClick={this.onDirectionsButtonClick_}
-                onBackButtonClick={this.onBackButtonClick_} />
+                onBackButtonClick={this.onBackButtonClick_}
+                disabled={!this.state.origin || !this.state.destination} />
           </div>
           <ResultsComponent onRowSelection={this.updateWaypoint_} 
               onRowHoverExit={this.clearLocationMarker_}
@@ -416,7 +417,7 @@ const OnboardingComponent = React.createClass({
     this.props.onOnboardingSelection({
       origin: 'New York City, NY, USA',
       destination: 'Boston, MA, USA',
-      stopFractionInTrip: 0.9,
+      stopFractionInTrip: 0.2,
       term: 'coffee',
     });
   },
@@ -428,7 +429,7 @@ const OnboardingComponent = React.createClass({
             subtitle="Stop for lunch midway"
             onClick={this.handleOnboarding1_} />
         <OnboardingCard image="images/coffee.jpg" title="NYC to Boston" 
-            subtitle="Grab coffee at the end"
+            subtitle="Grab coffee towards the start"
             onClick={this.handleOnboarding2_} />
       </div>
     )
@@ -548,7 +549,7 @@ const MapComponent = (props) => (
         Map
       </h2>
       <FlatButton label="Directions" secondary={true}
-          onClick={props.onDirectionsClick} />
+          onClick={props.onDirectionsClick} disabled={props.disabled} />
     </div>
 
     <div className="map-iframe-container" id="map">
