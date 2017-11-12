@@ -275,8 +275,6 @@
 	      };
 	
 	      directionsService.route(request, displayDirectionsFn);
-	
-	      _this3.updateDirectionsLink_();
 	    });
 	  },
 	  updateLocationMarker_: function updateLocationMarker_(resultIndex) {
@@ -371,6 +369,7 @@
 	
 	  // TODO: Investigate just making this an href?
 	  onDirectionsButtonClick_: function onDirectionsButtonClick_() {
+	    this.updateDirectionsLink_();
 	    var win = window.open(this.state.directionsLink, '_blank');
 	    if (win) {
 	      win.focus();

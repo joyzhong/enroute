@@ -189,8 +189,6 @@ const RoadtripComponent = React.createClass({
       };
 
       directionsService.route(request, displayDirectionsFn);
-
-      this.updateDirectionsLink_();
     });
   },
 
@@ -291,6 +289,7 @@ const RoadtripComponent = React.createClass({
 
  // TODO: Investigate just making this an href?
   onDirectionsButtonClick_() {
+    this.updateDirectionsLink_();
     const win = window.open(this.state.directionsLink, '_blank');
     if (win) {
       win.focus();
