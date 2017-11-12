@@ -161,6 +161,8 @@ const RoadtripComponent = React.createClass({
       this.state.directionsLink = 
           `http://maps.google.com/maps/dir/${startAddress}/${waypointAddress}/${destAddress}`;
       } else {
+        this.state.directionsLink = 
+            `http://maps.google.com/maps/dir/${startAddress}/${destAddress}`;
       }
   },
 

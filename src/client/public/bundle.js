@@ -249,7 +249,9 @@
 	    if (waypoint) {
 	      var waypointAddress = encodeURIComponent(waypoint.name + ',' + waypoint.location.address + ',' + waypoint.location.city + ',' + waypoint.location.country_code);
 	      this.state.directionsLink = 'http://maps.google.com/maps/dir/' + startAddress + '/' + waypointAddress + '/' + destAddress;
-	    } else {}
+	    } else {
+	      this.state.directionsLink = 'http://maps.google.com/maps/dir/' + startAddress + '/' + destAddress;
+	    }
 	  },
 	  updateWaypoint_: function updateWaypoint_(selectedResultIndex) {
 	    var _this3 = this;
