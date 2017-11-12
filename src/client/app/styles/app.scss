@@ -6,7 +6,7 @@ $max-width-medium: 1024px;
 
 $primary-color: #26C6DA; /* cyan400 */
 $secondary-color: #546E7A; /* blueGrey600 */
-$tertiary-color: #E0F7FA; /* cyan50 */
+$tertiary-color: #FFECB3; /* amber100 */
 
 $header-font: 'Roboto', sans-serif;
 $body-font: 'Roboto', sans-serif;
@@ -38,6 +38,7 @@ html, body {
   display: flex;
   font-family: $header-font;
   font-size: 2.5em;
+  @include respond-to((xsmall, small)) { font-size: 1.75em; }
   font-weight: 400;
   justify-content: center;
   padding: 8px 0;

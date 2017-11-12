@@ -246,8 +246,10 @@
 	    var startAddress = encodeURIComponent(this.state.origin);
 	    var destAddress = encodeURIComponent(this.state.destination);
 	    var waypoint = this.state.results[this.state.selectedResultIndex];
-	    var waypointAddress = encodeURIComponent(waypoint.name + ',' + waypoint.location.address + ',' + waypoint.location.city + ',' + waypoint.location.country_code);
-	    this.state.directionsLink = 'http://maps.google.com/maps/dir/' + startAddress + '/' + waypointAddress + '/' + destAddress;
+	    if (waypoint) {
+	      var waypointAddress = encodeURIComponent(waypoint.name + ',' + waypoint.location.address + ',' + waypoint.location.city + ',' + waypoint.location.country_code);
+	      this.state.directionsLink = 'http://maps.google.com/maps/dir/' + startAddress + '/' + waypointAddress + '/' + destAddress;
+	    } else {}
 	  },
 	  updateWaypoint_: function updateWaypoint_(selectedResultIndex) {
 	    var _this3 = this;

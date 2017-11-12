@@ -1,6 +1,6 @@
 /* cyan400 */
 /* blueGrey600 */
-/* cyan50 */
+/* amber100 */
 html, body {
   font-family: "Roboto", sans-serif;
   height: 100%;
@@ -15,6 +15,12 @@ html, body {
   font-weight: 400;
   justify-content: center;
   padding: 8px 0; }
+  @media only screen and (max-width: 480px) {
+    .app-title {
+      font-size: 1.75em; } }
+  @media only screen and (max-width: 767px) {
+    .app-title {
+      font-size: 1.75em; } }
   @media only screen and (max-width: 480px) {
     .app-title {
       padding-bottom: 0px; } }
@@ -35,7 +41,7 @@ html, body {
       margin: 0px 16.66667%; } }
 
 .container {
-  background-color: #E0F7FA;
+  background-color: #FFECB3;
   bottom: 0;
   display: flex;
   flex-direction: column;
