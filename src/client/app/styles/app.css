@@ -229,9 +229,7 @@ html, body {
   display: none; }
 
 .circular-progress {
-  left: 50%;
-  padding-top: 48px;
-  transform: translateX(-50%); }
+  padding-top: 48px; }
 
 .yelp-star-img {
   vertical-align: middle; }
