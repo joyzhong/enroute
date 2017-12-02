@@ -6,7 +6,7 @@ $max-width-medium: 1024px;
 
 $primary-color: #26C6DA; /* cyan400 */
 $secondary-color: #546E7A; /* blueGrey600 */
-$tertiary-color: #FFECB3; /* amber100 */
+$tertiary-color: #E0F7FA; /* cyan50 */
 
 $header-font: 'Roboto', sans-serif;
 $body-font: 'Roboto', sans-serif;
@@ -90,8 +90,12 @@ html, body {
   flex-direction: column;
   height: 100%;
   padding: 8px 24px 4px;
-  @include respond-to(xsmall) { padding: 8px 12px 4px; }
+  @include respond-to(xsmall) { padding: 8px 12px; }
   @include respond-to((xsmall, small)) { padding-top: 0px; }
+}
+
+.container:not(.map-mode) .content {
+  @include respond-to((xsmall, small)) { overflow-y: auto; }
 }
 
 .container.map-mode .app-title {
@@ -202,12 +206,15 @@ html, body {
 
 /** Results ========================================================= */
 .results-container {
-  height: 100%;
   margin-top: 12px;
+  max-height: 100%;
   overflow: auto;
-  padding-bottom: 12px;
   position: relative;
   width: 100%;
+}
+
+.container:not(.map-mode) .results-container {
+  @include respond-to((xsmall, small)) { overflow: initial; }
 }
 
 .results-table {
@@ -240,18 +247,19 @@ html, body {
 /** Onboarding ======================================================= */
 .onboarding-container {
   display: flex;
-  left: 50%;
-  margin-bottom: 12px;
+  margin: 0 auto;
   overflow-y: auto;
-  padding: 4px;
-  position: absolute;
-  transform: translateX(-50%);
+  @include respond-to((xsmall, small)) { overflow-y: initial; }
   visibility: initial;
   width: 100%;
   @include respond-to(xsmall) {
     flex-direction: column;
     height: 100%;
   }
+}
+
+.container:not(.map-mode) .onboarding-container {
+  @include respond-to((xsmall, small)) { overflow-y: initial; }
 }
 
 .onboarding-card {
