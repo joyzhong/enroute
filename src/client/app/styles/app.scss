@@ -42,7 +42,6 @@ html, body {
   font-weight: 400;
   justify-content: center;
   padding: 8px 0;
-  @include respond-to((xsmall, small)) { padding-bottom: 0px; }
 }
 
 .app-title, .content {
@@ -95,7 +94,10 @@ html, body {
 }
 
 .container:not(.map-mode) .content {
-  @include respond-to((xsmall, small)) { overflow-y: auto; }
+  @include respond-to((xsmall, small)) {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; 
+  }
 }
 
 .container.map-mode .app-title {
@@ -209,8 +211,10 @@ html, body {
   margin-top: 12px;
   max-height: 100%;
   overflow: auto;
+  padding-bottom: 4px;
   position: relative;
   width: 100%;
+  -webkit-overflow-scrolling: touch; 
 }
 
 .container:not(.map-mode) .results-container {

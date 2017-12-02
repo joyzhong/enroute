@@ -21,12 +21,6 @@ html, body {
   @media only screen and (max-width: 767px) {
     .app-title {
       font-size: 1.75em; } }
-  @media only screen and (max-width: 480px) {
-    .app-title {
-      padding-bottom: 0px; } }
-  @media only screen and (max-width: 767px) {
-    .app-title {
-      padding-bottom: 0px; } }
 
 .app-title, .content {
   margin: 0px 12.5%; }
@@ -95,10 +89,12 @@ html, body {
 
 @media only screen and (max-width: 480px) {
   .container:not(.map-mode) .content {
-    overflow-y: auto; } }
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; } }
 @media only screen and (max-width: 767px) {
   .container:not(.map-mode) .content {
-    overflow-y: auto; } }
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; } }
 
 @media only screen and (max-width: 480px) {
   .container.map-mode .app-title {
@@ -214,8 +210,10 @@ html, body {
   margin-top: 12px;
   max-height: 100%;
   overflow: auto;
+  padding-bottom: 4px;
   position: relative;
-  width: 100%; }
+  width: 100%;
+  -webkit-overflow-scrolling: touch; }
 
 @media only screen and (max-width: 480px) {
   .container:not(.map-mode) .results-container {
