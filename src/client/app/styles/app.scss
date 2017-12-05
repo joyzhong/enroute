@@ -8,6 +8,9 @@ $primary-color: #26C6DA; /* cyan400 */
 $secondary-color: #546E7A; /* blueGrey600 */
 $tertiary-color: #E0F7FA; /* cyan50 */
 
+$light-grey: #9E9E9E; /* grey500 */
+$dark-grey: #616161; /* grey700 */
+
 $header-font: 'Roboto', sans-serif;
 $body-font: 'Roboto', sans-serif;
 
@@ -149,12 +152,28 @@ html, body {
   @include respond-to((medium, large)) { padding-right: 48px; }
 }
 
+.text-field-container {
+  position: relative;
+}
+
+.text-field-close-button {
+  right: 0;
+}
+
+.text-field-close-button:hover .text-field-close-icon {
+  fill: $dark-grey;
+}
+
+.text-field-close-icon {
+  fill: $light-grey;
+  height: 18px;
+  width: 18px;
+}
+
 .slider-container {
   display: flex;
   flex-direction: column;
   margin: 14px 0 8px;
-  /* TODO: Enable this when ready to add settings. */
-  /*display: none;*/
 }
 
 .yelp-image {

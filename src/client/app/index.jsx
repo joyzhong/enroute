@@ -3,6 +3,7 @@ import CircularProgress from 'material-ui/CircularProgress';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import NavigationArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
+import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import React from 'react';
@@ -13,7 +14,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
-import {blueGrey600, cyan400} from 'material-ui/styles/colors';
+import {blueGrey600, cyan400, grey500, grey700} from 'material-ui/styles/colors';
 
 // Needed for onTouchTap 
 // http://stackoverflow.com/a/34015469/988941 
@@ -359,20 +360,35 @@ const FormComponent = React.createClass({
     this.props.onSubmit();
   },
 
+  clearTextOrigin_() {
+    this.props.onChange({origin: ''});
+  },
+
+  clearTextDestination_() {
+    this.props.onChange({destination: ''});
+  },
+
+  clearTextTerm_() {
+    this.props.onChange({term: ''});
+  },
+
   render() {
     return (
       <form className="form-container">
         <FormTextField floatingLabelText="Start Location" 
             id={TEXT_FIELD_START_DEST}
             onChange={this.handleOriginChange_}
+            onClickCloseButton={this.clearTextOrigin_}
             value={this.props.origin} />
         <FormTextField floatingLabelText="Final Destination"
             id={TEXT_FIELD_FINAL_DEST}
             onChange={this.handleDestinationChange_}
+            onClickCloseButton={this.clearTextDestination_}
             value={this.props.destination} />
         <FormTextField floatingLabelText="Stop for (e.g. lunch, coffee)..."
             id='Term' value={this.props.term}
-            onChange={this.handleTermChange_} />
+            onChange={this.handleTermChange_}
+            onClickCloseButton={this.clearTextTerm_} />
 
         <FormSlider value={this.props.initialSliderValue}
             onChange={this.handleSliderDragStop_} />
@@ -390,11 +406,36 @@ const FormComponent = React.createClass({
 
 /** Text field with customized styling. */
 const FormTextField = (props) => (
-  <TextField floatingLabelText={props.floatingLabelText}
-      placeholder="" id={props.id}
-      style={{ display: 'block', marginTop: '-6px', width: '100%' }}
-      onChange={props.onChange}
-      value={props.value} />
+  <div className="text-field-container">
+    <TextField floatingLabelText={props.floatingLabelText}
+        placeholder="" id={props.id}
+        inputStyle={{ paddingRight: 36 }}
+        style={{ display: 'block', marginTop: '-6px', width: '100%' }}
+        onChange={props.onChange}
+        value={props.value} />
+        {props.value &&
+          <IconButton className="text-field-close-button"
+              onClick={props.onClickCloseButton}
+              iconStyle={{ height: 18, width: 18 }}
+              style={{
+                bottom: 8,
+                height: 36,
+                position: 'absolute',
+                padding: 8,
+                right: 0,
+                width: 36
+              }}>
+            <CloseIcon className="text-field-close-icon" />
+          </IconButton>}
+  </div>
+);
+
+const CloseIcon = (props) => (
+  <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24"
+      className={props.className}>
+      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+      <path d="M0 0h24v24H0z" fill="none"/>
+  </svg>
 );
 
 /** Slider with customized styling. */

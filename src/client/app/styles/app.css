@@ -1,6 +1,8 @@
 /* cyan400 */
 /* blueGrey600 */
 /* cyan50 */
+/* grey500 */
+/* grey700 */
 html, body {
   font-family: "Roboto", sans-serif;
   height: 100%;
@@ -149,12 +151,24 @@ html, body {
     .form-container {
       padding-right: 48px; } }
 
+.text-field-container {
+  position: relative; }
+
+.text-field-close-button {
+  right: 0; }
+
+.text-field-close-button:hover .text-field-close-icon {
+  fill: #616161; }
+
+.text-field-close-icon {
+  fill: #9E9E9E;
+  height: 18px;
+  width: 18px; }
+
 .slider-container {
   display: flex;
   flex-direction: column;
-  margin: 14px 0 8px;
-  /* TODO: Enable this when ready to add settings. */
-  /*display: none;*/ }
+  margin: 14px 0 8px; }
 
 .yelp-image {
   float: right; }
