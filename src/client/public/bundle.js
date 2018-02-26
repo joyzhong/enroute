@@ -153,12 +153,18 @@
 	var RoadtripComponent = function (_React$Component) {
 	  _inherits(RoadtripComponent, _React$Component);
 	
-	  function RoadtripComponent(props) {
+	  function RoadtripComponent() {
+	    var _Object$getPrototypeO;
+	
+	    var _temp, _this, _ret;
+	
 	    _classCallCheck(this, RoadtripComponent);
 	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RoadtripComponent).call(this, props));
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
 	
-	    _this.state = {
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(RoadtripComponent)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
 	      origin: '',
 	      destination: '',
 	      term: '',
@@ -170,19 +176,7 @@
 	      tripTimeSec: 0, // Time from origin to destination, in seconds.
 	
 	      mapMode: false, // Whether the component is in map mode, for mobile screens.
-	      isLoading: false };
-	    return _this;
-	  }
-	
-	  _createClass(RoadtripComponent, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.initializeMapsAutocomplete_();
-	      this.initializeMap_();
-	    }
-	  }, {
-	    key: 'initializeMap_',
-	    value: function initializeMap_() {
+	      isLoading: false }, _this.initializeMap_ = function () {
 	      directionsDisplay = new google.maps.DirectionsRenderer();
 	      var nycCoord = new google.maps.LatLng(40.7128, -74.0060);
 	      var options = {
@@ -191,12 +185,7 @@
 	      };
 	      map = new google.maps.Map(document.getElementById('map'), options);
 	      directionsDisplay.setMap(map);
-	    }
-	  }, {
-	    key: 'initializeMapsAutocomplete_',
-	    value: function initializeMapsAutocomplete_() {
-	      var _this2 = this;
-	
+	    }, _this.initializeMapsAutocomplete_ = function () {
 	      var options = {
 	        placeIdOnly: true
 	      };
@@ -204,7 +193,7 @@
 	      var /** @type {!HTMLInputElement} */startDestTextField = document.getElementById(TEXT_FIELD_START_DEST);
 	      var autocompleteStartDest = new google.maps.places.Autocomplete(startDestTextField, options);
 	      autocompleteStartDest.addListener('place_changed', function () {
-	        _this2.handleChange_({
+	        _this.handleChange_({
 	          origin: autocompleteStartDest.getPlace()['name']
 	        });
 	      });
@@ -212,56 +201,42 @@
 	      var /** @type {!HTMLInputElement} */finalDestTextField = document.getElementById(TEXT_FIELD_FINAL_DEST);
 	      var autocompleteFinalDest = new google.maps.places.Autocomplete(finalDestTextField, options);
 	      autocompleteFinalDest.addListener('place_changed', function () {
-	        _this2.handleChange_({
+	        _this.handleChange_({
 	          destination: autocompleteFinalDest.getPlace()['name']
 	        });
 	      });
-	    }
-	  }, {
-	    key: 'handleChange_',
-	    value: function handleChange_(data) {
-	      this.setState(data);
-	    }
-	
-	    /**
-	     * Updates the map with the current origin and destination state,
-	     * and makes a Yelp API call to update the waypoints.
-	     */
-	
-	  }, {
-	    key: 'updateMap_',
-	    value: function updateMap_() {
-	      var _this3 = this;
-	
-	      this.setState({
+	    }, _this.handleChange_ = function (data) {
+	      _this.setState(data);
+	    }, _this.updateMap_ = function () {
+	      _this.setState({
 	        isLoading: true,
 	        mapMode: true
 	      });
 	
-	      this.clearLocationMarker_();
-	      this.clearSelectedResultIndex_();
+	      _this.clearLocationMarker_();
+	      _this.clearSelectedResultIndex_();
 	
 	      var request = {
-	        origin: this.state.origin,
-	        destination: this.state.destination,
+	        origin: _this.state.origin,
+	        destination: _this.state.destination,
 	        travelMode: 'DRIVING'
 	      };
 	      var displayDirectionsFn = function displayDirectionsFn(result, status) {
 	        if (status == 'OK') {
 	          (function () {
 	            var pathCoordinates = result.routes[0].overview_path;
-	            var indexInTrip = Math.round((pathCoordinates.length - 1) * _this3.state.stopFractionInTrip);
+	            var indexInTrip = Math.round((pathCoordinates.length - 1) * _this.state.stopFractionInTrip);
 	            var stopCooordinates = pathCoordinates[indexInTrip];
 	            directionsDisplay.setDirections(result);
 	
-	            _this3.setState({
+	            _this.setState({
 	              tripTimeSec: result.routes[0].legs[0].duration.value
 	            }, function () {
 	              // Trigger 'resize' event after displaying map on small screens,
 	              // so directions render correctly.
 	              google.maps.event.trigger(map, 'resize');
 	
-	              _this3.getStopsListFromYelp_(stopCooordinates.lat(), stopCooordinates.lng());
+	              _this.getStopsListFromYelp_(stopCooordinates.lat(), stopCooordinates.lng());
 	            });
 	          })();
 	        }
@@ -270,31 +245,23 @@
 	
 	      // Get the directions and then execute displayDirectionsFn.
 	      directionsService.route(request, displayDirectionsFn);
-	    }
-	  }, {
-	    key: 'updateDirectionsLink_',
-	    value: function updateDirectionsLink_() {
-	      var startAddress = encodeURIComponent(this.state.origin);
-	      var destAddress = encodeURIComponent(this.state.destination);
-	      var waypoint = this.state.results[this.state.selectedResultIndex];
+	    }, _this.updateDirectionsLink_ = function () {
+	      var startAddress = encodeURIComponent(_this.state.origin);
+	      var destAddress = encodeURIComponent(_this.state.destination);
+	      var waypoint = _this.state.results[_this.state.selectedResultIndex];
 	      if (waypoint) {
 	        var waypointAddress = encodeURIComponent(waypoint.name + ',' + waypoint.location.address + ',' + waypoint.location.city + ',' + waypoint.location.country_code);
-	        this.state.directionsLink = 'http://maps.google.com/maps/dir/' + startAddress + '/' + waypointAddress + '/' + destAddress;
+	        _this.state.directionsLink = 'http://maps.google.com/maps/dir/' + startAddress + '/' + waypointAddress + '/' + destAddress;
 	      } else {
-	        this.state.directionsLink = 'http://maps.google.com/maps/dir/' + startAddress + '/' + destAddress;
+	        _this.state.directionsLink = 'http://maps.google.com/maps/dir/' + startAddress + '/' + destAddress;
 	      }
-	    }
-	  }, {
-	    key: 'updateWaypoint_',
-	    value: function updateWaypoint_(selectedResultIndex) {
-	      var _this4 = this;
-	
-	      this.setState({ selectedResultIndex: selectedResultIndex }, function () {
-	        var businessCoordinate = _this4.state.results[_this4.state.selectedResultIndex].location.coordinate;
+	    }, _this.updateWaypoint_ = function (selectedResultIndex) {
+	      _this.setState({ selectedResultIndex: selectedResultIndex }, function () {
+	        var businessCoordinate = _this.state.results[_this.state.selectedResultIndex].location.coordinate;
 	        var latLng = new google.maps.LatLng(businessCoordinate.latitude, businessCoordinate.longitude);
 	        var request = {
-	          origin: _this4.state.origin,
-	          destination: _this4.state.destination,
+	          origin: _this.state.origin,
+	          destination: _this.state.destination,
 	          waypoints: [{ location: latLng }],
 	          travelMode: 'DRIVING'
 	        };
@@ -309,47 +276,27 @@
 	
 	        directionsService.route(request, displayDirectionsFn);
 	      });
-	    }
-	  }, {
-	    key: 'updateLocationMarker_',
-	    value: function updateLocationMarker_(resultIndex) {
-	      this.clearLocationMarker_();
+	    }, _this.updateLocationMarker_ = function (resultIndex) {
+	      _this.clearLocationMarker_();
 	
 	      // Get the latitude and longitude of the result.
-	      var business = this.state.results[resultIndex];
+	      var business = _this.state.results[resultIndex];
 	      locationMarker = new google.maps.Marker({
 	        position: new google.maps.LatLng(business.location.coordinate.latitude, business.location.coordinate.longitude),
 	        map: map
 	      });
-	    }
-	  }, {
-	    key: 'clearLocationMarker_',
-	    value: function clearLocationMarker_() {
+	    }, _this.clearLocationMarker_ = function () {
 	      if (locationMarker) {
 	        locationMarker.setMap(null);
 	      }
-	    }
-	  }, {
-	    key: 'clearSelectedResultIndex_',
-	    value: function clearSelectedResultIndex_() {
-	      this.setState({ selectedResultIndex: -1 });
-	    }
-	
-	    /**
-	     * @param {number} latitude
-	     * @param {number} longitude
-	     */
-	
-	  }, {
-	    key: 'getStopsListFromYelp_',
-	    value: function getStopsListFromYelp_(latitude, longitude) {
-	      var _this5 = this;
-	
+	    }, _this.clearSelectedResultIndex_ = function () {
+	      _this.setState({ selectedResultIndex: -1 });
+	    }, _this.getStopsListFromYelp_ = function (latitude, longitude) {
 	      $.ajax({
-	        context: this,
+	        context: _this,
 	        type: 'POST',
 	        url: '/yelp',
-	        data: { term: this.state.term, latitude: latitude, longitude: longitude },
+	        data: { term: _this.state.term, latitude: latitude, longitude: longitude },
 	        success: function success(yelpResults) {
 	          var businesses = yelpResults.businesses;
 	          var midpoints = businesses.map(function (result) {
@@ -358,8 +305,8 @@
 	              lng: result.location.coordinate.longitude
 	            };
 	          });
-	          var originToMidpointsDists = _this5.getDirectionsMatrix_([_this5.state.origin], midpoints);
-	          var midpointsToDestDists = _this5.getDirectionsMatrix_(midpoints, [_this5.state.destination]);
+	          var originToMidpointsDists = _this.getDirectionsMatrix_([_this.state.origin], midpoints);
+	          var midpointsToDestDists = _this.getDirectionsMatrix_(midpoints, [_this.state.destination]);
 	          Promise.all([originToMidpointsDists, midpointsToDestDists]).then(function (responses) {
 	            var legATimes = responses[0].rows[0].elements;
 	            var legBTimes = responses[1].rows.map(function (row) {
@@ -368,30 +315,17 @@
 	
 	            businesses.forEach(function (business, index) {
 	              var totalTripTimeSec = legATimes[index].duration.value + legBTimes[index].duration.value;
-	              business['min_added'] = Math.round((totalTripTimeSec - _this5.state.tripTimeSec) / 60);
+	              business['min_added'] = Math.round((totalTripTimeSec - _this.state.tripTimeSec) / 60);
 	            });
 	
-	            _this5.setState({
+	            _this.setState({
 	              results: yelpResults.businesses,
 	              isLoading: false
 	            });
 	          });
 	        }
 	      });
-	    }
-	
-	    /**
-	     * Makes a request via Google Maps Directions Matrix API.
-	     * or rejects if the request fails.
-	     * @param {!Array<string|!Object>} origins
-	     * @param {!Array<string|!Object>} destinations
-	     * @return {!Promise} Promise that resolves with the successful response,
-	     *    or rejects if the request fails.
-	     */
-	
-	  }, {
-	    key: 'getDirectionsMatrix_',
-	    value: function getDirectionsMatrix_(origins, destinations) {
+	    }, _this.getDirectionsMatrix_ = function (origins, destinations) {
 	      var promise = new Promise(function (resolve, reject) {
 	        distanceMatrixService.getDistanceMatrix({
 	          origins: origins,
@@ -407,28 +341,52 @@
 	      });
 	
 	      return promise;
-	    }
-	
-	    // TODO: Investigate just making this an href?
-	
-	  }, {
-	    key: 'onDirectionsButtonClick_',
-	    value: function onDirectionsButtonClick_() {
-	      this.updateDirectionsLink_();
-	      var win = window.open(this.state.directionsLink, '_blank');
+	    }, _this.onDirectionsButtonClick_ = function () {
+	      _this.updateDirectionsLink_();
+	      var win = window.open(_this.state.directionsLink, '_blank');
 	      if (win) {
 	        win.focus();
 	      } else {
 	        alert('Please disable your popup blocker to view the directions.');
 	      }
-	    }
-	  }, {
-	    key: 'onBackButtonClick_',
-	    value: function onBackButtonClick_() {
-	      this.setState({
+	    }, _this.onBackButtonClick_ = function () {
+	      _this.setState({
 	        mapMode: false
 	      });
+	    }, _temp), _possibleConstructorReturn(_this, _ret);
+	  }
+	
+	  _createClass(RoadtripComponent, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.initializeMapsAutocomplete_();
+	      this.initializeMap_();
 	    }
+	
+	    /**
+	     * Updates the map with the current origin and destination state,
+	     * and makes a Yelp API call to update the waypoints.
+	     */
+	
+	
+	    /**
+	     * @param {number} latitude
+	     * @param {number} longitude
+	     */
+	
+	
+	    /**
+	     * Makes a request via Google Maps Directions Matrix API.
+	     * or rejects if the request fails.
+	     * @param {!Array<string|!Object>} origins
+	     * @param {!Array<string|!Object>} destinations
+	     * @return {!Promise} Promise that resolves with the successful response,
+	     *    or rejects if the request fails.
+	     */
+	
+	
+	    // TODO: Investigate just making this an href?
+	
 	  }, {
 	    key: 'render',
 	    value: function render() {
@@ -452,26 +410,26 @@
 	            'div',
 	            { className: 'form-map-container' },
 	            _react2.default.createElement(FormComponent, {
-	              onSubmit: this.updateMap_.bind(this),
-	              onChange: this.handleChange_.bind(this),
+	              onSubmit: this.updateMap_,
+	              onChange: this.handleChange_,
 	              initialSliderValue: this.state.stopFractionInTrip,
 	              origin: this.state.origin,
 	              destination: this.state.destination,
 	              term: this.state.term }),
 	            _react2.default.createElement(MapComponent, {
-	              onDirectionsClick: this.onDirectionsButtonClick_.bind(this),
-	              onBackButtonClick: this.onBackButtonClick_.bind(this),
+	              onDirectionsClick: this.onDirectionsButtonClick_,
+	              onBackButtonClick: this.onBackButtonClick_,
 	              disabled: !this.state.origin || !this.state.destination })
 	          ),
 	          _react2.default.createElement(ResultsComponent, {
-	            onRowSelection: this.updateWaypoint_.bind(this),
-	            onRowHoverExit: this.clearLocationMarker_.bind(this),
-	            onRowHover: this.updateLocationMarker_.bind(this),
+	            onRowSelection: this.updateWaypoint_,
+	            onRowHoverExit: this.clearLocationMarker_,
+	            onRowHover: this.updateLocationMarker_,
 	            results: this.state.results,
 	            isLoading: this.state.isLoading,
 	            selectedResultIndex: this.state.selectedResultIndex,
 	            tripTimeSec: this.state.tripTimeSec,
-	            onOnboardingSelection: this.handleChange_.bind(this) })
+	            onOnboardingSelection: this.handleChange_ })
 	        )
 	      );
 	    }
@@ -482,64 +440,63 @@
 	
 	;
 	
-	// const AutocompleteComponent = React.createClass({
-	//   render() {
-	//     return ();
-	//   }
-	// });
+	var AutocompleteComponent = function (_React$Component2) {
+	  _inherits(AutocompleteComponent, _React$Component2);
 	
-	var FormComponent = function (_React$Component2) {
-	  _inherits(FormComponent, _React$Component2);
+	  function AutocompleteComponent() {
+	    _classCallCheck(this, AutocompleteComponent);
 	
-	  function FormComponent() {
-	    _classCallCheck(this, FormComponent);
-	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(FormComponent).apply(this, arguments));
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(AutocompleteComponent).apply(this, arguments));
 	  }
 	
-	  _createClass(FormComponent, [{
-	    key: 'handleOriginChange_',
+	  _createClass(AutocompleteComponent, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement('div', null);
+	    }
+	  }]);
 	
-	    // TODO: Refactor, DRY!
-	    value: function handleOriginChange_(e) {
-	      this.props.onChange({ origin: e.target.value });
+	  return AutocompleteComponent;
+	}(_react2.default.Component);
+	
+	;
+	
+	var FormComponent = function (_React$Component3) {
+	  _inherits(FormComponent, _React$Component3);
+	
+	  function FormComponent() {
+	    var _Object$getPrototypeO2;
+	
+	    var _temp2, _this3, _ret3;
+	
+	    _classCallCheck(this, FormComponent);
+	
+	    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	      args[_key2] = arguments[_key2];
 	    }
-	  }, {
-	    key: 'handleDestinationChange_',
-	    value: function handleDestinationChange_(e) {
-	      this.props.onChange({ destination: e.target.value });
-	    }
-	  }, {
-	    key: 'handleTermChange_',
-	    value: function handleTermChange_(e) {
-	      this.props.onChange({ term: e.target.value });
-	    }
-	  }, {
-	    key: 'handleSliderDragStop_',
-	    value: function handleSliderDragStop_(e, value) {
-	      this.props.onChange({ stopFractionInTrip: value });
-	    }
-	  }, {
-	    key: 'handleClick_',
-	    value: function handleClick_() {
-	      this.props.onSubmit();
-	    }
-	  }, {
-	    key: 'clearTextOrigin_',
-	    value: function clearTextOrigin_() {
-	      this.props.onChange({ origin: '' });
-	    }
-	  }, {
-	    key: 'clearTextDestination_',
-	    value: function clearTextDestination_() {
-	      this.props.onChange({ destination: '' });
-	    }
-	  }, {
-	    key: 'clearTextTerm_',
-	    value: function clearTextTerm_() {
-	      this.props.onChange({ term: '' });
-	    }
-	  }, {
+	
+	    return _ret3 = (_temp2 = (_this3 = _possibleConstructorReturn(this, (_Object$getPrototypeO2 = Object.getPrototypeOf(FormComponent)).call.apply(_Object$getPrototypeO2, [this].concat(args))), _this3), _this3.handleOriginChange_ = function (e) {
+	      _this3.props.onChange({ origin: e.target.value });
+	    }, _this3.handleDestinationChange_ = function (e) {
+	      _this3.props.onChange({ destination: e.target.value });
+	    }, _this3.handleTermChange_ = function (e) {
+	      _this3.props.onChange({ term: e.target.value });
+	    }, _this3.handleSliderDragStop_ = function (e, value) {
+	      _this3.props.onChange({ stopFractionInTrip: value });
+	    }, _this3.handleClick_ = function () {
+	      _this3.props.onSubmit();
+	    }, _this3.clearTextOrigin_ = function () {
+	      _this3.props.onChange({ origin: '' });
+	    }, _this3.clearTextDestination_ = function () {
+	      _this3.props.onChange({ destination: '' });
+	    }, _this3.clearTextTerm_ = function () {
+	      _this3.props.onChange({ term: '' });
+	    }, _temp2), _possibleConstructorReturn(_this3, _ret3);
+	  }
+	  // TODO: Refactor, DRY!
+	
+	
+	  _createClass(FormComponent, [{
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
@@ -548,28 +505,28 @@
 	        _react2.default.createElement(FormTextField, {
 	          floatingLabelText: 'Start Location',
 	          id: TEXT_FIELD_START_DEST,
-	          onChange: this.handleOriginChange_.bind(this),
-	          onClickCloseButton: this.clearTextOrigin_.bind(this),
+	          onChange: this.handleOriginChange_,
+	          onClickCloseButton: this.clearTextOrigin_,
 	          value: this.props.origin }),
 	        _react2.default.createElement(FormTextField, {
 	          floatingLabelText: 'Final Destination',
 	          id: TEXT_FIELD_FINAL_DEST,
-	          onChange: this.handleDestinationChange_.bind(this),
-	          onClickCloseButton: this.clearTextDestination_.bind(this),
+	          onChange: this.handleDestinationChange_,
+	          onClickCloseButton: this.clearTextDestination_,
 	          value: this.props.destination }),
 	        _react2.default.createElement(FormTextField, {
 	          floatingLabelText: 'Stop for (e.g. lunch, coffee)...',
 	          id: 'Term',
 	          value: this.props.term,
-	          onChange: this.handleTermChange_.bind(this),
-	          onClickCloseButton: this.clearTextTerm_.bind(this) }),
+	          onChange: this.handleTermChange_,
+	          onClickCloseButton: this.clearTextTerm_ }),
 	        _react2.default.createElement(FormSlider, {
 	          value: this.props.initialSliderValue,
-	          onChange: this.handleSliderDragStop_.bind(this) }),
+	          onChange: this.handleSliderDragStop_ }),
 	        _react2.default.createElement(_RaisedButton2.default, {
 	          label: 'Go',
 	          primary: true,
-	          onClick: this.handleClick_.bind(this),
+	          onClick: this.handleClick_,
 	          disabled: this.props.origin == '' || this.props.destination == '' }),
 	        _react2.default.createElement(
 	          'a',
@@ -640,36 +597,38 @@
 	  );
 	};
 	
-	var OnboardingComponent = function (_React$Component3) {
-	  _inherits(OnboardingComponent, _React$Component3);
+	var OnboardingComponent = function (_React$Component4) {
+	  _inherits(OnboardingComponent, _React$Component4);
 	
 	  function OnboardingComponent() {
+	    var _Object$getPrototypeO3;
+	
+	    var _temp3, _this4, _ret4;
+	
 	    _classCallCheck(this, OnboardingComponent);
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(OnboardingComponent).apply(this, arguments));
-	  }
+	    for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+	      args[_key3] = arguments[_key3];
+	    }
 	
-	  _createClass(OnboardingComponent, [{
-	    key: 'handleOnboarding1_',
-	    value: function handleOnboarding1_() {
-	      this.props.onOnboardingSelection({
+	    return _ret4 = (_temp3 = (_this4 = _possibleConstructorReturn(this, (_Object$getPrototypeO3 = Object.getPrototypeOf(OnboardingComponent)).call.apply(_Object$getPrototypeO3, [this].concat(args))), _this4), _this4.handleOnboarding1_ = function () {
+	      _this4.props.onOnboardingSelection({
 	        origin: 'San Francisco, CA, USA',
 	        destination: 'Los Angeles, CA, USA',
 	        stopFractionInTrip: 0.5,
 	        term: 'lunch'
 	      });
-	    }
-	  }, {
-	    key: 'handleOnboarding2_',
-	    value: function handleOnboarding2_() {
-	      this.props.onOnboardingSelection({
+	    }, _this4.handleOnboarding2_ = function () {
+	      _this4.props.onOnboardingSelection({
 	        origin: 'New York City, NY, USA',
 	        destination: 'Boston, MA, USA',
 	        stopFractionInTrip: 0.2,
 	        term: 'coffee'
 	      });
-	    }
-	  }, {
+	    }, _temp3), _possibleConstructorReturn(_this4, _ret4);
+	  }
+	
+	  _createClass(OnboardingComponent, [{
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
@@ -677,10 +636,10 @@
 	        { className: 'onboarding-container' },
 	        _react2.default.createElement(OnboardingCard, { image: 'images/lunch.jpg', title: 'SF to LA',
 	          subtitle: 'Stop for lunch midway',
-	          onClick: this.handleOnboarding1_.bind(this) }),
+	          onClick: this.handleOnboarding1_ }),
 	        _react2.default.createElement(OnboardingCard, { image: 'images/coffee.jpg', title: 'NYC to Boston',
 	          subtitle: 'Grab coffee towards the start',
-	          onClick: this.handleOnboarding2_.bind(this) })
+	          onClick: this.handleOnboarding2_ })
 	      );
 	    }
 	  }]);
@@ -703,43 +662,42 @@
 	  );
 	};
 	
-	var ResultsComponent = function (_React$Component4) {
-	  _inherits(ResultsComponent, _React$Component4);
+	var ResultsComponent = function (_React$Component5) {
+	  _inherits(ResultsComponent, _React$Component5);
 	
 	  function ResultsComponent() {
+	    var _Object$getPrototypeO4;
+	
+	    var _temp4, _this5, _ret5;
+	
 	    _classCallCheck(this, ResultsComponent);
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(ResultsComponent).apply(this, arguments));
-	  }
+	    for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+	      args[_key4] = arguments[_key4];
+	    }
 	
-	  _createClass(ResultsComponent, [{
-	    key: 'handleRowSelection_',
-	    value: function handleRowSelection_(selectedRows) {
+	    return _ret5 = (_temp4 = (_this5 = _possibleConstructorReturn(this, (_Object$getPrototypeO4 = Object.getPrototypeOf(ResultsComponent)).call.apply(_Object$getPrototypeO4, [this].concat(args))), _this5), _this5.handleRowSelection_ = function (selectedRows) {
 	      if (selectedRows.length > 0) {
-	        this.props.onRowSelection(selectedRows[0]);
+	        _this5.props.onRowSelection(selectedRows[0]);
 	      }
-	    }
-	  }, {
-	    key: 'handleRowHover_',
-	    value: function handleRowHover_(rowNumber) {
-	      this.props.onRowHover(rowNumber);
-	    }
-	
-	    /**
-	    * Called when a business link is clicked, to open the Yelp business page.
-	    * @param {!Object} event
-	    */
-	
-	  }, {
-	    key: 'handleLinkClick_',
-	    value: function handleLinkClick_(event) {
+	    }, _this5.handleRowHover_ = function (rowNumber) {
+	      _this5.props.onRowHover(rowNumber);
+	    }, _this5.handleLinkClick_ = function (event) {
 	      // Prevent bubbling up, so that the row is not selected.
 	      event.stopPropagation();
-	    }
-	  }, {
+	    }, _temp4), _possibleConstructorReturn(_this5, _ret5);
+	  }
+	
+	  /**
+	  * Called when a business link is clicked, to open the Yelp business page.
+	  * @param {!Object} event
+	  */
+	
+	
+	  _createClass(ResultsComponent, [{
 	    key: 'render',
 	    value: function render() {
-	      var _this9 = this;
+	      var _this6 = this;
 	
 	      var resultsClass = this.props.isLoading ? 'results-container loading' : 'results-container';
 	      return _react2.default.createElement(
@@ -752,9 +710,9 @@
 	        _react2.default.createElement(
 	          _Table.Table,
 	          {
-	            onRowHover: this.handleRowHover_.bind(this),
-	            onRowHoverExit: this.props.onRowHoverExit.bind(this),
-	            onRowSelection: this.handleRowSelection_.bind(this),
+	            onRowHover: this.handleRowHover_,
+	            onRowHoverExit: this.props.onRowHoverExit,
+	            onRowSelection: this.handleRowSelection_,
 	            className: 'results-table' },
 	          this.props.results.length > 0 && _react2.default.createElement(
 	            _Table.TableHeader,
@@ -795,14 +753,14 @@
 	              return _react2.default.createElement(
 	                _Table.TableRow,
 	                { key: result.id, style: { cursor: 'pointer' },
-	                  selected: index == _this9.props.selectedResultIndex },
+	                  selected: index == _this6.props.selectedResultIndex },
 	                _react2.default.createElement(
 	                  _Table.TableRowColumn,
 	                  { style: { paddingLeft: '12px', paddingRight: '12px' } },
 	                  _react2.default.createElement(
 	                    'a',
 	                    { href: result.url, target: '_blank',
-	                      onClick: _this9.handleLinkClick_.bind(_this9) },
+	                      onClick: _this6.handleLinkClick_ },
 	                    result.name
 	                  )
 	                ),

@@ -44,23 +44,19 @@ const App = () => (
 );
 
 class RoadtripComponent extends React.Component {
-  constructor(props) {
-    super(props);
+  state = {
+    origin: '',
+    destination: '',
+    term: '',
 
-    this.state = {
-      origin: '',
-      destination: '',
-      term: '',
+    selectedResultIndex: -1, // Index of the selected stop in the results array.
+    results: [],
+    stopFractionInTrip: 0.5,
+    directionsLink: '',
+    tripTimeSec: 0, // Time from origin to destination, in seconds.
 
-      selectedResultIndex: -1, // Index of the selected stop in the results array.
-      results: [],
-      stopFractionInTrip: 0.5,
-      directionsLink: '',
-      tripTimeSec: 0, // Time from origin to destination, in seconds.
-
-      mapMode: false, // Whether the component is in map mode, for mobile screens.
-      isLoading: false, // Whether the component is loading Map/Yelp results.
-    };
+    mapMode: false, // Whether the component is in map mode, for mobile screens.
+    isLoading: false, // Whether the component is loading Map/Yelp results.
   }
 
   componentDidMount() {
@@ -68,7 +64,7 @@ class RoadtripComponent extends React.Component {
     this.initializeMap_();
   }
 
-  initializeMap_() {
+  initializeMap_ = () => {
     directionsDisplay = new google.maps.DirectionsRenderer();
     const nycCoord = new google.maps.LatLng(40.7128, -74.0060);
     const options = {
@@ -77,9 +73,9 @@ class RoadtripComponent extends React.Component {
     }
     map = new google.maps.Map(document.getElementById('map'), options);
     directionsDisplay.setMap(map);
-  }
+  };
 
-  initializeMapsAutocomplete_() {
+  initializeMapsAutocomplete_ = () => {
     const options = {
       placeIdOnly: true,
     };
@@ -103,17 +99,17 @@ class RoadtripComponent extends React.Component {
         destination: autocompleteFinalDest.getPlace()['name'],
       });
     });
-  }
+  };
 
-  handleChange_(data) {
+  handleChange_ = (data) => {
     this.setState(data);
-  }
+  };
 
   /**
    * Updates the map with the current origin and destination state,
    * and makes a Yelp API call to update the waypoints.
    */
-  updateMap_() {
+  updateMap_ = () => {
     this.setState({
       isLoading: true,
       mapMode: true,
@@ -151,9 +147,9 @@ class RoadtripComponent extends React.Component {
 
     // Get the directions and then execute displayDirectionsFn.
     directionsService.route(request, displayDirectionsFn);
-  }
+  };
 
-  updateDirectionsLink_() {
+  updateDirectionsLink_ = () => {
     const startAddress = encodeURIComponent(this.state.origin);
     const destAddress = encodeURIComponent(this.state.destination);
     const waypoint = this.state.results[this.state.selectedResultIndex];
@@ -167,9 +163,9 @@ class RoadtripComponent extends React.Component {
         this.state.directionsLink = 
             `http://maps.google.com/maps/dir/${startAddress}/${destAddress}`;
       }
-  }
+  };
 
-  updateWaypoint_(selectedResultIndex) {
+  updateWaypoint_ = (selectedResultIndex) => {
     this.setState({selectedResultIndex: selectedResultIndex}, () => {
       const businessCoordinate = 
           this.state.results[this.state.selectedResultIndex].location.coordinate;
@@ -193,9 +189,9 @@ class RoadtripComponent extends React.Component {
 
       directionsService.route(request, displayDirectionsFn);
     });
-  }
+  };
 
-  updateLocationMarker_(resultIndex) {
+  updateLocationMarker_ = (resultIndex) => {
     this.clearLocationMarker_();
 
     // Get the latitude and longitude of the result.
@@ -207,23 +203,23 @@ class RoadtripComponent extends React.Component {
         ),
         map: map
     });
-  }
+  };
 
-  clearLocationMarker_() {
+  clearLocationMarker_ = () => {
     if (locationMarker) {
       locationMarker.setMap(null);
     }
-  }
+  };
 
-  clearSelectedResultIndex_() {
+  clearSelectedResultIndex_ = () => {
     this.setState({selectedResultIndex: -1});
-  }
+  };
 
   /**
    * @param {number} latitude
    * @param {number} longitude
    */
-  getStopsListFromYelp_(latitude, longitude) {
+  getStopsListFromYelp_ = (latitude, longitude) => {
     $.ajax({
       context: this,
       type: 'POST',
@@ -262,7 +258,7 @@ class RoadtripComponent extends React.Component {
             });
       }
     });
-  }
+  };
 
   /**
    * Makes a request via Google Maps Directions Matrix API.
@@ -272,7 +268,7 @@ class RoadtripComponent extends React.Component {
    * @return {!Promise} Promise that resolves with the successful response,
    *    or rejects if the request fails.
    */
-  getDirectionsMatrix_(origins, destinations) {
+  getDirectionsMatrix_ = (origins, destinations) => {
     const promise = new Promise((resolve, reject) => {
       distanceMatrixService.getDistanceMatrix({
         origins: origins,
@@ -288,10 +284,10 @@ class RoadtripComponent extends React.Component {
     });
 
     return promise;
-  }
+  };
 
  // TODO: Investigate just making this an href?
-  onDirectionsButtonClick_() {
+  onDirectionsButtonClick_ = () => {
     this.updateDirectionsLink_();
     const win = window.open(this.state.directionsLink, '_blank');
     if (win) {
@@ -299,13 +295,13 @@ class RoadtripComponent extends React.Component {
     } else {
       alert('Please disable your popup blocker to view the directions.');
     }
-  }
+  };
 
-  onBackButtonClick_() {
+  onBackButtonClick_ = () => {
     this.setState({
       mapMode: false
     });
-  }
+  };
 
   render() {
     const containerClassName =
@@ -318,71 +314,71 @@ class RoadtripComponent extends React.Component {
         <div className="content">
           <div className="form-map-container">
             <FormComponent
-                onSubmit={this.updateMap_.bind(this)}
-                onChange={this.handleChange_.bind(this)}
+                onSubmit={this.updateMap_}
+                onChange={this.handleChange_}
                 initialSliderValue={this.state.stopFractionInTrip}
                 origin={this.state.origin}
                 destination={this.state.destination}
                 term={this.state.term} />
             <MapComponent
-                onDirectionsClick={this.onDirectionsButtonClick_.bind(this)}
-                onBackButtonClick={this.onBackButtonClick_.bind(this)}
+                onDirectionsClick={this.onDirectionsButtonClick_}
+                onBackButtonClick={this.onBackButtonClick_}
                 disabled={!this.state.origin || !this.state.destination} />
           </div>
           <ResultsComponent
-              onRowSelection={this.updateWaypoint_.bind(this)} 
-              onRowHoverExit={this.clearLocationMarker_.bind(this)}
-              onRowHover={this.updateLocationMarker_.bind(this)} 
+              onRowSelection={this.updateWaypoint_} 
+              onRowHoverExit={this.clearLocationMarker_}
+              onRowHover={this.updateLocationMarker_} 
               results={this.state.results}
               isLoading={this.state.isLoading}
               selectedResultIndex={this.state.selectedResultIndex}
               tripTimeSec={this.state.tripTimeSec}
-              onOnboardingSelection={this.handleChange_.bind(this)} />
+              onOnboardingSelection={this.handleChange_} />
         </div>
       </div>
     );
   }
 };
 
-// const AutocompleteComponent = React.createClass({
-//   render() {
-//     return ();
-//   }
-// });
+class AutocompleteComponent extends React.Component {
+  render() {
+    return (<div></div>);
+  }
+};
 
 class FormComponent extends React.Component {
   // TODO: Refactor, DRY!
-  handleOriginChange_(e) {
+  handleOriginChange_ = (e) => {
     this.props.onChange({origin: e.target.value});
-  }
+  };
 
-  handleDestinationChange_(e) {
+  handleDestinationChange_ = (e) => {
     this.props.onChange({destination: e.target.value});
-  }
+  };
 
-  handleTermChange_(e) {
+  handleTermChange_ = (e) => {
     this.props.onChange({term: e.target.value});
-  }
+  };
 
-  handleSliderDragStop_(e, value) {
+  handleSliderDragStop_ = (e, value) => {
     this.props.onChange({stopFractionInTrip: value});
-  }
+  };
 
-  handleClick_() {
+  handleClick_ = () => {
     this.props.onSubmit();
-  }
+  };
 
-  clearTextOrigin_() {
+  clearTextOrigin_ = () => {
     this.props.onChange({origin: ''});
-  }
+  };
 
-  clearTextDestination_() {
+  clearTextDestination_ = () => {
     this.props.onChange({destination: ''});
-  }
+  };
 
-  clearTextTerm_() {
+  clearTextTerm_ = () => {
     this.props.onChange({term: ''});
-  }
+  };
 
   render() {
     return (
@@ -390,31 +386,31 @@ class FormComponent extends React.Component {
         <FormTextField
             floatingLabelText="Start Location" 
             id={TEXT_FIELD_START_DEST}
-            onChange={this.handleOriginChange_.bind(this)}
-            onClickCloseButton={this.clearTextOrigin_.bind(this)}
+            onChange={this.handleOriginChange_}
+            onClickCloseButton={this.clearTextOrigin_}
             value={this.props.origin} />
         <FormTextField
             floatingLabelText="Final Destination"
             id={TEXT_FIELD_FINAL_DEST}
-            onChange={this.handleDestinationChange_.bind(this)}
-            onClickCloseButton={this.clearTextDestination_.bind(this)}
+            onChange={this.handleDestinationChange_}
+            onClickCloseButton={this.clearTextDestination_}
             value={this.props.destination} />
         <FormTextField
             floatingLabelText="Stop for (e.g. lunch, coffee)..."
             id='Term'
             value={this.props.term}
-            onChange={this.handleTermChange_.bind(this)}
-            onClickCloseButton={this.clearTextTerm_.bind(this)} />
+            onChange={this.handleTermChange_}
+            onClickCloseButton={this.clearTextTerm_} />
 
         <FormSlider
             value={this.props.initialSliderValue}
-            onChange={this.handleSliderDragStop_.bind(this)} />
+            onChange={this.handleSliderDragStop_} />
         {/*<FormSlider startValue="Quality" endValue="Distance" /> */}
 
         <RaisedButton
             label="Go"
             primary={true}
-            onClick={this.handleClick_.bind(this)}
+            onClick={this.handleClick_}
             disabled={this.props.origin == '' || this.props.destination == ''} />
         <a className="yelp-image" href="https://www.yelp.com" target="_blank">
           <img src="https://s3-media2.fl.yelpcdn.com/assets/srv0/developer_pages/95212dafe621/assets/img/yelp-2c.png" />
@@ -469,33 +465,33 @@ const FormSlider = (props) => (
 );
 
 class OnboardingComponent extends React.Component {
-  handleOnboarding1_() {
+  handleOnboarding1_ = () => {
     this.props.onOnboardingSelection({
       origin: 'San Francisco, CA, USA',
       destination: 'Los Angeles, CA, USA',
       stopFractionInTrip: 0.5,
       term: 'lunch',
     });
-  }
+  };
 
-  handleOnboarding2_() {
+  handleOnboarding2_ = () => {
     this.props.onOnboardingSelection({
       origin: 'New York City, NY, USA',
       destination: 'Boston, MA, USA',
       stopFractionInTrip: 0.2,
       term: 'coffee',
     });
-  }
+  };
 
   render() {
     return (
       <div className="onboarding-container">
         <OnboardingCard image="images/lunch.jpg" title="SF to LA"
             subtitle="Stop for lunch midway"
-            onClick={this.handleOnboarding1_.bind(this)} />
+            onClick={this.handleOnboarding1_} />
         <OnboardingCard image="images/coffee.jpg" title="NYC to Boston" 
             subtitle="Grab coffee towards the start"
-            onClick={this.handleOnboarding2_.bind(this)} />
+            onClick={this.handleOnboarding2_} />
       </div>
     )
   }
@@ -511,24 +507,24 @@ const OnboardingCard = (props) => (
 );
 
 class ResultsComponent extends React.Component {
-  handleRowSelection_(selectedRows) {
+  handleRowSelection_ = (selectedRows) => {
     if (selectedRows.length > 0) {
       this.props.onRowSelection(selectedRows[0]);
     }
-  }
+  };
 
-  handleRowHover_(rowNumber) {
+  handleRowHover_ = (rowNumber) => {
     this.props.onRowHover(rowNumber);
-  }
+  };
 
   /**
   * Called when a business link is clicked, to open the Yelp business page.
   * @param {!Object} event
   */
-  handleLinkClick_(event) {
+  handleLinkClick_ = (event) => {
     // Prevent bubbling up, so that the row is not selected.
     event.stopPropagation();
-  }
+  };
 
   render() {
     const resultsClass = this.props.isLoading ?
@@ -544,9 +540,9 @@ class ResultsComponent extends React.Component {
               style={{display: 'block', margin: '0 auto'}} />}
 
         <Table
-            onRowHover={this.handleRowHover_.bind(this)}
-            onRowHoverExit={this.props.onRowHoverExit.bind(this)} 
-            onRowSelection={this.handleRowSelection_.bind(this)}
+            onRowHover={this.handleRowHover_}
+            onRowHoverExit={this.props.onRowHoverExit} 
+            onRowSelection={this.handleRowSelection_}
             className="results-table">
 
           {this.props.results.length > 0 &&
@@ -579,7 +575,7 @@ class ResultsComponent extends React.Component {
                     selected={index == this.props.selectedResultIndex}>
                   <TableRowColumn style={{paddingLeft: '12px', paddingRight: '12px'}}>
                     <a href={result.url} target="_blank"
-                        onClick={this.handleLinkClick_.bind(this)}>
+                        onClick={this.handleLinkClick_}>
                       {result.name}
                     </a>
                   </TableRowColumn>
