@@ -49,6 +49,8 @@
 
 	'use strict';
 	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
 	var _AppBar = __webpack_require__(/*! material-ui/AppBar */ 1);
 	
 	var _AppBar2 = _interopRequireDefault(_AppBar);
@@ -113,6 +115,12 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
 	// Needed for onTouchTap 
 	// http://stackoverflow.com/a/34015469/988941 
 	(0, _reactTapEventPlugin2.default)();
@@ -142,10 +150,15 @@
 	  );
 	};
 	
-	var RoadtripComponent = _react2.default.createClass({
-	  displayName: 'RoadtripComponent',
-	  getInitialState: function getInitialState() {
-	    return {
+	var RoadtripComponent = function (_React$Component) {
+	  _inherits(RoadtripComponent, _React$Component);
+	
+	  function RoadtripComponent(props) {
+	    _classCallCheck(this, RoadtripComponent);
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RoadtripComponent).call(this, props));
+	
+	    _this.state = {
 	      origin: '',
 	      destination: '',
 	      term: '',
@@ -158,334 +171,419 @@
 	
 	      mapMode: false, // Whether the component is in map mode, for mobile screens.
 	      isLoading: false };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.initializeMapsAutocomplete_();
-	    this.initializeMap_();
-	  },
-	  initializeMap_: function initializeMap_() {
-	    directionsDisplay = new google.maps.DirectionsRenderer();
-	    var nycCoord = new google.maps.LatLng(40.7128, -74.0060);
-	    var options = {
-	      zoom: 7,
-	      center: nycCoord
-	    };
-	    map = new google.maps.Map(document.getElementById('map'), options);
-	    directionsDisplay.setMap(map);
-	  },
-	  initializeMapsAutocomplete_: function initializeMapsAutocomplete_() {
-	    var _this = this;
+	    return _this;
+	  }
 	
-	    var options = {
-	      placeIdOnly: true
-	    };
-	
-	    var /** @type {!HTMLInputElement} */startDestTextField = document.getElementById(TEXT_FIELD_START_DEST);
-	    var autocompleteStartDest = new google.maps.places.Autocomplete(startDestTextField, options);
-	    autocompleteStartDest.addListener('place_changed', function () {
-	      _this.handleChange_({
-	        origin: autocompleteStartDest.getPlace()['name']
-	      });
-	    });
-	
-	    var /** @type {!HTMLInputElement} */finalDestTextField = document.getElementById(TEXT_FIELD_FINAL_DEST);
-	    var autocompleteFinalDest = new google.maps.places.Autocomplete(finalDestTextField, options);
-	    autocompleteFinalDest.addListener('place_changed', function () {
-	      _this.handleChange_({
-	        destination: autocompleteFinalDest.getPlace()['name']
-	      });
-	    });
-	  },
-	  handleChange_: function handleChange_(data) {
-	    this.setState(data);
-	  },
-	
-	
-	  /**
-	   * Updates the map with the current origin and destination state,
-	   * and makes a Yelp API call to update the waypoints.
-	   */
-	  updateMap_: function updateMap_() {
-	    var _this2 = this;
-	
-	    this.setState({
-	      isLoading: true,
-	      mapMode: true
-	    });
-	
-	    this.clearLocationMarker_();
-	    this.clearSelectedResultIndex_();
-	
-	    var request = {
-	      origin: this.state.origin,
-	      destination: this.state.destination,
-	      travelMode: 'DRIVING'
-	    };
-	    var displayDirectionsFn = function displayDirectionsFn(result, status) {
-	      if (status == 'OK') {
-	        (function () {
-	          var pathCoordinates = result.routes[0].overview_path;
-	          var indexInTrip = Math.round((pathCoordinates.length - 1) * _this2.state.stopFractionInTrip);
-	          var stopCooordinates = pathCoordinates[indexInTrip];
-	          directionsDisplay.setDirections(result);
-	
-	          _this2.setState({
-	            tripTimeSec: result.routes[0].legs[0].duration.value
-	          }, function () {
-	            // Trigger 'resize' event after displaying map on small screens,
-	            // so directions render correctly.
-	            google.maps.event.trigger(map, 'resize');
-	
-	            _this2.getStopsListFromYelp_(stopCooordinates.lat(), stopCooordinates.lng());
-	          });
-	        })();
-	      }
-	      // TODO: Handle error statuses.
-	    };
-	
-	    // Get the directions and then execute displayDirectionsFn.
-	    directionsService.route(request, displayDirectionsFn);
-	  },
-	  updateDirectionsLink_: function updateDirectionsLink_() {
-	    var startAddress = encodeURIComponent(this.state.origin);
-	    var destAddress = encodeURIComponent(this.state.destination);
-	    var waypoint = this.state.results[this.state.selectedResultIndex];
-	    if (waypoint) {
-	      var waypointAddress = encodeURIComponent(waypoint.name + ',' + waypoint.location.address + ',' + waypoint.location.city + ',' + waypoint.location.country_code);
-	      this.state.directionsLink = 'http://maps.google.com/maps/dir/' + startAddress + '/' + waypointAddress + '/' + destAddress;
-	    } else {
-	      this.state.directionsLink = 'http://maps.google.com/maps/dir/' + startAddress + '/' + destAddress;
+	  _createClass(RoadtripComponent, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.initializeMapsAutocomplete_();
+	      this.initializeMap_();
 	    }
-	  },
-	  updateWaypoint_: function updateWaypoint_(selectedResultIndex) {
-	    var _this3 = this;
+	  }, {
+	    key: 'initializeMap_',
+	    value: function initializeMap_() {
+	      directionsDisplay = new google.maps.DirectionsRenderer();
+	      var nycCoord = new google.maps.LatLng(40.7128, -74.0060);
+	      var options = {
+	        zoom: 7,
+	        center: nycCoord
+	      };
+	      map = new google.maps.Map(document.getElementById('map'), options);
+	      directionsDisplay.setMap(map);
+	    }
+	  }, {
+	    key: 'initializeMapsAutocomplete_',
+	    value: function initializeMapsAutocomplete_() {
+	      var _this2 = this;
 	
-	    this.setState({ selectedResultIndex: selectedResultIndex }, function () {
-	      var businessCoordinate = _this3.state.results[_this3.state.selectedResultIndex].location.coordinate;
-	      var latLng = new google.maps.LatLng(businessCoordinate.latitude, businessCoordinate.longitude);
+	      var options = {
+	        placeIdOnly: true
+	      };
+	
+	      var /** @type {!HTMLInputElement} */startDestTextField = document.getElementById(TEXT_FIELD_START_DEST);
+	      var autocompleteStartDest = new google.maps.places.Autocomplete(startDestTextField, options);
+	      autocompleteStartDest.addListener('place_changed', function () {
+	        _this2.handleChange_({
+	          origin: autocompleteStartDest.getPlace()['name']
+	        });
+	      });
+	
+	      var /** @type {!HTMLInputElement} */finalDestTextField = document.getElementById(TEXT_FIELD_FINAL_DEST);
+	      var autocompleteFinalDest = new google.maps.places.Autocomplete(finalDestTextField, options);
+	      autocompleteFinalDest.addListener('place_changed', function () {
+	        _this2.handleChange_({
+	          destination: autocompleteFinalDest.getPlace()['name']
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'handleChange_',
+	    value: function handleChange_(data) {
+	      this.setState(data);
+	    }
+	
+	    /**
+	     * Updates the map with the current origin and destination state,
+	     * and makes a Yelp API call to update the waypoints.
+	     */
+	
+	  }, {
+	    key: 'updateMap_',
+	    value: function updateMap_() {
+	      var _this3 = this;
+	
+	      this.setState({
+	        isLoading: true,
+	        mapMode: true
+	      });
+	
+	      this.clearLocationMarker_();
+	      this.clearSelectedResultIndex_();
+	
 	      var request = {
-	        origin: _this3.state.origin,
-	        destination: _this3.state.destination,
-	        waypoints: [{ location: latLng }],
+	        origin: this.state.origin,
+	        destination: this.state.destination,
 	        travelMode: 'DRIVING'
 	      };
 	      var displayDirectionsFn = function displayDirectionsFn(result, status) {
 	        if (status == 'OK') {
-	          var pathCoordinates = result.routes[0].overview_path;
-	          var stopCooordinates = pathCoordinates[Math.round(pathCoordinates.length / 2)];
-	          directionsDisplay.setDirections(result);
+	          (function () {
+	            var pathCoordinates = result.routes[0].overview_path;
+	            var indexInTrip = Math.round((pathCoordinates.length - 1) * _this3.state.stopFractionInTrip);
+	            var stopCooordinates = pathCoordinates[indexInTrip];
+	            directionsDisplay.setDirections(result);
+	
+	            _this3.setState({
+	              tripTimeSec: result.routes[0].legs[0].duration.value
+	            }, function () {
+	              // Trigger 'resize' event after displaying map on small screens,
+	              // so directions render correctly.
+	              google.maps.event.trigger(map, 'resize');
+	
+	              _this3.getStopsListFromYelp_(stopCooordinates.lat(), stopCooordinates.lng());
+	            });
+	          })();
 	        }
 	        // TODO: Handle error statuses.
 	      };
 	
+	      // Get the directions and then execute displayDirectionsFn.
 	      directionsService.route(request, displayDirectionsFn);
-	    });
-	  },
-	  updateLocationMarker_: function updateLocationMarker_(resultIndex) {
-	    this.clearLocationMarker_();
-	
-	    // Get the latitude and longitude of the result.
-	    var business = this.state.results[resultIndex];
-	    locationMarker = new google.maps.Marker({
-	      position: new google.maps.LatLng(business.location.coordinate.latitude, business.location.coordinate.longitude),
-	      map: map
-	    });
-	  },
-	  clearLocationMarker_: function clearLocationMarker_() {
-	    if (locationMarker) {
-	      locationMarker.setMap(null);
 	    }
-	  },
-	  clearSelectedResultIndex_: function clearSelectedResultIndex_() {
-	    this.setState({ selectedResultIndex: -1 });
-	  },
-	
-	
-	  /**
-	   * @param {number} latitude
-	   * @param {number} longitude
-	   */
-	  getStopsListFromYelp_: function getStopsListFromYelp_(latitude, longitude) {
-	    var _this4 = this;
-	
-	    $.ajax({
-	      context: this,
-	      type: 'POST',
-	      url: '/yelp',
-	      data: { term: this.state.term, latitude: latitude, longitude: longitude },
-	      success: function success(yelpResults) {
-	        var businesses = yelpResults.businesses;
-	        var midpoints = businesses.map(function (result) {
-	          return {
-	            lat: result.location.coordinate.latitude,
-	            lng: result.location.coordinate.longitude
-	          };
-	        });
-	        var originToMidpointsDists = _this4.getDirectionsMatrix_([_this4.state.origin], midpoints);
-	        var midpointsToDestDists = _this4.getDirectionsMatrix_(midpoints, [_this4.state.destination]);
-	        Promise.all([originToMidpointsDists, midpointsToDestDists]).then(function (responses) {
-	          var legATimes = responses[0].rows[0].elements;
-	          var legBTimes = responses[1].rows.map(function (row) {
-	            return row.elements[0];
-	          });
-	
-	          businesses.forEach(function (business, index) {
-	            var totalTripTimeSec = legATimes[index].duration.value + legBTimes[index].duration.value;
-	            business['min_added'] = Math.round((totalTripTimeSec - _this4.state.tripTimeSec) / 60);
-	          });
-	
-	          _this4.setState({
-	            results: yelpResults.businesses,
-	            isLoading: false
-	          });
-	        });
+	  }, {
+	    key: 'updateDirectionsLink_',
+	    value: function updateDirectionsLink_() {
+	      var startAddress = encodeURIComponent(this.state.origin);
+	      var destAddress = encodeURIComponent(this.state.destination);
+	      var waypoint = this.state.results[this.state.selectedResultIndex];
+	      if (waypoint) {
+	        var waypointAddress = encodeURIComponent(waypoint.name + ',' + waypoint.location.address + ',' + waypoint.location.city + ',' + waypoint.location.country_code);
+	        this.state.directionsLink = 'http://maps.google.com/maps/dir/' + startAddress + '/' + waypointAddress + '/' + destAddress;
+	      } else {
+	        this.state.directionsLink = 'http://maps.google.com/maps/dir/' + startAddress + '/' + destAddress;
 	      }
-	    });
-	  },
+	    }
+	  }, {
+	    key: 'updateWaypoint_',
+	    value: function updateWaypoint_(selectedResultIndex) {
+	      var _this4 = this;
 	
+	      this.setState({ selectedResultIndex: selectedResultIndex }, function () {
+	        var businessCoordinate = _this4.state.results[_this4.state.selectedResultIndex].location.coordinate;
+	        var latLng = new google.maps.LatLng(businessCoordinate.latitude, businessCoordinate.longitude);
+	        var request = {
+	          origin: _this4.state.origin,
+	          destination: _this4.state.destination,
+	          waypoints: [{ location: latLng }],
+	          travelMode: 'DRIVING'
+	        };
+	        var displayDirectionsFn = function displayDirectionsFn(result, status) {
+	          if (status == 'OK') {
+	            var pathCoordinates = result.routes[0].overview_path;
+	            var stopCooordinates = pathCoordinates[Math.round(pathCoordinates.length / 2)];
+	            directionsDisplay.setDirections(result);
+	          }
+	          // TODO: Handle error statuses.
+	        };
 	
-	  /**
-	   * Makes a request via Google Maps Directions Matrix API.
-	   * or rejects if the request fails.
-	   * @param {!Array<string|!Object>} origins
-	   * @param {!Array<string|!Object>} destinations
-	   * @return {!Promise} Promise that resolves with the successful response,
-	   *    or rejects if the request fails.
-	   */
-	  getDirectionsMatrix_: function getDirectionsMatrix_(origins, destinations) {
-	    var promise = new Promise(function (resolve, reject) {
-	      distanceMatrixService.getDistanceMatrix({
-	        origins: origins,
-	        destinations: destinations,
-	        travelMode: google.maps.DirectionsTravelMode.DRIVING
-	      }, function (response, status) {
-	        if (status == 'OK') {
-	          resolve(response);
-	        } else {
-	          reject('Directions matrix request failed.');
+	        directionsService.route(request, displayDirectionsFn);
+	      });
+	    }
+	  }, {
+	    key: 'updateLocationMarker_',
+	    value: function updateLocationMarker_(resultIndex) {
+	      this.clearLocationMarker_();
+	
+	      // Get the latitude and longitude of the result.
+	      var business = this.state.results[resultIndex];
+	      locationMarker = new google.maps.Marker({
+	        position: new google.maps.LatLng(business.location.coordinate.latitude, business.location.coordinate.longitude),
+	        map: map
+	      });
+	    }
+	  }, {
+	    key: 'clearLocationMarker_',
+	    value: function clearLocationMarker_() {
+	      if (locationMarker) {
+	        locationMarker.setMap(null);
+	      }
+	    }
+	  }, {
+	    key: 'clearSelectedResultIndex_',
+	    value: function clearSelectedResultIndex_() {
+	      this.setState({ selectedResultIndex: -1 });
+	    }
+	
+	    /**
+	     * @param {number} latitude
+	     * @param {number} longitude
+	     */
+	
+	  }, {
+	    key: 'getStopsListFromYelp_',
+	    value: function getStopsListFromYelp_(latitude, longitude) {
+	      var _this5 = this;
+	
+	      $.ajax({
+	        context: this,
+	        type: 'POST',
+	        url: '/yelp',
+	        data: { term: this.state.term, latitude: latitude, longitude: longitude },
+	        success: function success(yelpResults) {
+	          var businesses = yelpResults.businesses;
+	          var midpoints = businesses.map(function (result) {
+	            return {
+	              lat: result.location.coordinate.latitude,
+	              lng: result.location.coordinate.longitude
+	            };
+	          });
+	          var originToMidpointsDists = _this5.getDirectionsMatrix_([_this5.state.origin], midpoints);
+	          var midpointsToDestDists = _this5.getDirectionsMatrix_(midpoints, [_this5.state.destination]);
+	          Promise.all([originToMidpointsDists, midpointsToDestDists]).then(function (responses) {
+	            var legATimes = responses[0].rows[0].elements;
+	            var legBTimes = responses[1].rows.map(function (row) {
+	              return row.elements[0];
+	            });
+	
+	            businesses.forEach(function (business, index) {
+	              var totalTripTimeSec = legATimes[index].duration.value + legBTimes[index].duration.value;
+	              business['min_added'] = Math.round((totalTripTimeSec - _this5.state.tripTimeSec) / 60);
+	            });
+	
+	            _this5.setState({
+	              results: yelpResults.businesses,
+	              isLoading: false
+	            });
+	          });
 	        }
 	      });
-	    });
-	
-	    return promise;
-	  },
-	
-	
-	  // TODO: Investigate just making this an href?
-	  onDirectionsButtonClick_: function onDirectionsButtonClick_() {
-	    this.updateDirectionsLink_();
-	    var win = window.open(this.state.directionsLink, '_blank');
-	    if (win) {
-	      win.focus();
-	    } else {
-	      alert('Please disable your popup blocker to view the directions.');
 	    }
-	  },
-	  onBackButtonClick_: function onBackButtonClick_() {
-	    this.setState({
-	      mapMode: false
-	    });
-	  },
-	  render: function render() {
-	    var containerClassName = this.state.mapMode ? 'container map-mode' : 'container';
-	    return _react2.default.createElement(
-	      'div',
-	      { className: containerClassName },
-	      _react2.default.createElement(
+	
+	    /**
+	     * Makes a request via Google Maps Directions Matrix API.
+	     * or rejects if the request fails.
+	     * @param {!Array<string|!Object>} origins
+	     * @param {!Array<string|!Object>} destinations
+	     * @return {!Promise} Promise that resolves with the successful response,
+	     *    or rejects if the request fails.
+	     */
+	
+	  }, {
+	    key: 'getDirectionsMatrix_',
+	    value: function getDirectionsMatrix_(origins, destinations) {
+	      var promise = new Promise(function (resolve, reject) {
+	        distanceMatrixService.getDistanceMatrix({
+	          origins: origins,
+	          destinations: destinations,
+	          travelMode: google.maps.DirectionsTravelMode.DRIVING
+	        }, function (response, status) {
+	          if (status == 'OK') {
+	            resolve(response);
+	          } else {
+	            reject('Directions matrix request failed.');
+	          }
+	        });
+	      });
+	
+	      return promise;
+	    }
+	
+	    // TODO: Investigate just making this an href?
+	
+	  }, {
+	    key: 'onDirectionsButtonClick_',
+	    value: function onDirectionsButtonClick_() {
+	      this.updateDirectionsLink_();
+	      var win = window.open(this.state.directionsLink, '_blank');
+	      if (win) {
+	        win.focus();
+	      } else {
+	        alert('Please disable your popup blocker to view the directions.');
+	      }
+	    }
+	  }, {
+	    key: 'onBackButtonClick_',
+	    value: function onBackButtonClick_() {
+	      this.setState({
+	        mapMode: false
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var containerClassName = this.state.mapMode ? 'container map-mode' : 'container';
+	      return _react2.default.createElement(
 	        'div',
-	        { className: 'app-title' },
-	        _react2.default.createElement(
-	          'span',
-	          null,
-	          'Enroute'
-	        )
-	      ),
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'content' },
+	        { className: containerClassName },
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'form-map-container' },
-	          _react2.default.createElement(FormComponent, { onSubmit: this.updateMap_,
-	            onChange: this.handleChange_,
-	            initialSliderValue: this.state.stopFractionInTrip,
-	            origin: this.state.origin, destination: this.state.destination,
-	            term: this.state.term }),
-	          _react2.default.createElement(MapComponent, { onDirectionsClick: this.onDirectionsButtonClick_,
-	            onBackButtonClick: this.onBackButtonClick_,
-	            disabled: !this.state.origin || !this.state.destination })
+	          { className: 'app-title' },
+	          _react2.default.createElement(
+	            'span',
+	            null,
+	            'Enroute'
+	          )
 	        ),
-	        _react2.default.createElement(ResultsComponent, { onRowSelection: this.updateWaypoint_,
-	          onRowHoverExit: this.clearLocationMarker_,
-	          onRowHover: this.updateLocationMarker_,
-	          results: this.state.results,
-	          isLoading: this.state.isLoading,
-	          selectedResultIndex: this.state.selectedResultIndex,
-	          tripTimeSec: this.state.tripTimeSec,
-	          onOnboardingSelection: this.handleChange_ })
-	      )
-	    );
-	  }
-	});
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'content' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'form-map-container' },
+	            _react2.default.createElement(FormComponent, {
+	              onSubmit: this.updateMap_.bind(this),
+	              onChange: this.handleChange_.bind(this),
+	              initialSliderValue: this.state.stopFractionInTrip,
+	              origin: this.state.origin,
+	              destination: this.state.destination,
+	              term: this.state.term }),
+	            _react2.default.createElement(MapComponent, {
+	              onDirectionsClick: this.onDirectionsButtonClick_.bind(this),
+	              onBackButtonClick: this.onBackButtonClick_.bind(this),
+	              disabled: !this.state.origin || !this.state.destination })
+	          ),
+	          _react2.default.createElement(ResultsComponent, {
+	            onRowSelection: this.updateWaypoint_.bind(this),
+	            onRowHoverExit: this.clearLocationMarker_.bind(this),
+	            onRowHover: this.updateLocationMarker_.bind(this),
+	            results: this.state.results,
+	            isLoading: this.state.isLoading,
+	            selectedResultIndex: this.state.selectedResultIndex,
+	            tripTimeSec: this.state.tripTimeSec,
+	            onOnboardingSelection: this.handleChange_.bind(this) })
+	        )
+	      );
+	    }
+	  }]);
 	
-	var FormComponent = _react2.default.createClass({
-	  displayName: 'FormComponent',
+	  return RoadtripComponent;
+	}(_react2.default.Component);
 	
-	  // TODO: Refactor, DRY!
-	  handleOriginChange_: function handleOriginChange_(e) {
-	    this.props.onChange({ origin: e.target.value });
-	  },
-	  handleDestinationChange_: function handleDestinationChange_(e) {
-	    this.props.onChange({ destination: e.target.value });
-	  },
-	  handleTermChange_: function handleTermChange_(e) {
-	    this.props.onChange({ term: e.target.value });
-	  },
-	  handleSliderDragStop_: function handleSliderDragStop_(e, value) {
-	    this.props.onChange({ stopFractionInTrip: value });
-	  },
-	  handleClick_: function handleClick_() {
-	    this.props.onSubmit();
-	  },
-	  clearTextOrigin_: function clearTextOrigin_() {
-	    this.props.onChange({ origin: '' });
-	  },
-	  clearTextDestination_: function clearTextDestination_() {
-	    this.props.onChange({ destination: '' });
-	  },
-	  clearTextTerm_: function clearTextTerm_() {
-	    this.props.onChange({ term: '' });
-	  },
-	  render: function render() {
-	    return _react2.default.createElement(
-	      'form',
-	      { className: 'form-container' },
-	      _react2.default.createElement(FormTextField, { floatingLabelText: 'Start Location',
-	        id: TEXT_FIELD_START_DEST,
-	        onChange: this.handleOriginChange_,
-	        onClickCloseButton: this.clearTextOrigin_,
-	        value: this.props.origin }),
-	      _react2.default.createElement(FormTextField, { floatingLabelText: 'Final Destination',
-	        id: TEXT_FIELD_FINAL_DEST,
-	        onChange: this.handleDestinationChange_,
-	        onClickCloseButton: this.clearTextDestination_,
-	        value: this.props.destination }),
-	      _react2.default.createElement(FormTextField, { floatingLabelText: 'Stop for (e.g. lunch, coffee)...',
-	        id: 'Term', value: this.props.term,
-	        onChange: this.handleTermChange_,
-	        onClickCloseButton: this.clearTextTerm_ }),
-	      _react2.default.createElement(FormSlider, { value: this.props.initialSliderValue,
-	        onChange: this.handleSliderDragStop_ }),
-	      _react2.default.createElement(_RaisedButton2.default, { label: 'Go', primary: true, onClick: this.handleClick_,
-	        disabled: this.props.origin == '' || this.props.destination == '' }),
-	      _react2.default.createElement(
-	        'a',
-	        { className: 'yelp-image', href: 'https://www.yelp.com', target: '_blank' },
-	        _react2.default.createElement('img', { src: 'https://s3-media2.fl.yelpcdn.com/assets/srv0/developer_pages/95212dafe621/assets/img/yelp-2c.png' })
-	      )
-	    );
+	;
+	
+	// const AutocompleteComponent = React.createClass({
+	//   render() {
+	//     return ();
+	//   }
+	// });
+	
+	var FormComponent = function (_React$Component2) {
+	  _inherits(FormComponent, _React$Component2);
+	
+	  function FormComponent() {
+	    _classCallCheck(this, FormComponent);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(FormComponent).apply(this, arguments));
 	  }
-	});
+	
+	  _createClass(FormComponent, [{
+	    key: 'handleOriginChange_',
+	
+	    // TODO: Refactor, DRY!
+	    value: function handleOriginChange_(e) {
+	      this.props.onChange({ origin: e.target.value });
+	    }
+	  }, {
+	    key: 'handleDestinationChange_',
+	    value: function handleDestinationChange_(e) {
+	      this.props.onChange({ destination: e.target.value });
+	    }
+	  }, {
+	    key: 'handleTermChange_',
+	    value: function handleTermChange_(e) {
+	      this.props.onChange({ term: e.target.value });
+	    }
+	  }, {
+	    key: 'handleSliderDragStop_',
+	    value: function handleSliderDragStop_(e, value) {
+	      this.props.onChange({ stopFractionInTrip: value });
+	    }
+	  }, {
+	    key: 'handleClick_',
+	    value: function handleClick_() {
+	      this.props.onSubmit();
+	    }
+	  }, {
+	    key: 'clearTextOrigin_',
+	    value: function clearTextOrigin_() {
+	      this.props.onChange({ origin: '' });
+	    }
+	  }, {
+	    key: 'clearTextDestination_',
+	    value: function clearTextDestination_() {
+	      this.props.onChange({ destination: '' });
+	    }
+	  }, {
+	    key: 'clearTextTerm_',
+	    value: function clearTextTerm_() {
+	      this.props.onChange({ term: '' });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'form',
+	        { className: 'form-container' },
+	        _react2.default.createElement(FormTextField, {
+	          floatingLabelText: 'Start Location',
+	          id: TEXT_FIELD_START_DEST,
+	          onChange: this.handleOriginChange_.bind(this),
+	          onClickCloseButton: this.clearTextOrigin_.bind(this),
+	          value: this.props.origin }),
+	        _react2.default.createElement(FormTextField, {
+	          floatingLabelText: 'Final Destination',
+	          id: TEXT_FIELD_FINAL_DEST,
+	          onChange: this.handleDestinationChange_.bind(this),
+	          onClickCloseButton: this.clearTextDestination_.bind(this),
+	          value: this.props.destination }),
+	        _react2.default.createElement(FormTextField, {
+	          floatingLabelText: 'Stop for (e.g. lunch, coffee)...',
+	          id: 'Term',
+	          value: this.props.term,
+	          onChange: this.handleTermChange_.bind(this),
+	          onClickCloseButton: this.clearTextTerm_.bind(this) }),
+	        _react2.default.createElement(FormSlider, {
+	          value: this.props.initialSliderValue,
+	          onChange: this.handleSliderDragStop_.bind(this) }),
+	        _react2.default.createElement(_RaisedButton2.default, {
+	          label: 'Go',
+	          primary: true,
+	          onClick: this.handleClick_.bind(this),
+	          disabled: this.props.origin == '' || this.props.destination == '' }),
+	        _react2.default.createElement(
+	          'a',
+	          { className: 'yelp-image', href: 'https://www.yelp.com', target: '_blank' },
+	          _react2.default.createElement('img', { src: 'https://s3-media2.fl.yelpcdn.com/assets/srv0/developer_pages/95212dafe621/assets/img/yelp-2c.png' })
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return FormComponent;
+	}(_react2.default.Component);
+	
+	;
 	
 	/** Text field with customized styling. */
 	var FormTextField = function FormTextField(props) {
@@ -542,37 +640,55 @@
 	  );
 	};
 	
-	var OnboardingComponent = _react2.default.createClass({
-	  displayName: 'OnboardingComponent',
-	  handleOnboarding1_: function handleOnboarding1_() {
-	    this.props.onOnboardingSelection({
-	      origin: 'San Francisco, CA, USA',
-	      destination: 'Los Angeles, CA, USA',
-	      stopFractionInTrip: 0.5,
-	      term: 'lunch'
-	    });
-	  },
-	  handleOnboarding2_: function handleOnboarding2_() {
-	    this.props.onOnboardingSelection({
-	      origin: 'New York City, NY, USA',
-	      destination: 'Boston, MA, USA',
-	      stopFractionInTrip: 0.2,
-	      term: 'coffee'
-	    });
-	  },
-	  render: function render() {
-	    return _react2.default.createElement(
-	      'div',
-	      { className: 'onboarding-container' },
-	      _react2.default.createElement(OnboardingCard, { image: 'images/lunch.jpg', title: 'SF to LA',
-	        subtitle: 'Stop for lunch midway',
-	        onClick: this.handleOnboarding1_ }),
-	      _react2.default.createElement(OnboardingCard, { image: 'images/coffee.jpg', title: 'NYC to Boston',
-	        subtitle: 'Grab coffee towards the start',
-	        onClick: this.handleOnboarding2_ })
-	    );
+	var OnboardingComponent = function (_React$Component3) {
+	  _inherits(OnboardingComponent, _React$Component3);
+	
+	  function OnboardingComponent() {
+	    _classCallCheck(this, OnboardingComponent);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(OnboardingComponent).apply(this, arguments));
 	  }
-	});
+	
+	  _createClass(OnboardingComponent, [{
+	    key: 'handleOnboarding1_',
+	    value: function handleOnboarding1_() {
+	      this.props.onOnboardingSelection({
+	        origin: 'San Francisco, CA, USA',
+	        destination: 'Los Angeles, CA, USA',
+	        stopFractionInTrip: 0.5,
+	        term: 'lunch'
+	      });
+	    }
+	  }, {
+	    key: 'handleOnboarding2_',
+	    value: function handleOnboarding2_() {
+	      this.props.onOnboardingSelection({
+	        origin: 'New York City, NY, USA',
+	        destination: 'Boston, MA, USA',
+	        stopFractionInTrip: 0.2,
+	        term: 'coffee'
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'onboarding-container' },
+	        _react2.default.createElement(OnboardingCard, { image: 'images/lunch.jpg', title: 'SF to LA',
+	          subtitle: 'Stop for lunch midway',
+	          onClick: this.handleOnboarding1_.bind(this) }),
+	        _react2.default.createElement(OnboardingCard, { image: 'images/coffee.jpg', title: 'NYC to Boston',
+	          subtitle: 'Grab coffee towards the start',
+	          onClick: this.handleOnboarding2_.bind(this) })
+	      );
+	    }
+	  }]);
+	
+	  return OnboardingComponent;
+	}(_react2.default.Component);
+	
+	;
 	
 	var OnboardingCard = function OnboardingCard(props) {
 	  return _react2.default.createElement(
@@ -587,118 +703,140 @@
 	  );
 	};
 	
-	var ResultsComponent = _react2.default.createClass({
-	  displayName: 'ResultsComponent',
-	  handleRowSelection_: function handleRowSelection_(selectedRows) {
-	    if (selectedRows.length > 0) {
-	      this.props.onRowSelection(selectedRows[0]);
-	    }
-	  },
-	  handleRowHover_: function handleRowHover_(rowNumber) {
-	    this.props.onRowHover(rowNumber);
-	  },
+	var ResultsComponent = function (_React$Component4) {
+	  _inherits(ResultsComponent, _React$Component4);
 	
+	  function ResultsComponent() {
+	    _classCallCheck(this, ResultsComponent);
 	
-	  /**
-	  * Called when a business link is clicked, to open the Yelp business page.
-	  * @param {!Object} event
-	  */
-	  handleLinkClick_: function handleLinkClick_(event) {
-	    // Prevent bubbling up, so that the row is not selected.
-	    event.stopPropagation();
-	  },
-	  render: function render() {
-	    var _this5 = this;
-	
-	    var resultsClass = this.props.isLoading ? 'results-container loading' : 'results-container';
-	    return _react2.default.createElement(
-	      'div',
-	      { className: resultsClass },
-	      !this.props.isLoading && _react2.default.createElement(OnboardingComponent, {
-	        onOnboardingSelection: this.props.onOnboardingSelection }),
-	      this.props.isLoading && _react2.default.createElement(_CircularProgress2.default, { className: 'circular-progress',
-	        style: { display: 'block', margin: '0 auto' } }),
-	      _react2.default.createElement(
-	        _Table.Table,
-	        { onRowHover: this.handleRowHover_,
-	          onRowHoverExit: this.props.onRowHoverExit,
-	          onRowSelection: this.handleRowSelection_,
-	          className: 'results-table' },
-	        this.props.results.length > 0 && _react2.default.createElement(
-	          _Table.TableHeader,
-	          { adjustForCheckbox: false, displaySelectAll: false },
-	          _react2.default.createElement(
-	            _Table.TableRow,
-	            null,
-	            _react2.default.createElement(
-	              _Table.TableHeaderColumn,
-	              {
-	                style: { paddingLeft: '12px', paddingRight: '12px' },
-	                className: 'header-column' },
-	              'Name'
-	            ),
-	            _react2.default.createElement(
-	              _Table.TableHeaderColumn,
-	              { className: 'header-column',
-	                style: { paddingLeft: '12px', paddingRight: '12px' } },
-	              'Rating / # Reviews'
-	            ),
-	            _react2.default.createElement(
-	              _Table.TableHeaderColumn,
-	              { className: 'column-short header-column',
-	                style: { paddingLeft: '12px', paddingRight: '12px' } },
-	              'Time (from ',
-	              _react2.default.createElement(TimeFormatSpan, {
-	                timeInMin: Math.round(this.props.tripTimeSec / 60) }),
-	              ')'
-	            )
-	          )
-	        ),
-	        _react2.default.createElement(
-	          _Table.TableBody,
-	          { displayRowCheckbox: false,
-	            showRowHover: true,
-	            deselectOnClickaway: false },
-	          this.props.results.map(function (result, index) {
-	            return _react2.default.createElement(
-	              _Table.TableRow,
-	              { key: result.id, style: { cursor: 'pointer' },
-	                selected: index == _this5.props.selectedResultIndex },
-	              _react2.default.createElement(
-	                _Table.TableRowColumn,
-	                { style: { paddingLeft: '12px', paddingRight: '12px' } },
-	                _react2.default.createElement(
-	                  'a',
-	                  { href: result.url, target: '_blank',
-	                    onClick: _this5.handleLinkClick_ },
-	                  result.name
-	                )
-	              ),
-	              _react2.default.createElement(
-	                _Table.TableRowColumn,
-	                { style: { paddingLeft: '12px', paddingRight: '12px' } },
-	                _react2.default.createElement('img', { src: result.rating_img_url,
-	                  className: 'yelp-star-img',
-	                  style: { verticalAlign: 'middle' } }),
-	                ' ',
-	                '/',
-	                ' ',
-	                result.review_count
-	              ),
-	              _react2.default.createElement(
-	                _Table.TableRowColumn,
-	                { className: 'column-short',
-	                  style: { paddingLeft: '12px', paddingRight: '12px' } },
-	                '+',
-	                _react2.default.createElement(TimeFormatSpan, { timeInMin: result.min_added })
-	              )
-	            );
-	          })
-	        )
-	      )
-	    );
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(ResultsComponent).apply(this, arguments));
 	  }
-	});
+	
+	  _createClass(ResultsComponent, [{
+	    key: 'handleRowSelection_',
+	    value: function handleRowSelection_(selectedRows) {
+	      if (selectedRows.length > 0) {
+	        this.props.onRowSelection(selectedRows[0]);
+	      }
+	    }
+	  }, {
+	    key: 'handleRowHover_',
+	    value: function handleRowHover_(rowNumber) {
+	      this.props.onRowHover(rowNumber);
+	    }
+	
+	    /**
+	    * Called when a business link is clicked, to open the Yelp business page.
+	    * @param {!Object} event
+	    */
+	
+	  }, {
+	    key: 'handleLinkClick_',
+	    value: function handleLinkClick_(event) {
+	      // Prevent bubbling up, so that the row is not selected.
+	      event.stopPropagation();
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this9 = this;
+	
+	      var resultsClass = this.props.isLoading ? 'results-container loading' : 'results-container';
+	      return _react2.default.createElement(
+	        'div',
+	        { className: resultsClass },
+	        !this.props.isLoading && _react2.default.createElement(OnboardingComponent, {
+	          onOnboardingSelection: this.props.onOnboardingSelection }),
+	        this.props.isLoading && _react2.default.createElement(_CircularProgress2.default, { className: 'circular-progress',
+	          style: { display: 'block', margin: '0 auto' } }),
+	        _react2.default.createElement(
+	          _Table.Table,
+	          {
+	            onRowHover: this.handleRowHover_.bind(this),
+	            onRowHoverExit: this.props.onRowHoverExit.bind(this),
+	            onRowSelection: this.handleRowSelection_.bind(this),
+	            className: 'results-table' },
+	          this.props.results.length > 0 && _react2.default.createElement(
+	            _Table.TableHeader,
+	            { adjustForCheckbox: false, displaySelectAll: false },
+	            _react2.default.createElement(
+	              _Table.TableRow,
+	              null,
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                {
+	                  style: { paddingLeft: '12px', paddingRight: '12px' },
+	                  className: 'header-column' },
+	                'Name'
+	              ),
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                { className: 'header-column',
+	                  style: { paddingLeft: '12px', paddingRight: '12px' } },
+	                'Rating / # Reviews'
+	              ),
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                { className: 'column-short header-column',
+	                  style: { paddingLeft: '12px', paddingRight: '12px' } },
+	                'Time (from ',
+	                _react2.default.createElement(TimeFormatSpan, {
+	                  timeInMin: Math.round(this.props.tripTimeSec / 60) }),
+	                ')'
+	              )
+	            )
+	          ),
+	          _react2.default.createElement(
+	            _Table.TableBody,
+	            { displayRowCheckbox: false,
+	              showRowHover: true,
+	              deselectOnClickaway: false },
+	            this.props.results.map(function (result, index) {
+	              return _react2.default.createElement(
+	                _Table.TableRow,
+	                { key: result.id, style: { cursor: 'pointer' },
+	                  selected: index == _this9.props.selectedResultIndex },
+	                _react2.default.createElement(
+	                  _Table.TableRowColumn,
+	                  { style: { paddingLeft: '12px', paddingRight: '12px' } },
+	                  _react2.default.createElement(
+	                    'a',
+	                    { href: result.url, target: '_blank',
+	                      onClick: _this9.handleLinkClick_.bind(_this9) },
+	                    result.name
+	                  )
+	                ),
+	                _react2.default.createElement(
+	                  _Table.TableRowColumn,
+	                  {
+	                    style: { paddingLeft: '12px', paddingRight: '12px' } },
+	                  _react2.default.createElement('img', { src: result.rating_img_url,
+	                    className: 'yelp-star-img',
+	                    style: { verticalAlign: 'middle' } }),
+	                  ' ',
+	                  '/',
+	                  ' ',
+	                  result.review_count
+	                ),
+	                _react2.default.createElement(
+	                  _Table.TableRowColumn,
+	                  { className: 'column-short',
+	                    style: { paddingLeft: '12px', paddingRight: '12px' } },
+	                  '+',
+	                  _react2.default.createElement(TimeFormatSpan, { timeInMin: result.min_added })
+	                )
+	              );
+	            })
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return ResultsComponent;
+	}(_react2.default.Component);
+	
+	;
 	
 	var MapComponent = function MapComponent(props) {
 	  return _react2.default.createElement(
