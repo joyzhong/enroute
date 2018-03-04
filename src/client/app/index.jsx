@@ -1,4 +1,5 @@
 import AppBar from 'material-ui/AppBar';
+import AutoComplete from 'material-ui/AutoComplete';
 import CircularProgress from 'material-ui/CircularProgress';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
@@ -34,6 +35,7 @@ const muiTheme = getMuiTheme({
 let directionsDisplay;
 let map;
 let locationMarker;
+const autocompleteService = new google.maps.places.AutocompleteService();
 const directionsService = new google.maps.DirectionsService();
 const distanceMatrixService = new google.maps.DistanceMatrixService();
 
@@ -60,7 +62,6 @@ class RoadtripComponent extends React.Component {
   }
 
   componentDidMount() {
-    this.initializeMapsAutocomplete_();
     this.initializeMap_();
   }
 
@@ -73,32 +74,6 @@ class RoadtripComponent extends React.Component {
     }
     map = new google.maps.Map(document.getElementById('map'), options);
     directionsDisplay.setMap(map);
-  };
-
-  initializeMapsAutocomplete_ = () => {
-    const options = {
-      placeIdOnly: true,
-    };
-
-    const /** @type {!HTMLInputElement} */ startDestTextField =
-        (document.getElementById(TEXT_FIELD_START_DEST));
-    const autocompleteStartDest =
-        new google.maps.places.Autocomplete(startDestTextField, options);
-    autocompleteStartDest.addListener('place_changed', () => {
-      this.handleChange_({
-        origin: autocompleteStartDest.getPlace()['name'],
-      });
-    });
-
-    const /** @type {!HTMLInputElement} */ finalDestTextField =
-        (document.getElementById(TEXT_FIELD_FINAL_DEST));
-    const autocompleteFinalDest =
-        new google.maps.places.Autocomplete(finalDestTextField, options);
-    autocompleteFinalDest.addListener('place_changed', () => {
-      this.handleChange_({
-        destination: autocompleteFinalDest.getPlace()['name'],
-      });
-    });
   };
 
   handleChange_ = (data) => {
@@ -340,20 +315,9 @@ class RoadtripComponent extends React.Component {
   }
 };
 
-class AutocompleteComponent extends React.Component {
-  render() {
-    return (<div></div>);
-  }
-};
-
 class FormComponent extends React.Component {
-  // TODO: Refactor, DRY!
-  handleOriginChange_ = (e) => {
-    this.props.onChange({origin: e.target.value});
-  };
-
-  handleDestinationChange_ = (e) => {
-    this.props.onChange({destination: e.target.value});
+  handleChange_ = (state) => {
+    this.props.onChange(state);
   };
 
   handleTermChange_ = (e) => {
@@ -364,16 +328,8 @@ class FormComponent extends React.Component {
     this.props.onChange({stopFractionInTrip: value});
   };
 
-  handleClick_ = () => {
+  handleSearch_ = () => {
     this.props.onSubmit();
-  };
-
-  clearTextOrigin_ = () => {
-    this.props.onChange({origin: ''});
-  };
-
-  clearTextDestination_ = () => {
-    this.props.onChange({destination: ''});
   };
 
   clearTextTerm_ = () => {
@@ -383,17 +339,14 @@ class FormComponent extends React.Component {
   render() {
     return (
       <form className="form-container">
-        <FormTextField
-            floatingLabelText="Start Location" 
-            id={TEXT_FIELD_START_DEST}
-            onChange={this.handleOriginChange_}
-            onClickCloseButton={this.clearTextOrigin_}
+        <AutocompleteComponent
+            hintText="Start location"
+            isOrigin={true}
+            onChange={this.handleChange_}
             value={this.props.origin} />
-        <FormTextField
-            floatingLabelText="Final Destination"
-            id={TEXT_FIELD_FINAL_DEST}
-            onChange={this.handleDestinationChange_}
-            onClickCloseButton={this.clearTextDestination_}
+        <AutocompleteComponent
+            hintText="Final destination"
+            onChange={this.handleChange_}
             value={this.props.destination} />
         <FormTextField
             floatingLabelText="Stop for (e.g. lunch, coffee)..."
@@ -410,12 +363,94 @@ class FormComponent extends React.Component {
         <RaisedButton
             label="Go"
             primary={true}
-            onClick={this.handleClick_}
+            onClick={this.handleSearch_}
             disabled={this.props.origin == '' || this.props.destination == ''} />
         <a className="yelp-image" href="https://www.yelp.com" target="_blank">
           <img src="https://s3-media2.fl.yelpcdn.com/assets/srv0/developer_pages/95212dafe621/assets/img/yelp-2c.png" />
         </a>
       </form>
+    );
+  }
+};
+
+class AutocompleteComponent extends React.Component {
+  state = {
+    dataSource: [],
+  };
+
+  handleUpdateInput_ = (searchText) => {
+    this.updateTextInputState_(searchText);
+
+    if (!searchText) {
+      this.setState({
+        dataSource: [],
+      });
+      return;
+    }
+
+    autocompleteService.getPlacePredictions({
+      input: searchText,
+    },
+    (results) => {
+      const resultsForRender = results.map((result) => result.description);
+      this.setState({
+        dataSource: resultsForRender,
+      });
+    });
+  };
+
+  filterResults_ = () => {
+    // Don't filter results. Always use Google Places Autocomplete results.
+    return true;
+  };
+
+  handleSelectionChange_ = (selectionText, index) => {
+    if (index < 0) return;
+
+    this.updateTextInputState_(selectionText);
+  };
+
+
+  clearTextInputState_ = () => {
+    this.updateTextInputState_('');
+  };
+
+  /**
+   * Updates app origin or destination state based on text input.
+   */
+  updateTextInputState_ = (text) => {
+    const state =
+        this.props.isOrigin ? { origin: text } : { destination : text };
+    this.props.onChange(state);
+  };
+
+  render() {
+    return (
+      <div className="text-field-container">
+        <AutoComplete
+            dataSource={this.state.dataSource}
+            filter={this.filterResults_}
+            floatingLabelText={this.props.hintText}
+            fullWidth={true}
+            onNewRequest={this.handleSelectionChange_}
+            onUpdateInput={this.handleUpdateInput_}
+            searchText={this.props.value} />
+        {this.props.value &&
+          <IconButton className="text-field-close-button"
+              onClick={this.clearTextInputState_}
+              iconStyle={{ height: 18, width: 18 }}
+              style={{
+                bottom: 8,
+                height: 36,
+                position: 'absolute',
+                padding: 8,
+                right: 0,
+                width: 36
+              }}>
+            <CloseIcon className="text-field-close-icon" />
+          </IconButton>
+        }
+      </div>
     );
   }
 };
