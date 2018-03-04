@@ -576,16 +576,22 @@
 	    _this3.handleSelectionChange_ = function (dataSource, index) {
 	      if (index < 0) return;
 	      if (dataSource.isCurrentLocation) {
-	        navigator.geolocation.getCurrentPosition(function (position) {
-	          _this3.updateAutocompleteSelectionState_({
-	            currentLocation: {
-	              latitude: position.coords.latitude,
-	              longitude: position.coords.longitude
-	            }
-	          });
-	        }, function () {
-	          alert('Please enable location sharing in your browser.');
-	          _this3.clearTextInputState_();
+	        $.ajax({
+	          context: _this3,
+	          error: function error() {
+	            alert('Could not detect current location.');
+	            _this3.clearTextInputState_();
+	          },
+	          type: 'POST',
+	          url: 'https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyCW5ncOHTYAkqoTTN4Uu8rW2Vxgnxo82O4',
+	          success: function success(response) {
+	            _this3.updateAutocompleteSelectionState_({
+	              currentLocation: {
+	                latitude: response.location.lat,
+	                longitude: response.location.lng
+	              }
+	            });
+	          }
 	        });
 	
 	        return;
@@ -644,7 +650,6 @@
 	          fullWidth: true,
 	          inputStyle: {
 	            color: this.props.isCurrentLocation ? _colors.blueGrey600 : 'initial',
-	            fontWeight: this.props.isCurrentLocation ? 600 : 'initial',
 	            paddingRight: '36px'
 	          },
 	          maxSearchResults: 5,

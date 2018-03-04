@@ -463,16 +463,22 @@ class AutocompleteComponent extends React.Component {
   handleSelectionChange_ = (dataSource, index) => {
     if (index < 0) return;
     if (dataSource.isCurrentLocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        this.updateAutocompleteSelectionState_({
-          currentLocation: {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          },
-        });
-      }, () => {
-        alert('Please enable location sharing in your browser.');
-        this.clearTextInputState_();
+      $.ajax({
+        context: this,
+        error: () => {
+          alert('Could not detect current location.');
+          this.clearTextInputState_();
+        },
+        type: 'POST',
+        url: 'https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyCW5ncOHTYAkqoTTN4Uu8rW2Vxgnxo82O4', 
+        success: (response) => {
+          this.updateAutocompleteSelectionState_({
+            currentLocation: {
+              latitude: response.location.lat,
+              longitude: response.location.lng,
+            },
+          });
+        }
       });
 
       return;
@@ -522,7 +528,6 @@ class AutocompleteComponent extends React.Component {
             fullWidth={true}
             inputStyle={{
               color: this.props.isCurrentLocation ? blueGrey600 : 'initial',
-              fontWeight: this.props.isCurrentLocation ? 600 : 'initial',
               paddingRight: '36px',
             }}
             maxSearchResults={5}
