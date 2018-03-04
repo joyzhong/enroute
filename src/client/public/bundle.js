@@ -467,11 +467,13 @@
 	        { className: 'form-container' },
 	        _react2.default.createElement(AutocompleteComponent, {
 	          hintText: 'Start location',
+	          isCurrentLocation: _typeof(this.props.origin) === 'object',
 	          isOrigin: true,
 	          onChange: this.handleChange_,
 	          value: _typeof(this.props.origin) === 'object' ? 'Current Location' : this.props.origin }),
 	        _react2.default.createElement(AutocompleteComponent, {
 	          hintText: 'Final destination',
+	          isCurrentLocation: _typeof(this.props.destination) === 'object',
 	          onChange: this.handleChange_,
 	          value: _typeof(this.props.destination) === 'object' ? 'Current Location' : this.props.destination }),
 	        _react2.default.createElement(FormTextField, {
@@ -541,7 +543,7 @@
 	    _this3.getEmptyDataSourceList_ = function () {
 	      return [{
 	        isCurrentLocation: true,
-	        text: 'Current Location',
+	        text: '',
 	        value: _react2.default.createElement(_Menu.MenuItem, {
 	          rightIcon: _react2.default.createElement(_nearMe2.default, { style: {
 	              fill: _colors.blueGrey600,
@@ -582,6 +584,7 @@
 	            }
 	          });
 	        }, function () {
+	          alert('Please enable location sharing in your browser.');
 	          _this3.clearTextInputState_();
 	        });
 	
@@ -639,7 +642,11 @@
 	          filter: this.filterResults_,
 	          floatingLabelText: this.props.hintText,
 	          fullWidth: true,
-	          inputStyle: { paddingRight: '36px' },
+	          inputStyle: {
+	            color: this.props.isCurrentLocation ? _colors.blueGrey600 : 'initial',
+	            fontWeight: this.props.isCurrentLocation ? 600 : 'initial',
+	            paddingRight: '36px'
+	          },
 	          maxSearchResults: 5,
 	          onNewRequest: this.handleSelectionChange_,
 	          onUpdateInput: this.handleUpdateInput_,

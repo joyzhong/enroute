@@ -343,12 +343,14 @@ class FormComponent extends React.Component {
       <form className="form-container">
         <AutocompleteComponent
             hintText="Start location"
+            isCurrentLocation={typeof this.props.origin === 'object'}
             isOrigin={true}
             onChange={this.handleChange_}
             value={typeof this.props.origin === 'object' ?
                 'Current Location' : this.props.origin} />
         <AutocompleteComponent
             hintText="Final destination"
+            isCurrentLocation={typeof this.props.destination === 'object'}
             onChange={this.handleChange_}
             value={typeof this.props.destination === 'object' ?
                 'Current Location' : this.props.destination} />
@@ -419,7 +421,7 @@ class AutocompleteComponent extends React.Component {
   getEmptyDataSourceList_ = () => {
     return [{
       isCurrentLocation: true,
-      text: 'Current Location',
+      text: '',
       value: (
         <MenuItem
             rightIcon={
@@ -469,6 +471,7 @@ class AutocompleteComponent extends React.Component {
           },
         });
       }, () => {
+        alert('Please enable location sharing in your browser.');
         this.clearTextInputState_();
       });
 
@@ -517,7 +520,11 @@ class AutocompleteComponent extends React.Component {
             filter={this.filterResults_}
             floatingLabelText={this.props.hintText}
             fullWidth={true}
-            inputStyle={{ paddingRight: '36px' }}
+            inputStyle={{
+              color: this.props.isCurrentLocation ? blueGrey600 : 'initial',
+              fontWeight: this.props.isCurrentLocation ? 600 : 'initial',
+              paddingRight: '36px',
+            }}
             maxSearchResults={5}
             onNewRequest={this.handleSelectionChange_}
             onUpdateInput={this.handleUpdateInput_}
