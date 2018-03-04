@@ -4,6 +4,7 @@
   "description": "Lists best stops along a route.",
   "main": "index.js",
   "scripts": {
+    "concurrently": "concurrently",
     "webpack-watch": "webpack -d --watch",
     "express-server": "node ./server",
     "dev": "concurrently --kill-others \"npm run webpack-watch\" \"npm run express-server\"",
