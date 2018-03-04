@@ -386,6 +386,8 @@ class AutocompleteComponent extends React.Component {
     this.state = {
       dataSource: this.getEmptyDataSourceList_(),
     };
+
+    this.MAX_RESULTS = 5;
   }
 
   handleUpdateInput_ = (searchText) => {
@@ -413,7 +415,9 @@ class AutocompleteComponent extends React.Component {
         };
       });
       const finalResults =
-          this.getEmptyDataSourceList_().concat(dataSourceResults);
+          dataSourceResults
+              .slice(0, this.MAX_RESULTS - 1)
+              .concat(this.getEmptyDataSourceList_());
       this.setState({ dataSource: finalResults });
     });
   };
@@ -451,6 +455,9 @@ class AutocompleteComponent extends React.Component {
           primaryText={text}
           style={{
             fontSize: '14px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
           }} />
     );
   };
@@ -530,7 +537,7 @@ class AutocompleteComponent extends React.Component {
               color: this.props.isCurrentLocation ? blueGrey600 : 'initial',
               paddingRight: '36px',
             }}
-            maxSearchResults={5}
+            maxSearchResults={this.MAX_RESULTS}
             onNewRequest={this.handleSelectionChange_}
             onUpdateInput={this.handleUpdateInput_}
             openOnFocus={true}

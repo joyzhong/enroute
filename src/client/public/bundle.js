@@ -535,7 +535,7 @@
 	            value: _this3.getDataSourceNode_(result.description)
 	          };
 	        });
-	        var finalResults = _this3.getEmptyDataSourceList_().concat(dataSourceResults);
+	        var finalResults = dataSourceResults.slice(0, _this3.MAX_RESULTS - 1).concat(_this3.getEmptyDataSourceList_());
 	        _this3.setState({ dataSource: finalResults });
 	      });
 	    };
@@ -564,7 +564,10 @@
 	      return _react2.default.createElement(_Menu.MenuItem, {
 	        primaryText: text,
 	        style: {
-	          fontSize: '14px'
+	          fontSize: '14px',
+	          overflow: 'hidden',
+	          textOverflow: 'ellipsis',
+	          whiteSpace: 'nowrap'
 	        } });
 	    };
 	
@@ -620,6 +623,8 @@
 	    _this3.state = {
 	      dataSource: _this3.getEmptyDataSourceList_()
 	    };
+	
+	    _this3.MAX_RESULTS = 5;
 	    return _this3;
 	  }
 	
@@ -652,7 +657,7 @@
 	            color: this.props.isCurrentLocation ? _colors.blueGrey600 : 'initial',
 	            paddingRight: '36px'
 	          },
-	          maxSearchResults: 5,
+	          maxSearchResults: this.MAX_RESULTS,
 	          onNewRequest: this.handleSelectionChange_,
 	          onUpdateInput: this.handleUpdateInput_,
 	          openOnFocus: true,
