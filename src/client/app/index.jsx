@@ -5,6 +5,7 @@ import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import NavigationArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import NearMe from 'material-ui/svg-icons/maps/near-me';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import React from 'react';
@@ -344,11 +345,13 @@ class FormComponent extends React.Component {
             hintText="Start location"
             isOrigin={true}
             onChange={this.handleChange_}
-            value={this.props.origin} />
+            value={typeof this.props.origin === 'object' ?
+                'Current Location' : this.props.origin} />
         <AutocompleteComponent
             hintText="Final destination"
             onChange={this.handleChange_}
-            value={this.props.destination} />
+            value={typeof this.props.destination === 'object' ?
+                'Current Location' : this.props.destination} />
         <FormTextField
             floatingLabelText="Stop for (e.g. lunch, coffee)..."
             id='Term'
@@ -375,16 +378,22 @@ class FormComponent extends React.Component {
 };
 
 class AutocompleteComponent extends React.Component {
-  state = {
-    dataSource: [],
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      dataSource: this.getEmptyDataSourceList_(),
+    };
+  }
 
   handleUpdateInput_ = (searchText) => {
-    this.updateTextInputState_(searchText);
+    this.updateAutocompleteSelectionState_({
+      text: searchText,
+    });
 
     if (!searchText) {
       this.setState({
-        dataSource: [],
+        dataSource: this.getEmptyDataSourceList_(),
       });
       return;
     }
@@ -401,17 +410,44 @@ class AutocompleteComponent extends React.Component {
           value: this.getDataSourceNode_(result.description),
         };
       });
-      this.setState({
-        dataSource: dataSourceResults,
-      });
+      const finalResults =
+          this.getEmptyDataSourceList_().concat(dataSourceResults);
+      this.setState({ dataSource: finalResults });
     });
   };
 
+  getEmptyDataSourceList_ = () => {
+    return [{
+      isCurrentLocation: true,
+      text: 'Current Location',
+      value: (
+        <MenuItem
+            rightIcon={
+              <NearMe style={{
+                fill: blueGrey600,
+                height: '18px',
+                marginTop: '14px',
+                width: '18px'
+              }}/>
+            }
+            primaryText='Current Location'
+            style={{
+              color: blueGrey600,
+              fontSize: '14px',
+              fontWeight: 600,
+            }} />
+      ),
+    }];
+  };
+
+  /**
+   * @param {string} text
+   */
   getDataSourceNode_ = (text) => {
     return (
       <MenuItem 
           primaryText={text}
-          style= {{
+          style={{
             fontSize: '14px',
           }} />
     );
@@ -424,21 +460,52 @@ class AutocompleteComponent extends React.Component {
 
   handleSelectionChange_ = (dataSource, index) => {
     if (index < 0) return;
+    if (dataSource.isCurrentLocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.updateAutocompleteSelectionState_({
+          currentLocation: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          },
+        });
+      }, () => {
+        this.clearTextInputState_();
+      });
 
-    this.updateTextInputState_(dataSource.text);
+      return;
+    }
+
+    this.updateAutocompleteSelectionState_({
+      text: dataSource.text,
+    });
   };
 
 
   clearTextInputState_ = () => {
-    this.updateTextInputState_('');
+    this.updateAutocompleteSelectionState_({
+      text: '',
+    });
   };
 
   /**
-   * Updates app origin or destination state based on text input.
+   * Updates app origin or destination state based on selection state.
+   * @param {{
+   *  currentLocation: (!Object|undefined),
+   *  text: (string|undefined),
+   * }} selectionState
    */
-  updateTextInputState_ = (text) => {
-    const state =
-        this.props.isOrigin ? { origin: text } : { destination : text };
+  updateAutocompleteSelectionState_ = (selectionState) => {
+    const location = selectionState.currentLocation ?
+        new google.maps.LatLng(
+            selectionState.currentLocation.latitude,
+            selectionState.currentLocation.longitude) :
+        selectionState.text;
+    const state = this.props.isOrigin ?
+        { origin: location } :
+        { destination : location };
+    Object.assign(state, {
+      isCurrentLocation: selectionState.currentLocation != null,
+    });
     this.props.onChange(state);
   };
 
@@ -451,8 +518,10 @@ class AutocompleteComponent extends React.Component {
             floatingLabelText={this.props.hintText}
             fullWidth={true}
             inputStyle={{ paddingRight: '36px' }}
+            maxSearchResults={5}
             onNewRequest={this.handleSelectionChange_}
             onUpdateInput={this.handleUpdateInput_}
+            openOnFocus={true}
             searchText={this.props.value} />
         {this.props.value &&
           <IconButton className="text-field-close-button"
