@@ -113,6 +113,8 @@
 	
 	var _Card = __webpack_require__(/*! material-ui/Card */ 424);
 	
+	var _Menu = __webpack_require__(/*! material-ui/Menu */ 228);
+	
 	var _Table = __webpack_require__(/*! material-ui/Table */ 436);
 	
 	var _colors = __webpack_require__(/*! material-ui/styles/colors */ 375);
@@ -523,20 +525,31 @@
 	      autocompleteService.getPlacePredictions({
 	        input: searchText
 	      }, function (results) {
-	        var resultsForRender = results.map(function (result) {
-	          return result.description;
+	        if (!results) return;
+	
+	        var dataSourceResults = results.map(function (result) {
+	          return {
+	            text: result.description,
+	            value: _this3.getDataSourceNode_(result.description)
+	          };
 	        });
 	        _this3.setState({
-	          dataSource: resultsForRender
+	          dataSource: dataSourceResults
 	        });
 	      });
+	    }, _this3.getDataSourceNode_ = function (text) {
+	      return _react2.default.createElement(_Menu.MenuItem, {
+	        primaryText: text,
+	        style: {
+	          fontSize: '14px'
+	        } });
 	    }, _this3.filterResults_ = function () {
 	      // Don't filter results. Always use Google Places Autocomplete results.
 	      return true;
-	    }, _this3.handleSelectionChange_ = function (selectionText, index) {
+	    }, _this3.handleSelectionChange_ = function (dataSource, index) {
 	      if (index < 0) return;
 	
-	      _this3.updateTextInputState_(selectionText);
+	      _this3.updateTextInputState_(dataSource.text);
 	    }, _this3.clearTextInputState_ = function () {
 	      _this3.updateTextInputState_('');
 	    }, _this3.updateTextInputState_ = function (text) {
@@ -561,14 +574,15 @@
 	          filter: this.filterResults_,
 	          floatingLabelText: this.props.hintText,
 	          fullWidth: true,
+	          inputStyle: { paddingRight: '36px' },
 	          onNewRequest: this.handleSelectionChange_,
 	          onUpdateInput: this.handleUpdateInput_,
 	          searchText: this.props.value }),
 	        this.props.value && _react2.default.createElement(
 	          _IconButton2.default,
 	          { className: 'text-field-close-button',
-	            onClick: this.clearTextInputState_,
 	            iconStyle: { height: 18, width: 18 },
+	            onClick: this.clearTextInputState_,
 	            style: {
 	              bottom: 8,
 	              height: 36,
@@ -594,8 +608,8 @@
 	    'div',
 	    { className: 'text-field-container' },
 	    _react2.default.createElement(_TextField2.default, { floatingLabelText: props.floatingLabelText,
+	      inputStyle: { paddingRight: '36px' },
 	      placeholder: '', id: props.id,
-	      inputStyle: { paddingRight: 36 },
 	      style: { display: 'block', marginTop: '-6px', width: '100%' },
 	      onChange: props.onChange,
 	      value: props.value }),

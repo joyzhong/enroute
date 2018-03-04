@@ -14,6 +14,7 @@ import TextField from 'material-ui/TextField';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {MenuItem} from 'material-ui/Menu';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import {blueGrey600, cyan400, grey500, grey700} from 'material-ui/styles/colors';
 
@@ -392,11 +393,28 @@ class AutocompleteComponent extends React.Component {
       input: searchText,
     },
     (results) => {
-      const resultsForRender = results.map((result) => result.description);
+      if (!results) return;
+
+      const dataSourceResults = results.map((result) => {
+        return {
+          text: result.description,
+          value: this.getDataSourceNode_(result.description),
+        };
+      });
       this.setState({
-        dataSource: resultsForRender,
+        dataSource: dataSourceResults,
       });
     });
+  };
+
+  getDataSourceNode_ = (text) => {
+    return (
+      <MenuItem 
+          primaryText={text}
+          style= {{
+            fontSize: '14px',
+          }} />
+    );
   };
 
   filterResults_ = () => {
@@ -404,10 +422,10 @@ class AutocompleteComponent extends React.Component {
     return true;
   };
 
-  handleSelectionChange_ = (selectionText, index) => {
+  handleSelectionChange_ = (dataSource, index) => {
     if (index < 0) return;
 
-    this.updateTextInputState_(selectionText);
+    this.updateTextInputState_(dataSource.text);
   };
 
 
@@ -432,13 +450,14 @@ class AutocompleteComponent extends React.Component {
             filter={this.filterResults_}
             floatingLabelText={this.props.hintText}
             fullWidth={true}
+            inputStyle={{ paddingRight: '36px' }}
             onNewRequest={this.handleSelectionChange_}
             onUpdateInput={this.handleUpdateInput_}
             searchText={this.props.value} />
         {this.props.value &&
           <IconButton className="text-field-close-button"
-              onClick={this.clearTextInputState_}
               iconStyle={{ height: 18, width: 18 }}
+              onClick={this.clearTextInputState_}
               style={{
                 bottom: 8,
                 height: 36,
@@ -459,8 +478,8 @@ class AutocompleteComponent extends React.Component {
 const FormTextField = (props) => (
   <div className="text-field-container">
     <TextField floatingLabelText={props.floatingLabelText}
+        inputStyle={{ paddingRight: '36px' }}
         placeholder="" id={props.id}
-        inputStyle={{ paddingRight: 36 }}
         style={{ display: 'block', marginTop: '-6px', width: '100%' }}
         onChange={props.onChange}
         value={props.value} />
