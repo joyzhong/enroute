@@ -156,10 +156,6 @@ html, body {
   position: relative;
 }
 
-.text-field-container input {
-  padding-right: 36px;
-}
-
 .text-field-close-button {
   right: 0;
 }
@@ -186,6 +182,23 @@ html, body {
 
 .yelp-image img {
   width: 65px;
+}
+
+/** Autocomplete ========================================================= */
+.react-autosuggest__suggestions-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.react-autosuggest__container {
+  position: relative;
+}
+
+.react-autosuggest__suggestions-container--open {
+  position: absolute;
+  width: 100%;
+  z-index: 10;
 }
 
 /** Map ========================================================= */

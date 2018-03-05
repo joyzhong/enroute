@@ -1,5 +1,6 @@
 import AppBar from 'material-ui/AppBar';
 import AutoComplete from 'material-ui/AutoComplete';
+import Autosuggest from 'react-autosuggest';
 import CircularProgress from 'material-ui/CircularProgress';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
@@ -7,6 +8,7 @@ import NavigationArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import NearMe from 'material-ui/svg-icons/maps/near-me';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Paper from 'material-ui/Paper';
 import RaisedButton from 'material-ui/RaisedButton';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -342,21 +344,23 @@ class FormComponent extends React.Component {
     return (
       <form className="form-container">
         <AutocompleteComponent
-            hintText="Start location"
+            floatingLabelText="Start location"
+            id='origin'
             isCurrentLocation={typeof this.props.origin === 'object'}
             isOrigin={true}
             onChange={this.handleChange_}
             value={typeof this.props.origin === 'object' ?
                 'Current Location' : this.props.origin} />
         <AutocompleteComponent
-            hintText="Final destination"
+            floatingLabelText="Final destination"
+            id='destination'
             isCurrentLocation={typeof this.props.destination === 'object'}
             onChange={this.handleChange_}
             value={typeof this.props.destination === 'object' ?
                 'Current Location' : this.props.destination} />
         <FormTextField
             floatingLabelText="Stop for (e.g. lunch, coffee)..."
-            id='Term'
+            id='term'
             value={this.props.term}
             onChange={this.handleTermChange_}
             onClickCloseButton={this.clearTextTerm_} />
@@ -379,102 +383,99 @@ class FormComponent extends React.Component {
   }
 };
 
+/**
+ * Must be a pure function due to Autosuggest optimization.
+ */
+const renderSuggestion = (suggestion, { query, isHighlighted }) => {
+  return suggestion.isCurrentLocation ? (
+    <MenuItem
+        rightIcon={
+          <NearMe style={{
+            fill: blueGrey600,
+            height: '18px',
+            marginTop: '14px',
+            width: '18px'
+          }}/>
+        }
+        style={{
+          backgroundColor: isHighlighted ? 'rgba(0,0,0,0.1)' : 'initial',
+          color: blueGrey600,
+          fontSize: '14px',
+          fontWeight: 600,
+        }}>
+      <div>Current Location</div>
+    </MenuItem>
+  ) : (
+
+    <MenuItem 
+        style={{
+          backgroundColor: isHighlighted ? 'rgba(0,0,0,0.1)' : 'initial',
+          fontSize: '14px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}>
+      <div>{suggestion.text}</div>
+    </MenuItem>
+  );
+};
+
 class AutocompleteComponent extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      dataSource: this.getEmptyDataSourceList_(),
+      suggestions: this.getEmptySuggestionsList_(),
     };
 
     this.MAX_RESULTS = 5;
   }
 
-  handleUpdateInput_ = (searchText) => {
+  handleSuggestionsFetchRequested_ = ({ value }) => {
     this.updateAutocompleteSelectionState_({
-      text: searchText,
+      text: value,
     });
 
-    if (!searchText) {
+    if (!value) {
       this.setState({
-        dataSource: this.getEmptyDataSourceList_(),
+        suggestions: this.getEmptySuggestionsList_(),
       });
       return;
     }
 
     autocompleteService.getPlacePredictions({
-      input: searchText,
+      input: value,
     },
     (results) => {
       if (!results) return;
 
-      const dataSourceResults = results.map((result) => {
+      const placePredictions = results.map((result) => {
         return {
           text: result.description,
-          value: this.getDataSourceNode_(result.description),
         };
       });
-      const finalResults =
-          dataSourceResults
+      const finalSuggestions =
+          placePredictions
               .slice(0, this.MAX_RESULTS - 1)
-              .concat(this.getEmptyDataSourceList_());
-      this.setState({ dataSource: finalResults });
+              .concat(this.getEmptySuggestionsList_());
+      this.setState({ suggestions: finalSuggestions });
     });
   };
 
-  getEmptyDataSourceList_ = () => {
+  getEmptySuggestionsList_ = () => {
     return [{
       isCurrentLocation: true,
       text: '',
-      value: (
-        <MenuItem
-            rightIcon={
-              <NearMe style={{
-                fill: blueGrey600,
-                height: '18px',
-                marginTop: '14px',
-                width: '18px'
-              }}/>
-            }
-            primaryText='Current Location'
-            style={{
-              color: blueGrey600,
-              fontSize: '14px',
-              fontWeight: 600,
-            }} />
-      ),
     }];
   };
 
-  /**
-   * @param {string} text
-   */
-  getDataSourceNode_ = (text) => {
-    return (
-      <MenuItem 
-          primaryText={text}
-          style={{
-            fontSize: '14px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }} />
-    );
-  };
-
-  filterResults_ = () => {
-    // Don't filter results. Always use Google Places Autocomplete results.
-    return true;
-  };
-
-  handleSelectionChange_ = (dataSource, index) => {
-    if (index < 0) return;
-    if (dataSource.isCurrentLocation) {
+  handleSelectionSelected_ = (suggestion, suggestionValue) => {
+    if (suggestionValue.suggestion.isCurrentLocation) {
       $.ajax({
         context: this,
         error: () => {
           alert('Could not detect current location.');
-          this.clearTextInputState_();
+          this.clearInputState_();
         },
         type: 'POST',
         url: 'https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyCW5ncOHTYAkqoTTN4Uu8rW2Vxgnxo82O4', 
@@ -492,15 +493,24 @@ class AutocompleteComponent extends React.Component {
     }
 
     this.updateAutocompleteSelectionState_({
-      text: dataSource.text,
+      text: suggestionValue.suggestion.text,
     });
   };
 
+  onSuggestionsClearRequested_ = () => {
+    this.setState({
+      suggestions: this.getEmptySuggestionsList_(),
+    });
+  };
 
-  clearTextInputState_ = () => {
+  clearInputState_ = () => {
     this.updateAutocompleteSelectionState_({
       text: '',
     });
+  };
+
+  getSuggestionValue_ = (suggestion) => {
+    return suggestion.isCurrentLocation ? 'Current Location' : suggestion.text;
   };
 
   /**
@@ -525,68 +535,91 @@ class AutocompleteComponent extends React.Component {
     this.props.onChange(state);
   };
 
+  renderInput_ = (inputProps) => {
+    return (
+      <FormTextField
+          {...inputProps}
+          onClickCloseButton={this.clearInputState_} />
+    );
+  }
+
+  renderSuggestionsContainer_ = (options) => {
+    const { containerProps, children } = options;
+    return (
+      <Paper {...containerProps}>
+        {children}
+      </Paper>
+    );
+  };
+
+  shouldRenderSuggestions_ = (value) => {
+    // Always render suggestions regardless of value length.
+    return true;
+  };
+
+  handleTextInputChange_ = (event, {newValue}) => {
+    this.updateAutocompleteSelectionState_({
+      text: newValue,
+    });
+  };
+
   render() {
     return (
-      <div className="text-field-container">
-        <AutoComplete
-            dataSource={this.state.dataSource}
-            filter={this.filterResults_}
-            floatingLabelText={this.props.hintText}
-            fullWidth={true}
-            inputStyle={{
-              color: this.props.isCurrentLocation ? blueGrey600 : 'initial',
-              paddingRight: '36px',
+        <Autosuggest
+            focusInputOnSuggestionClick={false}
+            getSuggestionValue={this.getSuggestionValue_}
+            inputProps={{
+              floatingLabelText: this.props.floatingLabelText,
+              id: this.props.id,
+              isCurrentLocation: this.props.isCurrentLocation,
+              onChange: this.handleTextInputChange_,
+              value: this.props.value,
             }}
-            maxSearchResults={this.MAX_RESULTS}
-            onNewRequest={this.handleSelectionChange_}
-            onUpdateInput={this.handleUpdateInput_}
-            openOnFocus={true}
-            searchText={this.props.value} />
-        {this.props.value &&
-          <IconButton className="text-field-close-button"
-              iconStyle={{ height: 18, width: 18 }}
-              onClick={this.clearTextInputState_}
-              style={{
-                bottom: 8,
-                height: 36,
-                position: 'absolute',
-                padding: 8,
-                right: 0,
-                width: 36
-              }}>
-            <CloseIcon className="text-field-close-icon" />
-          </IconButton>
-        }
-      </div>
+            onSuggestionsClearRequested={this.onSuggestionsClearRequested_}
+            onSuggestionSelected={this.handleSelectionSelected_}
+            onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested_}
+            renderInputComponent={this.renderInput_}
+            renderSuggestion={renderSuggestion}
+            renderSuggestionsContainer={this.renderSuggestionsContainer_}
+            shouldRenderSuggestions={this.shouldRenderSuggestions_}
+            suggestions={this.state.suggestions} />
     );
   }
 };
 
 /** Text field with customized styling. */
-const FormTextField = (props) => (
-  <div className="text-field-container">
-    <TextField floatingLabelText={props.floatingLabelText}
-        inputStyle={{ paddingRight: '36px' }}
-        placeholder="" id={props.id}
-        style={{ display: 'block', marginTop: '-6px', width: '100%' }}
-        onChange={props.onChange}
-        value={props.value} />
-        {props.value &&
-          <IconButton className="text-field-close-button"
-              onClick={props.onClickCloseButton}
-              iconStyle={{ height: 18, width: 18 }}
-              style={{
-                bottom: 8,
-                height: 36,
-                position: 'absolute',
-                padding: 8,
-                right: 0,
-                width: 36
-              }}>
-            <CloseIcon className="text-field-close-icon" />
-          </IconButton>}
-  </div>
-);
+const FormTextField = (props) => {
+  const inputProps = Object.assign({}, props);
+  delete inputProps.isCurrentLocation;
+  delete inputProps.onClickCloseButton;
+
+  return (
+    <div className="text-field-container">
+      <TextField
+          {...inputProps}
+          inputStyle={{
+            color: props.isCurrentLocation ? blueGrey600 : 'initial',
+            paddingRight: '36px',
+          }}
+          placeholder=""
+          style={{ display: 'block', marginTop: '-6px', width: '100%' }} />
+          {props.value &&
+            <IconButton className="text-field-close-button"
+                onClick={props.onClickCloseButton}
+                iconStyle={{ height: 18, width: 18 }}
+                style={{
+                  bottom: 8,
+                  height: 36,
+                  position: 'absolute',
+                  padding: 8,
+                  right: 0,
+                  width: 36
+                }}>
+              <CloseIcon className="text-field-close-icon" />
+            </IconButton>}
+    </div>
+  );
+};
 
 const CloseIcon = (props) => (
   <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24"
