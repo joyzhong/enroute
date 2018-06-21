@@ -4,7 +4,7 @@
 /* grey500 */
 /* grey700 */
 html, body {
-  font-family: "Roboto", sans-serif;
+  font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
   height: 100%;
   margin: 0;
   padding: 0;
@@ -12,10 +12,9 @@ html, body {
 
 .app-title {
   display: flex;
-  font-family: "Roboto", sans-serif;
+  font-family: "Courgette", serif;
   font-size: 2.5em;
   font-weight: 400;
-  justify-content: center;
   padding: 8px 0; }
   @media only screen and (max-width: 480px) {
     .app-title {
@@ -23,9 +22,21 @@ html, body {
   @media only screen and (max-width: 767px) {
     .app-title {
       font-size: 1.75em; } }
+  @media only screen and (max-width: 480px) {
+    .app-title {
+      justify-content: center; } }
+  @media only screen and (max-width: 767px) {
+    .app-title {
+      justify-content: center; } }
+  @media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .app-title {
+      padding: 8px 0 8px 22px; } }
+  @media only screen and (min-width: 1025px) {
+    .app-title {
+      padding: 8px 0 8px 22px; } }
 
 .app-title, .content {
-  margin: 0px 12.5%; }
+  margin: 0px 36px; }
   @media only screen and (max-width: 480px) {
     .app-title, .content {
       margin: 0; } }
@@ -34,7 +45,7 @@ html, body {
       margin: 0; } }
   @media only screen and (min-width: 1025px) {
     .app-title, .content {
-      margin: 0px 16.66667%; } }
+      margin: 0px 6%; } }
 
 .container {
   background-color: #E0F7FA;
@@ -63,22 +74,22 @@ html, body {
 
 .content {
   background-color: white;
+  border-radius: 2px;
   display: flex;
-  flex-direction: column;
   height: 100%;
   padding: 8px 24px 4px; }
-  @media only screen and (max-width: 480px) {
-    .content {
-      align-items: center; } }
-  @media only screen and (max-width: 767px) {
-    .content {
-      align-items: center; } }
   @media only screen and (min-width: 768px) and (max-width: 1024px) {
     .content {
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); } }
   @media only screen and (min-width: 1025px) {
     .content {
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); } }
+  @media only screen and (max-width: 480px) {
+    .content {
+      justify-content: center; } }
+  @media only screen and (max-width: 767px) {
+    .content {
+      justify-content: center; } }
   @media only screen and (max-width: 480px) {
     .content {
       padding: 8px 12px; } }
@@ -115,17 +126,20 @@ html, body {
 
 @media only screen and (max-width: 767px) {
   .container .results-container {
-    visibility: hidden; } }
+    display: none; } }
 
 @media only screen and (max-width: 767px) {
   .container.map-mode .results-container {
-    visibility: visible; } }
+    display: flex; } }
+
+@media only screen and (max-width: 767px) {
+  .container.map-mode .form-map-container {
+    display: none; } }
 
 .container.map-mode .results-table {
   display: table; }
 
-.container .results-table,
-.container.map-mode .onboarding-container {
+.container .results-table {
   display: none; }
 
 .onboarding-container {
@@ -133,10 +147,18 @@ html, body {
 
 .form-map-container {
   display: flex;
-  flex: 0 0 auto;
+  flex-direction: column;
+  height: 100%;
   justify-content: center;
+  overflow-y: auto;
   position: relative;
   width: 100%; }
+  @media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .form-map-container {
+      flex: 0 0 300px; } }
+  @media only screen and (min-width: 1025px) {
+    .form-map-container {
+      flex: 0 0 33%; } }
   @media only screen and (max-width: 767px) {
     .form-map-container {
       max-width: 550px; } }
@@ -144,12 +166,6 @@ html, body {
 /** Form ========================================================= */
 .form-container {
   width: 100%; }
-  @media only screen and (min-width: 768px) and (max-width: 1024px) {
-    .form-container {
-      padding-right: 48px; } }
-  @media only screen and (min-width: 1025px) {
-    .form-container {
-      padding-right: 48px; } }
 
 .text-field-container {
   position: relative; }
@@ -192,17 +208,22 @@ html, body {
 
 /** Map ========================================================= */
 .map-container {
-  max-width: 300px;
-  width: 100%; }
+  display: flex;
+  flex: 0 0 auto;
+  margin: 8px 12px; }
   @media only screen and (max-width: 767px) {
     .map-container {
       display: none; } }
+  @media only screen and (max-width: 767px) {
+    .map-container {
+      flex-direction: column; } }
 
 .map-header-container {
   align-items: center;
-  display: flex;
-  font-family: "Roboto", sans-serif;
-  font-weight: 400; }
+  display: none; }
+  @media only screen and (max-width: 767px) {
+    .map-header-container {
+      display: flex; } }
 
 .back-button-container {
   flex: 1 0 auto; }
@@ -213,35 +234,30 @@ html, body {
     .back-button-container {
       display: none; } }
 
-.map-title {
-  flex: 1 0 auto;
-  margin: 8px 0; }
-  @media only screen and (max-width: 767px) {
-    .map-title {
-      display: none; } }
+@media only screen and (max-width: 480px) {
+  .directions-icon-container {
+    display: none; } }
+@media only screen and (max-width: 767px) {
+  .directions-icon-container {
+    display: none; } }
 
 .map-iframe-container {
-  height: 0;
-  overflow: hidden;
-  padding-bottom: 100%;
-  position: relative; }
-
-.map-iframe {
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
+  height: 265px;
   width: 100%; }
 
 /** Results ========================================================= */
 .results-container {
-  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
   max-height: 100%;
-  overflow: auto;
-  padding-bottom: 4px;
   position: relative;
-  width: 100%;
-  -webkit-overflow-scrolling: touch; }
+  width: 100%; }
+  @media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .results-container {
+      margin-left: 16px; } }
+  @media only screen and (min-width: 1025px) {
+    .results-container {
+      margin-left: 16px; } }
 
 @media only screen and (max-width: 480px) {
   .container:not(.map-mode) .results-container {
@@ -249,6 +265,10 @@ html, body {
 @media only screen and (max-width: 767px) {
   .container:not(.map-mode) .results-container {
     overflow: initial; } }
+
+.results-table-container {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch; }
 
 .results-table {
   display: table; }
@@ -275,36 +295,20 @@ html, body {
 /** Onboarding ======================================================= */
 .onboarding-container {
   display: flex;
-  margin: 0 auto;
-  overflow-y: auto;
+  flex-direction: column;
+  margin: 8px auto;
   visibility: initial;
   width: 100%; }
   @media only screen and (max-width: 480px) {
     .onboarding-container {
-      overflow-y: initial; } }
-  @media only screen and (max-width: 767px) {
-    .onboarding-container {
-      overflow-y: initial; } }
-  @media only screen and (max-width: 480px) {
-    .onboarding-container {
       flex-direction: column;
       height: 100%; } }
-
-@media only screen and (max-width: 480px) {
-  .container:not(.map-mode) .onboarding-container {
-    overflow-y: initial; } }
-@media only screen and (max-width: 767px) {
-  .container:not(.map-mode) .onboarding-container {
-    overflow-y: initial; } }
 
 .onboarding-card {
   cursor: pointer;
   height: initial; }
 
 .onboarding-card + .onboarding-card {
-  margin: 0 0 0 8px; }
-  @media only screen and (max-width: 480px) {
-    .onboarding-card + .onboarding-card {
-      margin: 8px 0 0; } }
+  margin: 8px 0 0; }
 
 /*# sourceMappingURL=app.css.map */

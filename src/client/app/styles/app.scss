@@ -1,5 +1,3 @@
-$num_cols_medium: 8;
-$num_cols_large: 6;
 $max-width-xsmall: 480px;
 $max-width-small: 767px;
 $max-width-medium: 1024px;
@@ -11,8 +9,8 @@ $tertiary-color: #E0F7FA; /* cyan50 */
 $light-grey: #9E9E9E; /* grey500 */
 $dark-grey: #616161; /* grey700 */
 
-$header-font: 'Roboto', sans-serif;
-$body-font: 'Roboto', sans-serif;
+$header-font: 'Courgette', serif;
+$body-font: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
 
 @mixin respond-to($mediaList) {
   @if index($mediaList, xsmall) {
@@ -43,17 +41,18 @@ html, body {
   font-size: 2.5em;
   @include respond-to((xsmall, small)) { font-size: 1.75em; }
   font-weight: 400;
-  justify-content: center;
+  @include respond-to((xsmall, small)) { justify-content: center; }
   padding: 8px 0;
+  @include respond-to((medium, large)) { padding: 8px 0 8px 22px; }
 }
 
 .app-title, .content {
-  margin: 0px (100% / $num_cols_medium);
+  margin: 0px 36px;
   @include respond-to((xsmall, small)) {
     margin: 0;
   }
   @include respond-to(large) {
-    margin: 0px (100% / $num_cols_large);
+    margin: 0px 6%;
   }
 }
 
@@ -83,14 +82,14 @@ html, body {
 }
 
 .content {
-  @include respond-to((xsmall, small)) { align-items: center; }
   background-color: white;
+  border-radius: 2px;
   display: flex;
   @include respond-to((medium, large)) {
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   }
-  flex-direction: column;
   height: 100%;
+  @include respond-to((xsmall, small)) { justify-content: center; }
   padding: 8px 24px 4px;
   @include respond-to(xsmall) { padding: 8px 12px; }
   @include respond-to((xsmall, small)) { padding-top: 0px; }
@@ -116,19 +115,22 @@ html, body {
 }
 
 .container .results-container {
-  @include respond-to(small) { visibility: hidden; }
+  @include respond-to(small) { display: none; }
 }
 
 .container.map-mode .results-container {
-  @include respond-to(small) { visibility: visible; }
+  @include respond-to(small) { display: flex; }
+}
+
+.container.map-mode .form-map-container {
+  @include respond-to(small) { display: none; }
 }
 
 .container.map-mode .results-table {
   display: table;
 }
 
-.container .results-table,
-.container.map-mode .onboarding-container {
+.container .results-table {
   display: none;
 }
 
@@ -138,9 +140,13 @@ html, body {
 
 .form-map-container {
   display: flex;
-  flex: 0 0 auto;
+  @include respond-to(medium) { flex: 0 0 300px; }
+  @include respond-to(large) { flex: 0 0 33%; }
+  flex-direction: column;
+  height: 100%;
   justify-content: center;
   @include respond-to(small) { max-width: 550px; }
+  overflow-y: auto;
   position: relative;
   width: 100%;
 }
@@ -149,7 +155,6 @@ html, body {
 
 .form-container {
   width: 100%;
-  @include respond-to((medium, large)) { padding-right: 48px; }
 }
 
 .text-field-container {
@@ -204,16 +209,17 @@ html, body {
 /** Map ========================================================= */
 
 .map-container {
-  max-width: 300px;
-  width: 100%;
+  display: flex;
   @include respond-to(small) { display: none; }
+  flex: 0 0 auto;
+  margin: 8px 12px;
+  @include respond-to(small) { flex-direction: column; }
 }
 
 .map-header-container {
   align-items: center;
-  display: flex;
-  font-family: $header-font;
-  font-weight: 400;
+  display: none;
+  @include respond-to(small) { display: flex; }
 }
 
 .back-button-container {
@@ -221,40 +227,32 @@ html, body {
   flex: 1 0 auto;
 }
 
-.map-title {
-  @include respond-to(small) { display: none; }
-  flex: 1 0 auto;
-  margin: 8px 0;
+.directions-icon-container {
+  @include respond-to((xsmall, small)) { display: none; }
 }
 
 .map-iframe-container {
-  height: 0;
-  overflow: hidden;
-  padding-bottom: 100%;
-  position: relative;
-}
-
-.map-iframe {
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
+  height: 265px;
   width: 100%;
 }
 
 /** Results ========================================================= */
 .results-container {
-  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  @include respond-to((medium, large)) { margin-left: 16px; }
   max-height: 100%;
-  overflow: auto;
-  padding-bottom: 4px;
   position: relative;
   width: 100%;
-  -webkit-overflow-scrolling: touch; 
 }
 
 .container:not(.map-mode) .results-container {
   @include respond-to((xsmall, small)) { overflow: initial; }
+}
+
+.results-table-container {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch; 
 }
 
 .results-table {
@@ -285,9 +283,8 @@ html, body {
 /** Onboarding ======================================================= */
 .onboarding-container {
   display: flex;
-  margin: 0 auto;
-  overflow-y: auto;
-  @include respond-to((xsmall, small)) { overflow-y: initial; }
+  flex-direction: column;
+  margin: 8px auto;
   visibility: initial;
   width: 100%;
   @include respond-to(xsmall) {
@@ -296,18 +293,11 @@ html, body {
   }
 }
 
-.container:not(.map-mode) .onboarding-container {
-  @include respond-to((xsmall, small)) { overflow-y: initial; }
-}
-
 .onboarding-card {
   cursor: pointer;
   height: initial;
 }
 
 .onboarding-card + .onboarding-card {
-  margin: 0 0 0 8px;
-  @include respond-to(xsmall) {
-    margin: 8px 0 0;
-  }
+  margin: 8px 0 0;
 }

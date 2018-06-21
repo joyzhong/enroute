@@ -4,6 +4,7 @@ import Autosuggest from 'react-autosuggest';
 import CircularProgress from 'material-ui/CircularProgress';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
+import MapsDirections from 'material-ui/svg-icons/maps/directions';
 import NavigationArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import NearMe from 'material-ui/svg-icons/maps/near-me';
@@ -14,8 +15,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Slider from 'material-ui/Slider';
 import TextField from 'material-ui/TextField';
-import injectTapEventPlugin from 'react-tap-event-plugin';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import {MenuItem} from 'material-ui/Menu';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
@@ -25,13 +26,14 @@ import {blueGrey600, cyan400, grey500, grey700} from 'material-ui/styles/colors'
 // http://stackoverflow.com/a/34015469/988941 
 injectTapEventPlugin();
 
-const TEXT_FIELD_START_DEST = 'textFieldStartDest';
-const TEXT_FIELD_FINAL_DEST = 'textFieldFinalDest';
-
 const muiTheme = getMuiTheme({
+  fontFamily: '"Source Sans Pro", "Helvetica Neue", Arial, sans-serif', 
   palette: {
     primary1Color: cyan400,
     accent1Color: blueGrey600,
+  },
+  svgIcon: {
+    color: blueGrey600,
   },
 });
 
@@ -285,6 +287,9 @@ class RoadtripComponent extends React.Component {
   render() {
     const containerClassName =
         this.state.mapMode ? 'container map-mode' : 'container';
+    const resultsClass = this.state.isLoading ?
+        'results-container loading' : 'results-container';
+
     return (
       <div className={containerClassName}>
         <div className="app-title">
@@ -299,20 +304,24 @@ class RoadtripComponent extends React.Component {
                 origin={this.state.origin}
                 destination={this.state.destination}
                 term={this.state.term} />
+            <OnboardingComponent 
+                onOnboardingSelection={this.handleChange_} />
+          </div>
+
+          <div className={resultsClass}>
             <MapComponent
                 onDirectionsClick={this.onDirectionsButtonClick_}
                 onBackButtonClick={this.onBackButtonClick_}
                 disabled={!this.state.origin || !this.state.destination} />
+            <ResultsComponent
+                onRowSelection={this.updateWaypoint_} 
+                onRowHoverExit={this.clearLocationMarker_}
+                onRowHover={this.updateLocationMarker_} 
+                results={this.state.results}
+                isLoading={this.state.isLoading}
+                selectedResultIndex={this.state.selectedResultIndex}
+                tripTimeSec={this.state.tripTimeSec} />
           </div>
-          <ResultsComponent
-              onRowSelection={this.updateWaypoint_} 
-              onRowHoverExit={this.clearLocationMarker_}
-              onRowHover={this.updateLocationMarker_} 
-              results={this.state.results}
-              isLoading={this.state.isLoading}
-              selectedResultIndex={this.state.selectedResultIndex}
-              tripTimeSec={this.state.tripTimeSec}
-              onOnboardingSelection={this.handleChange_} />
         </div>
       </div>
     );
@@ -702,14 +711,8 @@ class ResultsComponent extends React.Component {
   };
 
   render() {
-    const resultsClass = this.props.isLoading ?
-        'results-container loading' : 'results-container';
     return (
-      <div className={resultsClass}>
-        {!this.props.isLoading &&
-          <OnboardingComponent 
-              onOnboardingSelection={this.props.onOnboardingSelection} />}
-
+      <div className="results-table-container">
         {this.props.isLoading &&
           <CircularProgress className="circular-progress"
               style={{display: 'block', margin: '0 auto'}} />}
@@ -785,15 +788,22 @@ const MapComponent = (props) => (
           <NavigationArrowBack />
         </IconButton>
       </div>
-      <h2 className="map-title">
-        Map
-      </h2>
       <FlatButton label="Directions" secondary={true}
           onClick={props.onDirectionsClick} disabled={props.disabled} />
     </div>
 
     <div className="map-iframe-container" id="map">
       // Map is inserted here.
+    </div>
+
+    <div className="directions-icon-container">
+      <IconButton
+          style={{ marginLeft: '8px' }}
+          onClick={props.onDirectionsClick}
+          disabled={props.disabled}>
+        <MapsDirections
+            hoverColor={muiTheme.palette.primary1Color} />
+      </IconButton>
     </div>
   </div>
 );
