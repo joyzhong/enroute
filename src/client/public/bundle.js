@@ -49,63 +49,27 @@
 
 	'use strict';
 	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _AppBar = __webpack_require__(/*! material-ui/AppBar */ 1);
 	
 	var _AppBar2 = _interopRequireDefault(_AppBar);
 	
-	var _AutoComplete = __webpack_require__(/*! material-ui/AutoComplete */ 218);
+	var _form = __webpack_require__(/*! ./form.jsx */ 475);
 	
-	var _AutoComplete2 = _interopRequireDefault(_AutoComplete);
+	var _form2 = _interopRequireDefault(_form);
 	
-	var _reactAutosuggest = __webpack_require__(/*! react-autosuggest */ 256);
+	var _map = __webpack_require__(/*! ./map.jsx */ 474);
 	
-	var _reactAutosuggest2 = _interopRequireDefault(_reactAutosuggest);
-	
-	var _CircularProgress = __webpack_require__(/*! material-ui/CircularProgress */ 278);
-	
-	var _CircularProgress2 = _interopRequireDefault(_CircularProgress);
-	
-	var _FlatButton = __webpack_require__(/*! material-ui/FlatButton */ 280);
-	
-	var _FlatButton2 = _interopRequireDefault(_FlatButton);
-	
-	var _IconButton = __webpack_require__(/*! material-ui/IconButton */ 38);
-	
-	var _IconButton2 = _interopRequireDefault(_IconButton);
-	
-	var _directions = __webpack_require__(/*! material-ui/svg-icons/maps/directions */ 283);
-	
-	var _directions2 = _interopRequireDefault(_directions);
-	
-	var _arrowBack = __webpack_require__(/*! material-ui/svg-icons/navigation/arrow-back */ 284);
-	
-	var _arrowBack2 = _interopRequireDefault(_arrowBack);
-	
-	var _close = __webpack_require__(/*! material-ui/svg-icons/navigation/close */ 285);
-	
-	var _close2 = _interopRequireDefault(_close);
-	
-	var _nearMe = __webpack_require__(/*! material-ui/svg-icons/maps/near-me */ 286);
-	
-	var _nearMe2 = _interopRequireDefault(_nearMe);
+	var _map2 = _interopRequireDefault(_map);
 	
 	var _MuiThemeProvider = __webpack_require__(/*! material-ui/styles/MuiThemeProvider */ 287);
 	
 	var _MuiThemeProvider2 = _interopRequireDefault(_MuiThemeProvider);
 	
-	var _Paper = __webpack_require__(/*! material-ui/Paper */ 216);
+	var _onboarding = __webpack_require__(/*! ./onboarding.jsx */ 478);
 	
-	var _Paper2 = _interopRequireDefault(_Paper);
-	
-	var _RaisedButton = __webpack_require__(/*! material-ui/RaisedButton */ 438);
-	
-	var _RaisedButton2 = _interopRequireDefault(_RaisedButton);
+	var _onboarding2 = _interopRequireDefault(_onboarding);
 	
 	var _react = __webpack_require__(/*! react */ 5);
 	
@@ -115,13 +79,9 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _Slider = __webpack_require__(/*! material-ui/Slider */ 440);
+	var _results = __webpack_require__(/*! ./results.jsx */ 473);
 	
-	var _Slider2 = _interopRequireDefault(_Slider);
-	
-	var _TextField = __webpack_require__(/*! material-ui/TextField */ 220);
-	
-	var _TextField2 = _interopRequireDefault(_TextField);
+	var _results2 = _interopRequireDefault(_results);
 	
 	var _getMuiTheme = __webpack_require__(/*! material-ui/styles/getMuiTheme */ 288);
 	
@@ -130,12 +90,6 @@
 	var _reactTapEventPlugin = __webpack_require__(/*! react-tap-event-plugin */ 442);
 	
 	var _reactTapEventPlugin2 = _interopRequireDefault(_reactTapEventPlugin);
-	
-	var _Card = __webpack_require__(/*! material-ui/Card */ 448);
-	
-	var _Menu = __webpack_require__(/*! material-ui/Menu */ 228);
-	
-	var _Table = __webpack_require__(/*! material-ui/Table */ 460);
 	
 	var _colors = __webpack_require__(/*! material-ui/styles/colors */ 399);
 	
@@ -166,7 +120,6 @@
 	var directionsDisplay = void 0;
 	var map = void 0;
 	var locationMarker = void 0;
-	var autocompleteService = new google.maps.places.AutocompleteService();
 	var directionsService = new google.maps.DirectionsService();
 	var distanceMatrixService = new google.maps.DistanceMatrixService();
 	
@@ -418,24 +371,25 @@
 	          _react2.default.createElement(
 	            'div',
 	            { className: 'form-map-container' },
-	            _react2.default.createElement(FormComponent, {
+	            _react2.default.createElement(_form2.default, {
 	              onSubmit: this.updateMap_,
 	              onChange: this.handleChange_,
 	              initialSliderValue: this.state.stopFractionInTrip,
 	              origin: this.state.origin,
 	              destination: this.state.destination,
 	              term: this.state.term }),
-	            _react2.default.createElement(OnboardingComponent, {
+	            _react2.default.createElement(_onboarding2.default, {
 	              onOnboardingSelection: this.handleChange_ })
 	          ),
 	          _react2.default.createElement(
 	            'div',
 	            { className: resultsClass },
-	            _react2.default.createElement(MapComponent, {
+	            _react2.default.createElement(_map2.default, {
+	              directionsIconHoverColor: muiTheme.palette.primary1Color,
 	              onDirectionsClick: this.onDirectionsButtonClick_,
 	              onBackButtonClick: this.onBackButtonClick_,
 	              disabled: !this.state.origin || !this.state.destination }),
-	            _react2.default.createElement(ResultsComponent, {
+	            _react2.default.createElement(_results2.default, {
 	              onRowSelection: this.updateWaypoint_,
 	              onRowHoverExit: this.clearLocationMarker_,
 	              onRowHover: this.updateLocationMarker_,
@@ -453,624 +407,6 @@
 	}(_react2.default.Component);
 	
 	;
-	
-	var FormComponent = function (_React$Component2) {
-	  _inherits(FormComponent, _React$Component2);
-	
-	  function FormComponent() {
-	    var _Object$getPrototypeO2;
-	
-	    var _temp2, _this2, _ret3;
-	
-	    _classCallCheck(this, FormComponent);
-	
-	    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-	      args[_key2] = arguments[_key2];
-	    }
-	
-	    return _ret3 = (_temp2 = (_this2 = _possibleConstructorReturn(this, (_Object$getPrototypeO2 = Object.getPrototypeOf(FormComponent)).call.apply(_Object$getPrototypeO2, [this].concat(args))), _this2), _this2.handleChange_ = function (state) {
-	      _this2.props.onChange(state);
-	    }, _this2.handleTermChange_ = function (e) {
-	      _this2.props.onChange({ term: e.target.value });
-	    }, _this2.handleSliderDragStop_ = function (e, value) {
-	      _this2.props.onChange({ stopFractionInTrip: value });
-	    }, _this2.handleSearch_ = function () {
-	      _this2.props.onSubmit();
-	    }, _this2.clearTextTerm_ = function () {
-	      _this2.props.onChange({ term: '' });
-	    }, _temp2), _possibleConstructorReturn(_this2, _ret3);
-	  }
-	
-	  _createClass(FormComponent, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'form',
-	        { className: 'form-container' },
-	        _react2.default.createElement(AutocompleteComponent, {
-	          floatingLabelText: 'Start location',
-	          id: 'origin',
-	          isCurrentLocation: _typeof(this.props.origin) === 'object',
-	          isOrigin: true,
-	          onChange: this.handleChange_,
-	          value: _typeof(this.props.origin) === 'object' ? 'Current Location' : this.props.origin }),
-	        _react2.default.createElement(AutocompleteComponent, {
-	          floatingLabelText: 'Final destination',
-	          id: 'destination',
-	          isCurrentLocation: _typeof(this.props.destination) === 'object',
-	          onChange: this.handleChange_,
-	          value: _typeof(this.props.destination) === 'object' ? 'Current Location' : this.props.destination }),
-	        _react2.default.createElement(FormTextField, {
-	          floatingLabelText: 'Stop for (e.g. lunch, coffee)...',
-	          id: 'term',
-	          value: this.props.term,
-	          onChange: this.handleTermChange_,
-	          onClickCloseButton: this.clearTextTerm_ }),
-	        _react2.default.createElement(FormSlider, {
-	          value: this.props.initialSliderValue,
-	          onChange: this.handleSliderDragStop_ }),
-	        _react2.default.createElement(_RaisedButton2.default, {
-	          label: 'Go',
-	          primary: true,
-	          onClick: this.handleSearch_,
-	          disabled: this.props.origin == '' || this.props.destination == '' }),
-	        _react2.default.createElement(
-	          'a',
-	          { className: 'yelp-image', href: 'https://www.yelp.com', target: '_blank' },
-	          _react2.default.createElement('img', { src: 'https://s3-media2.fl.yelpcdn.com/assets/srv0/developer_pages/95212dafe621/assets/img/yelp-2c.png' })
-	        )
-	      );
-	    }
-	  }]);
-	
-	  return FormComponent;
-	}(_react2.default.Component);
-	
-	;
-	
-	/**
-	 * Must be a pure function due to Autosuggest optimization.
-	 */
-	var renderSuggestion = function renderSuggestion(suggestion, _ref) {
-	  var query = _ref.query;
-	  var isHighlighted = _ref.isHighlighted;
-	
-	  return suggestion.isCurrentLocation ? _react2.default.createElement(
-	    _Menu.MenuItem,
-	    {
-	      rightIcon: _react2.default.createElement(_nearMe2.default, { style: {
-	          fill: _colors.blueGrey600,
-	          height: '18px',
-	          marginTop: '14px',
-	          width: '18px'
-	        } }),
-	      style: {
-	        backgroundColor: isHighlighted ? 'rgba(0,0,0,0.1)' : 'initial',
-	        color: _colors.blueGrey600,
-	        fontSize: '14px',
-	        fontWeight: 600
-	      } },
-	    _react2.default.createElement(
-	      'div',
-	      null,
-	      'Current Location'
-	    )
-	  ) : _react2.default.createElement(
-	    _Menu.MenuItem,
-	    {
-	      style: {
-	        backgroundColor: isHighlighted ? 'rgba(0,0,0,0.1)' : 'initial',
-	        fontSize: '14px',
-	        overflow: 'hidden',
-	        textOverflow: 'ellipsis',
-	        whiteSpace: 'nowrap'
-	      } },
-	    _react2.default.createElement(
-	      'div',
-	      null,
-	      suggestion.text
-	    )
-	  );
-	};
-	
-	var AutocompleteComponent = function (_React$Component3) {
-	  _inherits(AutocompleteComponent, _React$Component3);
-	
-	  function AutocompleteComponent(props) {
-	    _classCallCheck(this, AutocompleteComponent);
-	
-	    var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(AutocompleteComponent).call(this, props));
-	
-	    _this3.handleSuggestionsFetchRequested_ = function (_ref2) {
-	      var value = _ref2.value;
-	
-	      _this3.updateAutocompleteSelectionState_({
-	        text: value
-	      });
-	
-	      if (!value) {
-	        _this3.setState({
-	          suggestions: _this3.getEmptySuggestionsList_()
-	        });
-	        return;
-	      }
-	
-	      autocompleteService.getPlacePredictions({
-	        input: value
-	      }, function (results) {
-	        if (!results) return;
-	
-	        var placePredictions = results.map(function (result) {
-	          return {
-	            text: result.description
-	          };
-	        });
-	        var finalSuggestions = placePredictions.slice(0, _this3.MAX_RESULTS - 1).concat(_this3.getEmptySuggestionsList_());
-	        _this3.setState({ suggestions: finalSuggestions });
-	      });
-	    };
-	
-	    _this3.getEmptySuggestionsList_ = function () {
-	      return [{
-	        isCurrentLocation: true,
-	        text: ''
-	      }];
-	    };
-	
-	    _this3.handleSelectionSelected_ = function (suggestion, suggestionValue) {
-	      if (suggestionValue.suggestion.isCurrentLocation) {
-	        $.ajax({
-	          context: _this3,
-	          error: function error() {
-	            alert('Could not detect current location.');
-	            _this3.clearInputState_();
-	          },
-	          type: 'POST',
-	          url: 'https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyCW5ncOHTYAkqoTTN4Uu8rW2Vxgnxo82O4',
-	          success: function success(response) {
-	            _this3.updateAutocompleteSelectionState_({
-	              currentLocation: {
-	                latitude: response.location.lat,
-	                longitude: response.location.lng
-	              }
-	            });
-	          }
-	        });
-	
-	        return;
-	      }
-	
-	      _this3.updateAutocompleteSelectionState_({
-	        text: suggestionValue.suggestion.text
-	      });
-	    };
-	
-	    _this3.onSuggestionsClearRequested_ = function () {
-	      _this3.setState({
-	        suggestions: _this3.getEmptySuggestionsList_()
-	      });
-	    };
-	
-	    _this3.clearInputState_ = function () {
-	      _this3.updateAutocompleteSelectionState_({
-	        text: ''
-	      });
-	    };
-	
-	    _this3.getSuggestionValue_ = function (suggestion) {
-	      return suggestion.isCurrentLocation ? 'Current Location' : suggestion.text;
-	    };
-	
-	    _this3.updateAutocompleteSelectionState_ = function (selectionState) {
-	      var location = selectionState.currentLocation ? new google.maps.LatLng(selectionState.currentLocation.latitude, selectionState.currentLocation.longitude) : selectionState.text;
-	      var state = _this3.props.isOrigin ? { origin: location } : { destination: location };
-	      Object.assign(state, {
-	        isCurrentLocation: selectionState.currentLocation != null
-	      });
-	      _this3.props.onChange(state);
-	    };
-	
-	    _this3.renderInput_ = function (inputProps) {
-	      return _react2.default.createElement(FormTextField, _extends({}, inputProps, {
-	        onClickCloseButton: _this3.clearInputState_ }));
-	    };
-	
-	    _this3.renderSuggestionsContainer_ = function (options) {
-	      var containerProps = options.containerProps;
-	      var children = options.children;
-	
-	      return _react2.default.createElement(
-	        _Paper2.default,
-	        containerProps,
-	        children
-	      );
-	    };
-	
-	    _this3.shouldRenderSuggestions_ = function (value) {
-	      // Always render suggestions regardless of value length.
-	      return true;
-	    };
-	
-	    _this3.handleTextInputChange_ = function (event, _ref3) {
-	      var newValue = _ref3.newValue;
-	
-	      _this3.updateAutocompleteSelectionState_({
-	        text: newValue
-	      });
-	    };
-	
-	    _this3.state = {
-	      suggestions: _this3.getEmptySuggestionsList_()
-	    };
-	
-	    _this3.MAX_RESULTS = 5;
-	    return _this3;
-	  }
-	
-	  /**
-	   * Updates app origin or destination state based on selection state.
-	   * @param {{
-	   *  currentLocation: (!Object|undefined),
-	   *  text: (string|undefined),
-	   * }} selectionState
-	   */
-	
-	
-	  _createClass(AutocompleteComponent, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(_reactAutosuggest2.default, {
-	        focusInputOnSuggestionClick: false,
-	        getSuggestionValue: this.getSuggestionValue_,
-	        inputProps: {
-	          floatingLabelText: this.props.floatingLabelText,
-	          id: this.props.id,
-	          isCurrentLocation: this.props.isCurrentLocation,
-	          onChange: this.handleTextInputChange_,
-	          value: this.props.value
-	        },
-	        onSuggestionsClearRequested: this.onSuggestionsClearRequested_,
-	        onSuggestionSelected: this.handleSelectionSelected_,
-	        onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested_,
-	        renderInputComponent: this.renderInput_,
-	        renderSuggestion: renderSuggestion,
-	        renderSuggestionsContainer: this.renderSuggestionsContainer_,
-	        shouldRenderSuggestions: this.shouldRenderSuggestions_,
-	        suggestions: this.state.suggestions });
-	    }
-	  }]);
-	
-	  return AutocompleteComponent;
-	}(_react2.default.Component);
-	
-	;
-	
-	/** Text field with customized styling. */
-	var FormTextField = function FormTextField(props) {
-	  var inputProps = Object.assign({}, props);
-	  delete inputProps.isCurrentLocation;
-	  delete inputProps.onClickCloseButton;
-	
-	  return _react2.default.createElement(
-	    'div',
-	    { className: 'text-field-container' },
-	    _react2.default.createElement(_TextField2.default, _extends({}, inputProps, {
-	      inputStyle: {
-	        color: props.isCurrentLocation ? _colors.blueGrey600 : 'initial',
-	        paddingRight: '36px'
-	      },
-	      placeholder: '',
-	      style: { display: 'block', marginTop: '-6px', width: '100%' } })),
-	    props.value && _react2.default.createElement(
-	      _IconButton2.default,
-	      { className: 'text-field-close-button',
-	        onClick: props.onClickCloseButton,
-	        iconStyle: { height: 18, width: 18 },
-	        style: {
-	          bottom: 8,
-	          height: 36,
-	          position: 'absolute',
-	          padding: 8,
-	          right: 0,
-	          width: 36
-	        } },
-	      _react2.default.createElement(CloseIcon, { className: 'text-field-close-icon' })
-	    )
-	  );
-	};
-	
-	var CloseIcon = function CloseIcon(props) {
-	  return _react2.default.createElement(
-	    'svg',
-	    { fill: '#000000', height: '24', viewBox: '0 0 24 24', width: '24',
-	      className: props.className },
-	    _react2.default.createElement('path', { d: 'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z' }),
-	    _react2.default.createElement('path', { d: 'M0 0h24v24H0z', fill: 'none' })
-	  );
-	};
-	
-	/** Slider with customized styling. */
-	var FormSlider = function FormSlider(props) {
-	  return _react2.default.createElement(
-	    'div',
-	    { className: 'slider-container' },
-	    _react2.default.createElement(
-	      'div',
-	      { className: 'slider-header' },
-	      'Stop Distance into Trip'
-	    ),
-	    _react2.default.createElement(_Slider2.default, { value: props.value, style: { width: '100%' },
-	      sliderStyle: { marginTop: '14px', marginBottom: '16px' },
-	      onChange: props.onChange })
-	  );
-	};
-	
-	var OnboardingComponent = function (_React$Component4) {
-	  _inherits(OnboardingComponent, _React$Component4);
-	
-	  function OnboardingComponent() {
-	    var _Object$getPrototypeO3;
-	
-	    var _temp3, _this4, _ret4;
-	
-	    _classCallCheck(this, OnboardingComponent);
-	
-	    for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-	      args[_key3] = arguments[_key3];
-	    }
-	
-	    return _ret4 = (_temp3 = (_this4 = _possibleConstructorReturn(this, (_Object$getPrototypeO3 = Object.getPrototypeOf(OnboardingComponent)).call.apply(_Object$getPrototypeO3, [this].concat(args))), _this4), _this4.handleOnboarding1_ = function () {
-	      _this4.props.onOnboardingSelection({
-	        origin: 'San Francisco, CA, USA',
-	        destination: 'Los Angeles, CA, USA',
-	        stopFractionInTrip: 0.5,
-	        term: 'lunch'
-	      });
-	    }, _this4.handleOnboarding2_ = function () {
-	      _this4.props.onOnboardingSelection({
-	        origin: 'New York City, NY, USA',
-	        destination: 'Boston, MA, USA',
-	        stopFractionInTrip: 0.2,
-	        term: 'coffee'
-	      });
-	    }, _temp3), _possibleConstructorReturn(_this4, _ret4);
-	  }
-	
-	  _createClass(OnboardingComponent, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'onboarding-container' },
-	        _react2.default.createElement(OnboardingCard, { image: 'images/lunch.jpg', title: 'SF to LA',
-	          subtitle: 'Stop for lunch midway',
-	          onClick: this.handleOnboarding1_ }),
-	        _react2.default.createElement(OnboardingCard, { image: 'images/coffee.jpg', title: 'NYC to Boston',
-	          subtitle: 'Grab coffee towards the start',
-	          onClick: this.handleOnboarding2_ })
-	      );
-	    }
-	  }]);
-	
-	  return OnboardingComponent;
-	}(_react2.default.Component);
-	
-	;
-	
-	var OnboardingCard = function OnboardingCard(props) {
-	  return _react2.default.createElement(
-	    _Card.Card,
-	    { className: 'onboarding-card', onClick: props.onClick },
-	    _react2.default.createElement(
-	      _Card.CardMedia,
-	      {
-	        overlay: _react2.default.createElement(_Card.CardTitle, { title: props.title, subtitle: props.subtitle }) },
-	      _react2.default.createElement('img', { src: props.image, alt: '' })
-	    )
-	  );
-	};
-	
-	var ResultsComponent = function (_React$Component5) {
-	  _inherits(ResultsComponent, _React$Component5);
-	
-	  function ResultsComponent() {
-	    var _Object$getPrototypeO4;
-	
-	    var _temp4, _this5, _ret5;
-	
-	    _classCallCheck(this, ResultsComponent);
-	
-	    for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-	      args[_key4] = arguments[_key4];
-	    }
-	
-	    return _ret5 = (_temp4 = (_this5 = _possibleConstructorReturn(this, (_Object$getPrototypeO4 = Object.getPrototypeOf(ResultsComponent)).call.apply(_Object$getPrototypeO4, [this].concat(args))), _this5), _this5.handleRowSelection_ = function (selectedRows) {
-	      if (selectedRows.length > 0) {
-	        _this5.props.onRowSelection(selectedRows[0]);
-	      }
-	    }, _this5.handleRowHover_ = function (rowNumber) {
-	      _this5.props.onRowHover(rowNumber);
-	    }, _this5.handleLinkClick_ = function (event) {
-	      // Prevent bubbling up, so that the row is not selected.
-	      event.stopPropagation();
-	    }, _temp4), _possibleConstructorReturn(_this5, _ret5);
-	  }
-	
-	  /**
-	  * Called when a business link is clicked, to open the Yelp business page.
-	  * @param {!Object} event
-	  */
-	
-	
-	  _createClass(ResultsComponent, [{
-	    key: 'render',
-	    value: function render() {
-	      var _this6 = this;
-	
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'results-table-container' },
-	        this.props.isLoading && _react2.default.createElement(_CircularProgress2.default, { className: 'circular-progress',
-	          style: { display: 'block', margin: '12px auto' } }),
-	        this.props.results.length == 0 && _react2.default.createElement(
-	          'div',
-	          { className: 'empty-results-container' },
-	          'No results yet...',
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'map-emoji' },
-	            '🗺'
-	          )
-	        ),
-	        _react2.default.createElement(
-	          _Table.Table,
-	          {
-	            onRowHover: this.handleRowHover_,
-	            onRowHoverExit: this.props.onRowHoverExit,
-	            onRowSelection: this.handleRowSelection_,
-	            className: 'results-table' },
-	          this.props.results.length > 0 && _react2.default.createElement(
-	            _Table.TableHeader,
-	            { adjustForCheckbox: false, displaySelectAll: false },
-	            _react2.default.createElement(
-	              _Table.TableRow,
-	              null,
-	              _react2.default.createElement(
-	                _Table.TableHeaderColumn,
-	                {
-	                  style: { paddingLeft: '12px', paddingRight: '12px' },
-	                  className: 'header-column' },
-	                'Name'
-	              ),
-	              _react2.default.createElement(
-	                _Table.TableHeaderColumn,
-	                { className: 'header-column',
-	                  style: { paddingLeft: '12px', paddingRight: '12px' } },
-	                'Rating / # Reviews'
-	              ),
-	              _react2.default.createElement(
-	                _Table.TableHeaderColumn,
-	                { className: 'column-short header-column',
-	                  style: { paddingLeft: '12px', paddingRight: '12px' } },
-	                'Time (from ',
-	                _react2.default.createElement(TimeFormatSpan, {
-	                  timeInMin: Math.round(this.props.tripTimeSec / 60) }),
-	                ')'
-	              )
-	            )
-	          ),
-	          _react2.default.createElement(
-	            _Table.TableBody,
-	            { displayRowCheckbox: false,
-	              showRowHover: true,
-	              deselectOnClickaway: false },
-	            this.props.results.map(function (result, index) {
-	              return _react2.default.createElement(
-	                _Table.TableRow,
-	                { key: result.id, style: { cursor: 'pointer' },
-	                  selected: index == _this6.props.selectedResultIndex },
-	                _react2.default.createElement(
-	                  _Table.TableRowColumn,
-	                  { style: { paddingLeft: '12px', paddingRight: '12px' } },
-	                  _react2.default.createElement(
-	                    'a',
-	                    { href: result.url, target: '_blank',
-	                      onClick: _this6.handleLinkClick_ },
-	                    result.name
-	                  )
-	                ),
-	                _react2.default.createElement(
-	                  _Table.TableRowColumn,
-	                  {
-	                    style: { paddingLeft: '12px', paddingRight: '12px' } },
-	                  _react2.default.createElement('img', { src: result.rating_img_url,
-	                    className: 'yelp-star-img',
-	                    style: { verticalAlign: 'middle' } }),
-	                  ' ',
-	                  '/',
-	                  ' ',
-	                  result.review_count
-	                ),
-	                _react2.default.createElement(
-	                  _Table.TableRowColumn,
-	                  { className: 'column-short',
-	                    style: { paddingLeft: '12px', paddingRight: '12px' } },
-	                  '+',
-	                  _react2.default.createElement(TimeFormatSpan, { timeInMin: result.min_added })
-	                )
-	              );
-	            })
-	          )
-	        )
-	      );
-	    }
-	  }]);
-	
-	  return ResultsComponent;
-	}(_react2.default.Component);
-	
-	;
-	
-	var MapComponent = function MapComponent(props) {
-	  return _react2.default.createElement(
-	    'div',
-	    { className: 'map-container' },
-	    _react2.default.createElement(
-	      'div',
-	      { className: 'map-header-container' },
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'back-button-container' },
-	        _react2.default.createElement(
-	          _IconButton2.default,
-	          { onClick: props.onBackButtonClick },
-	          _react2.default.createElement(_arrowBack2.default, null)
-	        )
-	      ),
-	      _react2.default.createElement(_FlatButton2.default, { label: 'Directions', secondary: true,
-	        onClick: props.onDirectionsClick, disabled: props.disabled })
-	    ),
-	    _react2.default.createElement(
-	      'div',
-	      { className: 'map-iframe-container', id: 'map' },
-	      '// Map is inserted here.'
-	    ),
-	    _react2.default.createElement(
-	      'div',
-	      { className: 'directions-icon-container' },
-	      _react2.default.createElement(
-	        _IconButton2.default,
-	        {
-	          disabled: props.disabled,
-	          onClick: props.onDirectionsClick,
-	          style: { marginLeft: '8px' },
-	          tooltip: 'Directions' },
-	        _react2.default.createElement(_directions2.default, {
-	          hoverColor: muiTheme.palette.primary1Color })
-	      )
-	    )
-	  );
-	};
-	
-	var TimeFormatSpan = function TimeFormatSpan(props) {
-	  return _react2.default.createElement(
-	    'span',
-	    null,
-	    props.timeInMin >= 60 ? _react2.default.createElement(
-	      'span',
-	      null,
-	      Math.floor(props.timeInMin / 60),
-	      'h ',
-	      props.timeInMin % 60,
-	      'min'
-	    ) : _react2.default.createElement(
-	      'span',
-	      null,
-	      props.timeInMin,
-	      ' min'
-	    )
-	  );
-	};
 	
 	var runApp = function runApp() {
 	  _reactDom2.default.render(_react2.default.createElement(App, null), document.getElementById('app'));
@@ -27167,699 +26503,8 @@
 	exports.default = Paper;
 
 /***/ },
-/* 218 */
-/*!*********************************************!*\
-  !*** ./~/material-ui/AutoComplete/index.js ***!
-  \*********************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = undefined;
-	
-	var _AutoComplete = __webpack_require__(/*! ./AutoComplete */ 219);
-	
-	var _AutoComplete2 = _interopRequireDefault(_AutoComplete);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = _AutoComplete2.default;
-
-/***/ },
-/* 219 */
-/*!****************************************************!*\
-  !*** ./~/material-ui/AutoComplete/AutoComplete.js ***!
-  \****************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _simpleAssign = __webpack_require__(/*! simple-assign */ 4);
-	
-	var _simpleAssign2 = _interopRequireDefault(_simpleAssign);
-	
-	var _react = __webpack_require__(/*! react */ 5);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactDom = __webpack_require__(/*! react-dom */ 49);
-	
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-	
-	var _keycode = __webpack_require__(/*! keycode */ 47);
-	
-	var _keycode2 = _interopRequireDefault(_keycode);
-	
-	var _TextField = __webpack_require__(/*! ../TextField */ 220);
-	
-	var _TextField2 = _interopRequireDefault(_TextField);
-	
-	var _Menu = __webpack_require__(/*! ../Menu */ 228);
-	
-	var _Menu2 = _interopRequireDefault(_Menu);
-	
-	var _MenuItem = __webpack_require__(/*! ../MenuItem */ 235);
-	
-	var _MenuItem2 = _interopRequireDefault(_MenuItem);
-	
-	var _Divider = __webpack_require__(/*! ../Divider */ 254);
-	
-	var _Divider2 = _interopRequireDefault(_Divider);
-	
-	var _Popover = __webpack_require__(/*! ../Popover/Popover */ 237);
-	
-	var _Popover2 = _interopRequireDefault(_Popover);
-	
-	var _propTypes = __webpack_require__(/*! ../utils/propTypes */ 41);
-	
-	var _propTypes2 = _interopRequireDefault(_propTypes);
-	
-	var _warning = __webpack_require__(/*! warning */ 200);
-	
-	var _warning2 = _interopRequireDefault(_warning);
-	
-	var _deprecatedPropType = __webpack_require__(/*! ../utils/deprecatedPropType */ 199);
-	
-	var _deprecatedPropType2 = _interopRequireDefault(_deprecatedPropType);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	function getStyles(props, context, state) {
-	  var anchorEl = state.anchorEl;
-	  var fullWidth = props.fullWidth;
-	
-	
-	  var styles = {
-	    root: {
-	      display: 'inline-block',
-	      position: 'relative',
-	      width: fullWidth ? '100%' : 256
-	    },
-	    menu: {
-	      width: '100%'
-	    },
-	    list: {
-	      display: 'block',
-	      width: fullWidth ? '100%' : 256
-	    },
-	    innerDiv: {
-	      overflow: 'hidden'
-	    }
-	  };
-	
-	  if (anchorEl && fullWidth) {
-	    styles.popover = {
-	      width: anchorEl.clientWidth
-	    };
-	  }
-	
-	  return styles;
-	}
-	
-	var AutoComplete = function (_Component) {
-	  _inherits(AutoComplete, _Component);
-	
-	  function AutoComplete() {
-	    var _Object$getPrototypeO;
-	
-	    var _temp, _this, _ret;
-	
-	    _classCallCheck(this, AutoComplete);
-	
-	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	      args[_key] = arguments[_key];
-	    }
-	
-	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(AutoComplete)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
-	      anchorEl: null,
-	      focusTextField: true,
-	      open: false,
-	      searchText: undefined
-	    }, _this.handleRequestClose = function () {
-	      // Only take into account the Popover clickAway when we are
-	      // not focusing the TextField.
-	      if (!_this.state.focusTextField) {
-	        _this.close();
-	      }
-	    }, _this.handleMouseDown = function (event) {
-	      // Keep the TextField focused
-	      event.preventDefault();
-	    }, _this.handleItemTouchTap = function (event, child) {
-	      var dataSource = _this.props.dataSource;
-	
-	      var index = parseInt(child.key, 10);
-	      var chosenRequest = dataSource[index];
-	      var searchText = _this.chosenRequestText(chosenRequest);
-	
-	      _this.timerTouchTapCloseId = setTimeout(function () {
-	        _this.timerTouchTapCloseId = null;
-	
-	        _this.setState({
-	          searchText: searchText
-	        });
-	        _this.close();
-	        _this.props.onNewRequest(chosenRequest, index);
-	      }, _this.props.menuCloseDelay);
-	    }, _this.chosenRequestText = function (chosenRequest) {
-	      if (typeof chosenRequest === 'string') {
-	        return chosenRequest;
-	      } else {
-	        return chosenRequest[_this.props.dataSourceConfig.text];
-	      }
-	    }, _this.handleEscKeyDown = function () {
-	      _this.close();
-	    }, _this.handleKeyDown = function (event) {
-	      if (_this.props.onKeyDown) _this.props.onKeyDown(event);
-	
-	      switch ((0, _keycode2.default)(event)) {
-	        case 'enter':
-	          _this.close();
-	          var searchText = _this.state.searchText;
-	          if (searchText !== '') {
-	            _this.props.onNewRequest(searchText, -1);
-	          }
-	          break;
-	
-	        case 'esc':
-	          _this.close();
-	          break;
-	
-	        case 'down':
-	          event.preventDefault();
-	          _this.setState({
-	            open: true,
-	            focusTextField: false,
-	            anchorEl: _reactDom2.default.findDOMNode(_this.refs.searchTextField)
-	          });
-	          break;
-	
-	        default:
-	          break;
-	      }
-	    }, _this.handleChange = function (event) {
-	      var searchText = event.target.value;
-	
-	      // Make sure that we have a new searchText.
-	      // Fix an issue with a Cordova Webview
-	      if (searchText === _this.state.searchText) {
-	        return;
-	      }
-	
-	      _this.setState({
-	        searchText: searchText,
-	        open: true,
-	        anchorEl: _reactDom2.default.findDOMNode(_this.refs.searchTextField)
-	      }, function () {
-	        _this.props.onUpdateInput(searchText, _this.props.dataSource);
-	      });
-	    }, _this.handleBlur = function (event) {
-	      if (_this.state.focusTextField && _this.timerTouchTapCloseId === null) {
-	        _this.close();
-	      }
-	
-	      if (_this.props.onBlur) {
-	        _this.props.onBlur(event);
-	      }
-	    }, _this.handleFocus = function (event) {
-	      if (!_this.state.open && (_this.props.triggerUpdateOnFocus || _this.props.openOnFocus)) {
-	        _this.setState({
-	          open: true,
-	          anchorEl: _reactDom2.default.findDOMNode(_this.refs.searchTextField)
-	        });
-	      }
-	
-	      _this.setState({
-	        focusTextField: true
-	      });
-	
-	      if (_this.props.onFocus) {
-	        _this.props.onFocus(event);
-	      }
-	    }, _temp), _possibleConstructorReturn(_this, _ret);
-	  }
-	
-	  _createClass(AutoComplete, [{
-	    key: 'componentWillMount',
-	    value: function componentWillMount() {
-	      this.requestsList = [];
-	      this.setState({
-	        open: this.props.open,
-	        searchText: this.props.searchText
-	      });
-	      this.timerTouchTapCloseId = null;
-	    }
-	  }, {
-	    key: 'componentWillReceiveProps',
-	    value: function componentWillReceiveProps(nextProps) {
-	      if (this.props.searchText !== nextProps.searchText) {
-	        this.setState({
-	          searchText: nextProps.searchText
-	        });
-	      }
-	    }
-	  }, {
-	    key: 'componentWillUnmount',
-	    value: function componentWillUnmount() {
-	      clearTimeout(this.timerTouchTapCloseId);
-	    }
-	  }, {
-	    key: 'close',
-	    value: function close() {
-	      this.setState({
-	        open: false,
-	        anchorEl: null
-	      });
-	    }
-	  }, {
-	    key: 'setValue',
-	    value: function setValue(textValue) {
-	      process.env.NODE_ENV !== "production" ? (0, _warning2.default)(false, 'setValue() is deprecated, use the searchText property.\n      It will be removed with v0.16.0.') : void 0;
-	
-	      this.setState({
-	        searchText: textValue
-	      });
-	    }
-	  }, {
-	    key: 'getValue',
-	    value: function getValue() {
-	      process.env.NODE_ENV !== "production" ? (0, _warning2.default)(false, 'getValue() is deprecated. It will be removed with v0.16.0.') : void 0;
-	
-	      return this.state.searchText;
-	    }
-	  }, {
-	    key: 'blur',
-	    value: function blur() {
-	      this.refs.searchTextField.blur();
-	    }
-	  }, {
-	    key: 'focus',
-	    value: function focus() {
-	      this.refs.searchTextField.focus();
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _this2 = this;
-	
-	      var _props = this.props;
-	      var anchorOrigin = _props.anchorOrigin;
-	      var animated = _props.animated;
-	      var animation = _props.animation;
-	      var dataSource = _props.dataSource;
-	      var dataSourceConfig = _props.dataSourceConfig;
-	      var disableFocusRipple = _props.disableFocusRipple;
-	      var errorStyle = _props.errorStyle;
-	      var floatingLabelText = _props.floatingLabelText;
-	      var filter = _props.filter;
-	      var fullWidth = _props.fullWidth;
-	      var style = _props.style;
-	      var hintText = _props.hintText;
-	      var maxSearchResults = _props.maxSearchResults;
-	      var menuCloseDelay = _props.menuCloseDelay;
-	      var textFieldStyle = _props.textFieldStyle;
-	      var menuStyle = _props.menuStyle;
-	      var menuProps = _props.menuProps;
-	      var listStyle = _props.listStyle;
-	      var targetOrigin = _props.targetOrigin;
-	      var triggerUpdateOnFocus = _props.triggerUpdateOnFocus;
-	      var onNewRequest = _props.onNewRequest;
-	      var onUpdateInput = _props.onUpdateInput;
-	      var openOnFocus = _props.openOnFocus;
-	      var searchTextProp = _props.searchText;
-	
-	      var other = _objectWithoutProperties(_props, ['anchorOrigin', 'animated', 'animation', 'dataSource', 'dataSourceConfig', 'disableFocusRipple', 'errorStyle', 'floatingLabelText', 'filter', 'fullWidth', 'style', 'hintText', 'maxSearchResults', 'menuCloseDelay', 'textFieldStyle', 'menuStyle', 'menuProps', 'listStyle', 'targetOrigin', 'triggerUpdateOnFocus', 'onNewRequest', 'onUpdateInput', 'openOnFocus', 'searchText']);
-	
-	      var _state = this.state;
-	      var open = _state.open;
-	      var anchorEl = _state.anchorEl;
-	      var searchText = _state.searchText;
-	      var focusTextField = _state.focusTextField;
-	      var prepareStyles = this.context.muiTheme.prepareStyles;
-	
-	      var styles = getStyles(this.props, this.context, this.state);
-	
-	      var requestsList = [];
-	
-	      dataSource.every(function (item, index) {
-	        switch (typeof item === 'undefined' ? 'undefined' : _typeof(item)) {
-	          case 'string':
-	            if (filter(searchText, item, item)) {
-	              requestsList.push({
-	                text: item,
-	                value: _react2.default.createElement(_MenuItem2.default, {
-	                  innerDivStyle: styles.innerDiv,
-	                  value: item,
-	                  primaryText: item,
-	                  disableFocusRipple: disableFocusRipple,
-	                  key: index
-	                })
-	              });
-	            }
-	            break;
-	
-	          case 'object':
-	            if (item && typeof item[_this2.props.dataSourceConfig.text] === 'string') {
-	              var itemText = item[_this2.props.dataSourceConfig.text];
-	              if (!_this2.props.filter(searchText, itemText, item)) break;
-	
-	              var itemValue = item[_this2.props.dataSourceConfig.value];
-	              if (itemValue.type && (itemValue.type.muiName === _MenuItem2.default.muiName || itemValue.type.muiName === _Divider2.default.muiName)) {
-	                requestsList.push({
-	                  text: itemText,
-	                  value: _react2.default.cloneElement(itemValue, {
-	                    key: index,
-	                    disableFocusRipple: disableFocusRipple
-	                  })
-	                });
-	              } else {
-	                requestsList.push({
-	                  text: itemText,
-	                  value: _react2.default.createElement(_MenuItem2.default, {
-	                    innerDivStyle: styles.innerDiv,
-	                    primaryText: itemText,
-	                    disableFocusRipple: disableFocusRipple,
-	                    key: index
-	                  })
-	                });
-	              }
-	            }
-	            break;
-	
-	          default:
-	          // Do nothing
-	        }
-	
-	        return !(maxSearchResults && maxSearchResults > 0 && requestsList.length === maxSearchResults);
-	      });
-	
-	      this.requestsList = requestsList;
-	
-	      var menu = open && requestsList.length > 0 && _react2.default.createElement(
-	        _Menu2.default,
-	        _extends({}, menuProps, {
-	          ref: 'menu',
-	          autoWidth: false,
-	          disableAutoFocus: focusTextField,
-	          onEscKeyDown: this.handleEscKeyDown,
-	          initiallyKeyboardFocused: true,
-	          onItemTouchTap: this.handleItemTouchTap,
-	          onMouseDown: this.handleMouseDown,
-	          style: (0, _simpleAssign2.default)(styles.menu, menuStyle),
-	          listStyle: (0, _simpleAssign2.default)(styles.list, listStyle)
-	        }),
-	        requestsList.map(function (i) {
-	          return i.value;
-	        })
-	      );
-	
-	      return _react2.default.createElement(
-	        'div',
-	        { style: prepareStyles((0, _simpleAssign2.default)(styles.root, style)) },
-	        _react2.default.createElement(_TextField2.default, _extends({}, other, {
-	          ref: 'searchTextField',
-	          autoComplete: 'off',
-	          value: searchText,
-	          onChange: this.handleChange,
-	          onBlur: this.handleBlur,
-	          onFocus: this.handleFocus,
-	          onKeyDown: this.handleKeyDown,
-	          floatingLabelText: floatingLabelText,
-	          hintText: hintText,
-	          fullWidth: fullWidth,
-	          multiLine: false,
-	          errorStyle: errorStyle,
-	          style: textFieldStyle
-	        })),
-	        _react2.default.createElement(
-	          _Popover2.default,
-	          {
-	            style: styles.popover,
-	            canAutoPosition: false,
-	            anchorOrigin: anchorOrigin,
-	            targetOrigin: targetOrigin,
-	            open: open,
-	            anchorEl: anchorEl,
-	            useLayerForClickAway: false,
-	            onRequestClose: this.handleRequestClose,
-	            animated: animated,
-	            animation: animation
-	          },
-	          menu
-	        )
-	      );
-	    }
-	  }]);
-	
-	  return AutoComplete;
-	}(_react.Component);
-	
-	AutoComplete.propTypes = {
-	  /**
-	   * Location of the anchor for the auto complete.
-	   */
-	  anchorOrigin: _propTypes2.default.origin,
-	  /**
-	   * If true, the auto complete is animated as it is toggled.
-	   */
-	  animated: _react.PropTypes.bool,
-	  /**
-	   * Override the default animation component used.
-	   */
-	  animation: _react.PropTypes.func,
-	  /**
-	   * Array of strings or nodes used to populate the list.
-	   */
-	  dataSource: _react.PropTypes.array.isRequired,
-	  /**
-	   * Config for objects list dataSource.
-	   *
-	   * @typedef {Object} dataSourceConfig
-	   *
-	   * @property {string} text `dataSource` element key used to find a string to be matched for search
-	   * and shown as a `TextField` input value after choosing the result.
-	   * @property {string} value `dataSource` element key used to find a string to be shown in search results.
-	   */
-	  dataSourceConfig: _react.PropTypes.object,
-	  /**
-	   * Disables focus ripple when true.
-	   */
-	  disableFocusRipple: _react.PropTypes.bool,
-	  /**
-	   * Override style prop for error.
-	   */
-	  errorStyle: _react.PropTypes.object,
-	  /**
-	   * The error content to display.
-	   */
-	  errorText: _react.PropTypes.node,
-	  /**
-	   * Callback function used to filter the auto complete.
-	   *
-	   * @param {string} searchText The text to search for within `dataSource`.
-	   * @param {string} key `dataSource` element, or `text` property on that element if it's not a string.
-	   * @returns {boolean} `true` indicates the auto complete list will include `key` when the input is `searchText`.
-	   */
-	  filter: _react.PropTypes.func,
-	  /**
-	   * The content to use for adding floating label element.
-	   */
-	  floatingLabelText: _react.PropTypes.node,
-	  /**
-	   * If true, the field receives the property `width: 100%`.
-	   */
-	  fullWidth: _react.PropTypes.bool,
-	  /**
-	   * The hint content to display.
-	   */
-	  hintText: _react.PropTypes.node,
-	  /**
-	   * Override style for list.
-	   */
-	  listStyle: _react.PropTypes.object,
-	  /**
-	   * The max number of search results to be shown.
-	   * By default it shows all the items which matches filter.
-	   */
-	  maxSearchResults: _react.PropTypes.number,
-	  /**
-	   * Delay for closing time of the menu.
-	   */
-	  menuCloseDelay: _react.PropTypes.number,
-	  /**
-	   * Props to be passed to menu.
-	   */
-	  menuProps: _react.PropTypes.object,
-	  /**
-	   * Override style for menu.
-	   */
-	  menuStyle: _react.PropTypes.object,
-	  /** @ignore */
-	  onBlur: _react.PropTypes.func,
-	  /** @ignore */
-	  onFocus: _react.PropTypes.func,
-	  /** @ignore */
-	  onKeyDown: _react.PropTypes.func,
-	  /**
-	   * Callback function that is fired when a list item is selected, or enter is pressed in the `TextField`.
-	   *
-	   * @param {string} chosenRequest Either the `TextField` input value, if enter is pressed in the `TextField`,
-	   * or the text value of the corresponding list item that was selected.
-	   * @param {number} index The index in `dataSource` of the list item selected, or `-1` if enter is pressed in the
-	   * `TextField`.
-	   */
-	  onNewRequest: _react.PropTypes.func,
-	  /**
-	   * Callback function that is fired when the user updates the `TextField`.
-	   *
-	   * @param {string} searchText The auto-complete's `searchText` value.
-	   * @param {array} dataSource The auto-complete's `dataSource` array.
-	   */
-	  onUpdateInput: _react.PropTypes.func,
-	  /**
-	   * Auto complete menu is open if true.
-	   */
-	  open: _react.PropTypes.bool,
-	  /**
-	   * If true, the list item is showed when a focus event triggers.
-	   */
-	  openOnFocus: _react.PropTypes.bool,
-	  /**
-	   * Text being input to auto complete.
-	   */
-	  searchText: _react.PropTypes.string,
-	  /**
-	   * Override the inline-styles of the root element.
-	   */
-	  style: _react.PropTypes.object,
-	  /**
-	   * Origin for location of target.
-	   */
-	  targetOrigin: _propTypes2.default.origin,
-	  /**
-	   * Override the inline-styles of AutoComplete's TextField element.
-	   */
-	  textFieldStyle: _react.PropTypes.object,
-	  /**
-	   * If true, will update when focus event triggers.
-	   */
-	  triggerUpdateOnFocus: (0, _deprecatedPropType2.default)(_react.PropTypes.bool, 'Instead, use openOnFocus. It will be removed with v0.16.0.')
-	};
-	AutoComplete.defaultProps = {
-	  anchorOrigin: {
-	    vertical: 'bottom',
-	    horizontal: 'left'
-	  },
-	  animated: true,
-	  dataSourceConfig: {
-	    text: 'text',
-	    value: 'value'
-	  },
-	  disableFocusRipple: true,
-	  filter: function filter(searchText, key) {
-	    return searchText !== '' && key.indexOf(searchText) !== -1;
-	  },
-	  fullWidth: false,
-	  open: false,
-	  openOnFocus: false,
-	  onUpdateInput: function onUpdateInput() {},
-	  onNewRequest: function onNewRequest() {},
-	  searchText: '',
-	  menuCloseDelay: 300,
-	  targetOrigin: {
-	    vertical: 'top',
-	    horizontal: 'left'
-	  }
-	};
-	AutoComplete.contextTypes = {
-	  muiTheme: _react.PropTypes.object.isRequired
-	};
-	
-	
-	AutoComplete.levenshteinDistance = function (searchText, key) {
-	  var current = [];
-	  var prev = void 0;
-	  var value = void 0;
-	
-	  for (var i = 0; i <= key.length; i++) {
-	    for (var j = 0; j <= searchText.length; j++) {
-	      if (i && j) {
-	        if (searchText.charAt(j - 1) === key.charAt(i - 1)) value = prev;else value = Math.min(current[j], current[j - 1], prev) + 1;
-	      } else {
-	        value = i + j;
-	      }
-	      prev = current[j];
-	      current[j] = value;
-	    }
-	  }
-	  return current.pop();
-	};
-	
-	AutoComplete.noFilter = function () {
-	  return true;
-	};
-	
-	AutoComplete.defaultFilter = AutoComplete.caseSensitiveFilter = function (searchText, key) {
-	  return searchText !== '' && key.indexOf(searchText) !== -1;
-	};
-	
-	AutoComplete.caseInsensitiveFilter = function (searchText, key) {
-	  return key.toLowerCase().indexOf(searchText.toLowerCase()) !== -1;
-	};
-	
-	AutoComplete.levenshteinDistanceFilter = function (distanceLessThan) {
-	  if (distanceLessThan === undefined) {
-	    return AutoComplete.levenshteinDistance;
-	  } else if (typeof distanceLessThan !== 'number') {
-	    throw 'Error: AutoComplete.levenshteinDistanceFilter is a filter generator, not a filter!';
-	  }
-	
-	  return function (s, k) {
-	    return AutoComplete.levenshteinDistance(s, k) < distanceLessThan;
-	  };
-	};
-	
-	AutoComplete.fuzzyFilter = function (searchText, key) {
-	  var compareString = key.toLowerCase();
-	  searchText = searchText.toLowerCase();
-	
-	  var searchTextIndex = 0;
-	  for (var index = 0; index < key.length; index++) {
-	    if (compareString[index] === searchText[searchTextIndex]) {
-	      searchTextIndex += 1;
-	    }
-	  }
-	
-	  return searchTextIndex === searchText.length;
-	};
-	
-	AutoComplete.Item = _MenuItem2.default;
-	AutoComplete.Divider = _Divider2.default;
-	
-	exports.default = AutoComplete;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./~/process/browser.js */ 3)))
-
-/***/ },
+/* 218 */,
+/* 219 */,
 /* 220 */
 /*!******************************************!*\
   !*** ./~/material-ui/TextField/index.js ***!
@@ -33227,109 +31872,8 @@
 	exports.default = NestedList;
 
 /***/ },
-/* 254 */
-/*!****************************************!*\
-  !*** ./~/material-ui/Divider/index.js ***!
-  \****************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = undefined;
-	
-	var _Divider = __webpack_require__(/*! ./Divider */ 255);
-	
-	var _Divider2 = _interopRequireDefault(_Divider);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = _Divider2.default;
-
-/***/ },
-/* 255 */
-/*!******************************************!*\
-  !*** ./~/material-ui/Divider/Divider.js ***!
-  \******************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _simpleAssign = __webpack_require__(/*! simple-assign */ 4);
-	
-	var _simpleAssign2 = _interopRequireDefault(_simpleAssign);
-	
-	var _react = __webpack_require__(/*! react */ 5);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-	
-	var propTypes = {
-	  /**
-	   * The css class name of the root element.
-	   */
-	  className: _react.PropTypes.string,
-	  /**
-	   * If true, the `Divider` will be indented `72px`.
-	   */
-	  inset: _react.PropTypes.bool,
-	  /**
-	   * Override the inline-styles of the root element.
-	   */
-	  style: _react.PropTypes.object
-	};
-	
-	var defaultProps = {
-	  inset: false
-	};
-	
-	var contextTypes = {
-	  muiTheme: _react.PropTypes.object.isRequired
-	};
-	
-	var Divider = function Divider(props, context) {
-	  var inset = props.inset;
-	  var style = props.style;
-	
-	  var other = _objectWithoutProperties(props, ['inset', 'style']);
-	
-	  var muiTheme = context.muiTheme;
-	  var prepareStyles = muiTheme.prepareStyles;
-	
-	
-	  var styles = {
-	    root: {
-	      margin: 0,
-	      marginTop: -1,
-	      marginLeft: inset ? 72 : 0,
-	      height: 1,
-	      border: 'none',
-	      backgroundColor: muiTheme.baseTheme.palette.borderColor
-	    }
-	  };
-	
-	  return _react2.default.createElement('hr', _extends({}, other, { style: prepareStyles((0, _simpleAssign2.default)({}, styles.root, style)) }));
-	};
-	
-	Divider.muiName = 'Divider';
-	Divider.propTypes = propTypes;
-	Divider.defaultProps = defaultProps;
-	Divider.contextTypes = contextTypes;
-	
-	exports.default = Divider;
-
-/***/ },
+/* 254 */,
+/* 255 */,
 /* 256 */
 /*!*******************************************!*\
   !*** ./~/react-autosuggest/dist/index.js ***!
@@ -37130,46 +35674,7 @@
 	exports.default = NavigationArrowBack;
 
 /***/ },
-/* 285 */
-/*!*****************************************************!*\
-  !*** ./~/material-ui/svg-icons/navigation/close.js ***!
-  \*****************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _react = __webpack_require__(/*! react */ 5);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _pure = __webpack_require__(/*! recompose/pure */ 205);
-	
-	var _pure2 = _interopRequireDefault(_pure);
-	
-	var _SvgIcon = __webpack_require__(/*! ../../SvgIcon */ 214);
-	
-	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var NavigationClose = function NavigationClose(props) {
-	  return _react2.default.createElement(
-	    _SvgIcon2.default,
-	    props,
-	    _react2.default.createElement('path', { d: 'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z' })
-	  );
-	};
-	NavigationClose = (0, _pure2.default)(NavigationClose);
-	NavigationClose.displayName = 'NavigationClose';
-	NavigationClose.muiName = 'SvgIcon';
-	
-	exports.default = NavigationClose;
-
-/***/ },
+/* 285 */,
 /* 286 */
 /*!*************************************************!*\
   !*** ./~/material-ui/svg-icons/maps/near-me.js ***!
@@ -49972,6 +48477,858 @@
 	  muiTheme: _react.PropTypes.object.isRequired
 	};
 	exports.default = TableRow;
+
+/***/ },
+/* 473 */
+/*!************************************!*\
+  !*** ./src/client/app/results.jsx ***!
+  \************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _CircularProgress = __webpack_require__(/*! material-ui/CircularProgress */ 278);
+	
+	var _CircularProgress2 = _interopRequireDefault(_CircularProgress);
+	
+	var _react = __webpack_require__(/*! react */ 5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _Table = __webpack_require__(/*! material-ui/Table */ 460);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var ResultsComponent = function (_React$Component) {
+	  _inherits(ResultsComponent, _React$Component);
+	
+	  function ResultsComponent() {
+	    var _Object$getPrototypeO;
+	
+	    var _temp, _this, _ret;
+	
+	    _classCallCheck(this, ResultsComponent);
+	
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+	
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(ResultsComponent)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.handleRowSelection_ = function (selectedRows) {
+	      if (selectedRows.length > 0) {
+	        _this.props.onRowSelection(selectedRows[0]);
+	      }
+	    }, _this.handleRowHover_ = function (rowNumber) {
+	      _this.props.onRowHover(rowNumber);
+	    }, _this.handleLinkClick_ = function (event) {
+	      // Prevent bubbling up, so that the row is not selected.
+	      event.stopPropagation();
+	    }, _temp), _possibleConstructorReturn(_this, _ret);
+	  }
+	
+	  /**
+	  * Called when a business link is clicked, to open the Yelp business page.
+	  * @param {!Object} event
+	  */
+	
+	
+	  _createClass(ResultsComponent, [{
+	    key: 'render',
+	    value: function render() {
+	      var _this2 = this;
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'results-table-container' },
+	        this.props.isLoading && _react2.default.createElement(_CircularProgress2.default, { className: 'circular-progress',
+	          style: { display: 'block', margin: '12px auto' } }),
+	        this.props.results.length == 0 && _react2.default.createElement(
+	          'div',
+	          { className: 'empty-results-container' },
+	          'No results yet...',
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'map-emoji' },
+	            '🗺️'
+	          )
+	        ),
+	        _react2.default.createElement(
+	          _Table.Table,
+	          {
+	            onRowHover: this.handleRowHover_,
+	            onRowHoverExit: this.props.onRowHoverExit,
+	            onRowSelection: this.handleRowSelection_,
+	            className: 'results-table' },
+	          this.props.results.length > 0 && _react2.default.createElement(
+	            _Table.TableHeader,
+	            { adjustForCheckbox: false, displaySelectAll: false },
+	            _react2.default.createElement(
+	              _Table.TableRow,
+	              null,
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                {
+	                  style: { paddingLeft: '12px', paddingRight: '12px' },
+	                  className: 'header-column' },
+	                'Name'
+	              ),
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                { className: 'header-column',
+	                  style: { paddingLeft: '12px', paddingRight: '12px' } },
+	                'Rating / # Reviews'
+	              ),
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                { className: 'column-short header-column',
+	                  style: { paddingLeft: '12px', paddingRight: '12px' } },
+	                'Time (from ',
+	                _react2.default.createElement(TimeFormatSpan, {
+	                  timeInMin: Math.round(this.props.tripTimeSec / 60) }),
+	                ')'
+	              )
+	            )
+	          ),
+	          _react2.default.createElement(
+	            _Table.TableBody,
+	            { displayRowCheckbox: false,
+	              showRowHover: true,
+	              deselectOnClickaway: false },
+	            this.props.results.map(function (result, index) {
+	              return _react2.default.createElement(
+	                _Table.TableRow,
+	                { key: result.id, style: { cursor: 'pointer' },
+	                  selected: index == _this2.props.selectedResultIndex },
+	                _react2.default.createElement(
+	                  _Table.TableRowColumn,
+	                  { style: { paddingLeft: '12px', paddingRight: '12px' } },
+	                  _react2.default.createElement(
+	                    'a',
+	                    { href: result.url, target: '_blank',
+	                      onClick: _this2.handleLinkClick_ },
+	                    result.name
+	                  )
+	                ),
+	                _react2.default.createElement(
+	                  _Table.TableRowColumn,
+	                  {
+	                    style: { paddingLeft: '12px', paddingRight: '12px' } },
+	                  _react2.default.createElement('img', { src: result.rating_img_url,
+	                    className: 'yelp-star-img',
+	                    style: { verticalAlign: 'middle' } }),
+	                  ' ',
+	                  '/',
+	                  ' ',
+	                  result.review_count
+	                ),
+	                _react2.default.createElement(
+	                  _Table.TableRowColumn,
+	                  { className: 'column-short',
+	                    style: { paddingLeft: '12px', paddingRight: '12px' } },
+	                  '+',
+	                  _react2.default.createElement(TimeFormatSpan, { timeInMin: result.min_added })
+	                )
+	              );
+	            })
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return ResultsComponent;
+	}(_react2.default.Component);
+	
+	;
+	
+	var TimeFormatSpan = function TimeFormatSpan(props) {
+	  return _react2.default.createElement(
+	    'span',
+	    null,
+	    props.timeInMin >= 60 ? _react2.default.createElement(
+	      'span',
+	      null,
+	      Math.floor(props.timeInMin / 60),
+	      'h ',
+	      props.timeInMin % 60,
+	      'min'
+	    ) : _react2.default.createElement(
+	      'span',
+	      null,
+	      props.timeInMin,
+	      ' min'
+	    )
+	  );
+	};
+	
+	exports.default = ResultsComponent;
+
+/***/ },
+/* 474 */
+/*!********************************!*\
+  !*** ./src/client/app/map.jsx ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _FlatButton = __webpack_require__(/*! material-ui/FlatButton */ 280);
+	
+	var _FlatButton2 = _interopRequireDefault(_FlatButton);
+	
+	var _IconButton = __webpack_require__(/*! material-ui/IconButton */ 38);
+	
+	var _IconButton2 = _interopRequireDefault(_IconButton);
+	
+	var _directions = __webpack_require__(/*! material-ui/svg-icons/maps/directions */ 283);
+	
+	var _directions2 = _interopRequireDefault(_directions);
+	
+	var _arrowBack = __webpack_require__(/*! material-ui/svg-icons/navigation/arrow-back */ 284);
+	
+	var _arrowBack2 = _interopRequireDefault(_arrowBack);
+	
+	var _react = __webpack_require__(/*! react */ 5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var MapComponent = function MapComponent(props) {
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'map-container' },
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'map-header-container' },
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'back-button-container' },
+	        _react2.default.createElement(
+	          _IconButton2.default,
+	          { onClick: props.onBackButtonClick },
+	          _react2.default.createElement(_arrowBack2.default, null)
+	        )
+	      ),
+	      _react2.default.createElement(_FlatButton2.default, { label: 'Directions', secondary: true,
+	        onClick: props.onDirectionsClick, disabled: props.disabled })
+	    ),
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'map-iframe-container', id: 'map' },
+	      '// Map is inserted here.'
+	    ),
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'directions-icon-container' },
+	      _react2.default.createElement(
+	        _IconButton2.default,
+	        {
+	          disabled: props.disabled,
+	          onClick: props.onDirectionsClick,
+	          style: { marginLeft: '8px' },
+	          tooltip: 'Directions' },
+	        _react2.default.createElement(_directions2.default, {
+	          hoverColor: props.directionsIconHoverColor })
+	      )
+	    )
+	  );
+	};
+	
+	exports.default = MapComponent;
+
+/***/ },
+/* 475 */
+/*!*********************************!*\
+  !*** ./src/client/app/form.jsx ***!
+  \*********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _autocomplete = __webpack_require__(/*! ./autocomplete.jsx */ 476);
+	
+	var _autocomplete2 = _interopRequireDefault(_autocomplete);
+	
+	var _formtextfield = __webpack_require__(/*! ./formtextfield.jsx */ 477);
+	
+	var _formtextfield2 = _interopRequireDefault(_formtextfield);
+	
+	var _RaisedButton = __webpack_require__(/*! material-ui/RaisedButton */ 438);
+	
+	var _RaisedButton2 = _interopRequireDefault(_RaisedButton);
+	
+	var _react = __webpack_require__(/*! react */ 5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _Slider = __webpack_require__(/*! material-ui/Slider */ 440);
+	
+	var _Slider2 = _interopRequireDefault(_Slider);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var FormComponent = function (_React$Component) {
+	  _inherits(FormComponent, _React$Component);
+	
+	  function FormComponent() {
+	    var _Object$getPrototypeO;
+	
+	    var _temp, _this, _ret;
+	
+	    _classCallCheck(this, FormComponent);
+	
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+	
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(FormComponent)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.handleChange_ = function (state) {
+	      _this.props.onChange(state);
+	    }, _this.handleTermChange_ = function (e) {
+	      _this.props.onChange({ term: e.target.value });
+	    }, _this.handleSliderDragStop_ = function (e, value) {
+	      _this.props.onChange({ stopFractionInTrip: value });
+	    }, _this.handleSearch_ = function () {
+	      _this.props.onSubmit();
+	    }, _this.clearTextTerm_ = function () {
+	      _this.props.onChange({ term: '' });
+	    }, _temp), _possibleConstructorReturn(_this, _ret);
+	  }
+	
+	  _createClass(FormComponent, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'form',
+	        { className: 'form-container' },
+	        _react2.default.createElement(_autocomplete2.default, {
+	          floatingLabelText: 'Start location',
+	          id: 'origin',
+	          isCurrentLocation: _typeof(this.props.origin) === 'object',
+	          isOrigin: true,
+	          onChange: this.handleChange_,
+	          value: _typeof(this.props.origin) === 'object' ? 'Current Location' : this.props.origin }),
+	        _react2.default.createElement(_autocomplete2.default, {
+	          floatingLabelText: 'Final destination',
+	          id: 'destination',
+	          isCurrentLocation: _typeof(this.props.destination) === 'object',
+	          onChange: this.handleChange_,
+	          value: _typeof(this.props.destination) === 'object' ? 'Current Location' : this.props.destination }),
+	        _react2.default.createElement(_formtextfield2.default, {
+	          floatingLabelText: 'Stop for (e.g. lunch, coffee)...',
+	          id: 'term',
+	          value: this.props.term,
+	          onChange: this.handleTermChange_,
+	          onClickCloseButton: this.clearTextTerm_ }),
+	        _react2.default.createElement(FormSlider, {
+	          value: this.props.initialSliderValue,
+	          onChange: this.handleSliderDragStop_ }),
+	        _react2.default.createElement(_RaisedButton2.default, {
+	          label: 'Go',
+	          primary: true,
+	          onClick: this.handleSearch_,
+	          disabled: this.props.origin == '' || this.props.destination == '' }),
+	        _react2.default.createElement(
+	          'a',
+	          { className: 'yelp-image', href: 'https://www.yelp.com', target: '_blank' },
+	          _react2.default.createElement('img', { src: 'https://s3-media2.fl.yelpcdn.com/assets/srv0/developer_pages/95212dafe621/assets/img/yelp-2c.png' })
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return FormComponent;
+	}(_react2.default.Component);
+	
+	;
+	
+	/** Slider with customized styling. */
+	var FormSlider = function FormSlider(props) {
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'slider-container' },
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'slider-header' },
+	      'Stop Distance into Trip'
+	    ),
+	    _react2.default.createElement(_Slider2.default, { value: props.value, style: { width: '100%' },
+	      sliderStyle: { marginTop: '14px', marginBottom: '16px' },
+	      onChange: props.onChange })
+	  );
+	};
+	
+	exports.default = FormComponent;
+
+/***/ },
+/* 476 */
+/*!*****************************************!*\
+  !*** ./src/client/app/autocomplete.jsx ***!
+  \*****************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _reactAutosuggest = __webpack_require__(/*! react-autosuggest */ 256);
+	
+	var _reactAutosuggest2 = _interopRequireDefault(_reactAutosuggest);
+	
+	var _formtextfield = __webpack_require__(/*! ./formtextfield.jsx */ 477);
+	
+	var _formtextfield2 = _interopRequireDefault(_formtextfield);
+	
+	var _nearMe = __webpack_require__(/*! material-ui/svg-icons/maps/near-me */ 286);
+	
+	var _nearMe2 = _interopRequireDefault(_nearMe);
+	
+	var _Paper = __webpack_require__(/*! material-ui/Paper */ 216);
+	
+	var _Paper2 = _interopRequireDefault(_Paper);
+	
+	var _react = __webpack_require__(/*! react */ 5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _Menu = __webpack_require__(/*! material-ui/Menu */ 228);
+	
+	var _colors = __webpack_require__(/*! material-ui/styles/colors */ 399);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var autocompleteService = new google.maps.places.AutocompleteService();
+	
+	var AutocompleteComponent = function (_React$Component) {
+	  _inherits(AutocompleteComponent, _React$Component);
+	
+	  function AutocompleteComponent(props) {
+	    _classCallCheck(this, AutocompleteComponent);
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AutocompleteComponent).call(this, props));
+	
+	    _this.handleSuggestionsFetchRequested_ = function (_ref) {
+	      var value = _ref.value;
+	
+	      _this.updateAutocompleteSelectionState_({
+	        text: value
+	      });
+	
+	      if (!value) {
+	        _this.setState({
+	          suggestions: _this.getEmptySuggestionsList_()
+	        });
+	        return;
+	      }
+	
+	      autocompleteService.getPlacePredictions({
+	        input: value
+	      }, function (results) {
+	        if (!results) return;
+	
+	        var placePredictions = results.map(function (result) {
+	          return {
+	            text: result.description
+	          };
+	        });
+	        var finalSuggestions = placePredictions.slice(0, _this.MAX_RESULTS - 1).concat(_this.getEmptySuggestionsList_());
+	        _this.setState({ suggestions: finalSuggestions });
+	      });
+	    };
+	
+	    _this.getEmptySuggestionsList_ = function () {
+	      return [{
+	        isCurrentLocation: true,
+	        text: ''
+	      }];
+	    };
+	
+	    _this.handleSelectionSelected_ = function (suggestion, suggestionValue) {
+	      if (suggestionValue.suggestion.isCurrentLocation) {
+	        $.ajax({
+	          context: _this,
+	          error: function error() {
+	            alert('Could not detect current location.');
+	            _this.clearInputState_();
+	          },
+	          type: 'POST',
+	          url: 'https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyCW5ncOHTYAkqoTTN4Uu8rW2Vxgnxo82O4',
+	          success: function success(response) {
+	            _this.updateAutocompleteSelectionState_({
+	              currentLocation: {
+	                latitude: response.location.lat,
+	                longitude: response.location.lng
+	              }
+	            });
+	          }
+	        });
+	
+	        return;
+	      }
+	
+	      _this.updateAutocompleteSelectionState_({
+	        text: suggestionValue.suggestion.text
+	      });
+	    };
+	
+	    _this.onSuggestionsClearRequested_ = function () {
+	      _this.setState({
+	        suggestions: _this.getEmptySuggestionsList_()
+	      });
+	    };
+	
+	    _this.clearInputState_ = function () {
+	      _this.updateAutocompleteSelectionState_({
+	        text: ''
+	      });
+	    };
+	
+	    _this.getSuggestionValue_ = function (suggestion) {
+	      return suggestion.isCurrentLocation ? 'Current Location' : suggestion.text;
+	    };
+	
+	    _this.updateAutocompleteSelectionState_ = function (selectionState) {
+	      var location = selectionState.currentLocation ? new google.maps.LatLng(selectionState.currentLocation.latitude, selectionState.currentLocation.longitude) : selectionState.text;
+	      var state = _this.props.isOrigin ? { origin: location } : { destination: location };
+	      Object.assign(state, {
+	        isCurrentLocation: selectionState.currentLocation != null
+	      });
+	      _this.props.onChange(state);
+	    };
+	
+	    _this.renderInput_ = function (inputProps) {
+	      return _react2.default.createElement(_formtextfield2.default, _extends({}, inputProps, {
+	        onClickCloseButton: _this.clearInputState_ }));
+	    };
+	
+	    _this.renderSuggestionsContainer_ = function (options) {
+	      var containerProps = options.containerProps;
+	      var children = options.children;
+	
+	      return _react2.default.createElement(
+	        _Paper2.default,
+	        containerProps,
+	        children
+	      );
+	    };
+	
+	    _this.shouldRenderSuggestions_ = function (value) {
+	      // Always render suggestions regardless of value length.
+	      return true;
+	    };
+	
+	    _this.handleTextInputChange_ = function (event, _ref2) {
+	      var newValue = _ref2.newValue;
+	
+	      _this.updateAutocompleteSelectionState_({
+	        text: newValue
+	      });
+	    };
+	
+	    _this.state = {
+	      suggestions: _this.getEmptySuggestionsList_()
+	    };
+	
+	    _this.MAX_RESULTS = 5;
+	    return _this;
+	  }
+	
+	  /**
+	   * Updates app origin or destination state based on selection state.
+	   * @param {{
+	   *  currentLocation: (!Object|undefined),
+	   *  text: (string|undefined),
+	   * }} selectionState
+	   */
+	
+	
+	  _createClass(AutocompleteComponent, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(_reactAutosuggest2.default, {
+	        focusInputOnSuggestionClick: false,
+	        getSuggestionValue: this.getSuggestionValue_,
+	        inputProps: {
+	          floatingLabelText: this.props.floatingLabelText,
+	          id: this.props.id,
+	          isCurrentLocation: this.props.isCurrentLocation,
+	          onChange: this.handleTextInputChange_,
+	          value: this.props.value
+	        },
+	        onSuggestionsClearRequested: this.onSuggestionsClearRequested_,
+	        onSuggestionSelected: this.handleSelectionSelected_,
+	        onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested_,
+	        renderInputComponent: this.renderInput_,
+	        renderSuggestion: renderSuggestion,
+	        renderSuggestionsContainer: this.renderSuggestionsContainer_,
+	        shouldRenderSuggestions: this.shouldRenderSuggestions_,
+	        suggestions: this.state.suggestions });
+	    }
+	  }]);
+	
+	  return AutocompleteComponent;
+	}(_react2.default.Component);
+	
+	;
+	
+	/**
+	 * Must be a pure function due to Autosuggest optimization.
+	 */
+	var renderSuggestion = function renderSuggestion(suggestion, _ref3) {
+	  var query = _ref3.query;
+	  var isHighlighted = _ref3.isHighlighted;
+	
+	  return suggestion.isCurrentLocation ? _react2.default.createElement(
+	    _Menu.MenuItem,
+	    {
+	      rightIcon: _react2.default.createElement(_nearMe2.default, { style: {
+	          fill: _colors.blueGrey600,
+	          height: '18px',
+	          marginTop: '14px',
+	          width: '18px'
+	        } }),
+	      style: {
+	        backgroundColor: isHighlighted ? 'rgba(0,0,0,0.1)' : 'initial',
+	        color: _colors.blueGrey600,
+	        fontSize: '14px',
+	        fontWeight: 600
+	      } },
+	    _react2.default.createElement(
+	      'div',
+	      null,
+	      'Current Location'
+	    )
+	  ) : _react2.default.createElement(
+	    _Menu.MenuItem,
+	    {
+	      style: {
+	        backgroundColor: isHighlighted ? 'rgba(0,0,0,0.1)' : 'initial',
+	        fontSize: '14px',
+	        overflow: 'hidden',
+	        textOverflow: 'ellipsis',
+	        whiteSpace: 'nowrap'
+	      } },
+	    _react2.default.createElement(
+	      'div',
+	      null,
+	      suggestion.text
+	    )
+	  );
+	};
+	
+	exports.default = AutocompleteComponent;
+
+/***/ },
+/* 477 */
+/*!******************************************!*\
+  !*** ./src/client/app/formtextfield.jsx ***!
+  \******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _IconButton = __webpack_require__(/*! material-ui/IconButton */ 38);
+	
+	var _IconButton2 = _interopRequireDefault(_IconButton);
+	
+	var _react = __webpack_require__(/*! react */ 5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _TextField = __webpack_require__(/*! material-ui/TextField */ 220);
+	
+	var _TextField2 = _interopRequireDefault(_TextField);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	/** Text field with customized styling. */
+	var FormTextField = function FormTextField(props) {
+	  var inputProps = Object.assign({}, props);
+	  delete inputProps.isCurrentLocation;
+	  delete inputProps.onClickCloseButton;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'text-field-container' },
+	    _react2.default.createElement(_TextField2.default, _extends({}, inputProps, {
+	      inputStyle: {
+	        color: props.isCurrentLocation ? blueGrey600 : 'initial',
+	        paddingRight: '36px'
+	      },
+	      placeholder: '',
+	      style: { display: 'block', marginTop: '-6px', width: '100%' } })),
+	    props.value && _react2.default.createElement(
+	      _IconButton2.default,
+	      { className: 'text-field-close-button',
+	        onClick: props.onClickCloseButton,
+	        iconStyle: { height: 18, width: 18 },
+	        style: {
+	          bottom: 8,
+	          height: 36,
+	          position: 'absolute',
+	          padding: 8,
+	          right: 0,
+	          width: 36
+	        } },
+	      _react2.default.createElement(CloseIcon, { className: 'text-field-close-icon' })
+	    )
+	  );
+	};
+	
+	var CloseIcon = function CloseIcon(props) {
+	  return _react2.default.createElement(
+	    'svg',
+	    { fill: '#000000', height: '24', viewBox: '0 0 24 24', width: '24',
+	      className: props.className },
+	    _react2.default.createElement('path', { d: 'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z' }),
+	    _react2.default.createElement('path', { d: 'M0 0h24v24H0z', fill: 'none' })
+	  );
+	};
+	
+	exports.default = FormTextField;
+
+/***/ },
+/* 478 */
+/*!***************************************!*\
+  !*** ./src/client/app/onboarding.jsx ***!
+  \***************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _Card = __webpack_require__(/*! material-ui/Card */ 448);
+	
+	var _react = __webpack_require__(/*! react */ 5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var OnboardingComponent = function (_React$Component) {
+	  _inherits(OnboardingComponent, _React$Component);
+	
+	  function OnboardingComponent() {
+	    var _Object$getPrototypeO;
+	
+	    var _temp, _this, _ret;
+	
+	    _classCallCheck(this, OnboardingComponent);
+	
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+	
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(OnboardingComponent)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.handleOnboarding1_ = function () {
+	      _this.props.onOnboardingSelection({
+	        origin: 'San Francisco, CA, USA',
+	        destination: 'Los Angeles, CA, USA',
+	        stopFractionInTrip: 0.5,
+	        term: 'lunch'
+	      });
+	    }, _this.handleOnboarding2_ = function () {
+	      _this.props.onOnboardingSelection({
+	        origin: 'New York City, NY, USA',
+	        destination: 'Boston, MA, USA',
+	        stopFractionInTrip: 0.2,
+	        term: 'coffee'
+	      });
+	    }, _temp), _possibleConstructorReturn(_this, _ret);
+	  }
+	
+	  _createClass(OnboardingComponent, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'onboarding-container' },
+	        _react2.default.createElement(OnboardingCard, { image: 'images/lunch.jpg', title: 'SF to LA',
+	          subtitle: 'Stop for lunch midway',
+	          onClick: this.handleOnboarding1_ }),
+	        _react2.default.createElement(OnboardingCard, { image: 'images/coffee.jpg', title: 'NYC to Boston',
+	          subtitle: 'Grab coffee towards the start',
+	          onClick: this.handleOnboarding2_ })
+	      );
+	    }
+	  }]);
+	
+	  return OnboardingComponent;
+	}(_react2.default.Component);
+	
+	;
+	
+	var OnboardingCard = function OnboardingCard(props) {
+	  return _react2.default.createElement(
+	    _Card.Card,
+	    { className: 'onboarding-card', onClick: props.onClick },
+	    _react2.default.createElement(
+	      _Card.CardMedia,
+	      {
+	        overlay: _react2.default.createElement(_Card.CardTitle, { title: props.title, subtitle: props.subtitle }) },
+	      _react2.default.createElement('img', { src: props.image, alt: '' })
+	    )
+	  );
+	};
+	
+	exports.default = OnboardingComponent;
 
 /***/ }
 /******/ ]);
