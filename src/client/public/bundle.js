@@ -911,7 +911,17 @@
 	        'div',
 	        { className: 'results-table-container' },
 	        this.props.isLoading && _react2.default.createElement(_CircularProgress2.default, { className: 'circular-progress',
-	          style: { display: 'block', margin: '0 auto' } }),
+	          style: { display: 'block', margin: '12px auto' } }),
+	        this.props.results.length == 0 && _react2.default.createElement(
+	          'div',
+	          { className: 'empty-results-container' },
+	          'No results yet...',
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'map-emoji' },
+	            '🗺'
+	          )
+	        ),
 	        _react2.default.createElement(
 	          _Table.Table,
 	          {

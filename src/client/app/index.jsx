@@ -715,7 +715,13 @@ class ResultsComponent extends React.Component {
       <div className="results-table-container">
         {this.props.isLoading &&
           <CircularProgress className="circular-progress"
-              style={{display: 'block', margin: '0 auto'}} />}
+              style={{display: 'block', margin: '12px auto'}} />}
+        {this.props.results.length == 0 &&
+          <div className="empty-results-container">
+            No results yet...
+            <div className="map-emoji">🗺</div>
+          </div>
+        }
 
         <Table
             onRowHover={this.handleRowHover_}

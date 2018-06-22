@@ -1,9 +1,9 @@
 /* cyan400 */
 /* blueGrey600 */
-/* cyan50 */
 /* grey500 */
 /* grey700 */
 html, body {
+  color: #212121;
   font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
   height: 100%;
   margin: 0;
@@ -137,12 +137,6 @@ html, body {
   .container.map-mode .form-map-container {
     display: none; } }
 
-.container.map-mode .results-table {
-  display: table; }
-
-.container .results-table {
-  display: none; }
-
 .onboarding-container {
   max-width: 550px; }
 
@@ -210,8 +204,10 @@ html, body {
 
 /** Map ========================================================= */
 .map-container {
+  align-items: center;
   display: flex;
   flex: 0 0 auto;
+  justify-content: center;
   margin: 8px; }
   @media only screen and (max-width: 767px) {
     .map-container {
@@ -245,6 +241,7 @@ html, body {
 
 .map-iframe-container {
   height: 265px;
+  max-width: 400px;
   width: 100%; }
 
 /** Results ========================================================= */
@@ -268,8 +265,26 @@ html, body {
   .container:not(.map-mode) .results-container {
     overflow: initial; } }
 
+.container.map-mode .empty-results-container {
+  display: none; }
+
+.empty-results-container {
+  font-family: "Courgette", serif;
+  font-size: 28px;
+  left: 50%;
+  padding-bottom: 24px;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  transform: translate(-50%, -50%); }
+
+.map-emoji {
+  font-size: 64px; }
+
 .results-table-container {
+  height: 100%;
   overflow: auto;
+  position: relative;
   -webkit-overflow-scrolling: touch; }
 
 .results-table {
