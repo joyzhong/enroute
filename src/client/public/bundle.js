@@ -279,7 +279,7 @@
 	            var stopCooordinates = pathCoordinates[Math.round(pathCoordinates.length / 2)];
 	            directionsDisplay.setDirections(result);
 	          }
-	          // TODO: Handle error statuses.
+	          // TODO: Handle error statuses  .
 	        };
 	
 	        directionsService.route(request, displayDirectionsFn);
