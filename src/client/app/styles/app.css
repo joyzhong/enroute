@@ -78,7 +78,7 @@ html, body {
   border-radius: 2px;
   display: flex;
   height: 100%;
-  padding: 8px 24px 4px; }
+  padding: 8px 20px 4px; }
   @media only screen and (min-width: 768px) and (max-width: 1024px) {
     .content {
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23); } }
@@ -163,6 +163,12 @@ html, body {
   @media only screen and (max-width: 767px) {
     .form-map-container {
       max-width: 550px; } }
+  @media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .form-map-container {
+      padding: 0 4px; } }
+  @media only screen and (min-width: 1025px) {
+    .form-map-container {
+      padding: 0 4px; } }
 
 /** Form ========================================================= */
 .form-container {
@@ -211,7 +217,7 @@ html, body {
 .map-container {
   display: flex;
   flex: 0 0 auto;
-  margin: 8px 12px; }
+  margin: 8px; }
   @media only screen and (max-width: 767px) {
     .map-container {
       display: none; } }
