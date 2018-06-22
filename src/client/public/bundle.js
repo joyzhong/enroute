@@ -1041,9 +1041,10 @@
 	      _react2.default.createElement(
 	        _IconButton2.default,
 	        {
-	          style: { marginLeft: '8px' },
+	          disabled: props.disabled,
 	          onClick: props.onDirectionsClick,
-	          disabled: props.disabled },
+	          style: { marginLeft: '8px' },
+	          tooltip: 'Directions' },
 	        _react2.default.createElement(_directions2.default, {
 	          hoverColor: muiTheme.palette.primary1Color })
 	      )

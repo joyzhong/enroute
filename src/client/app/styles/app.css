@@ -75,7 +75,7 @@ html, body {
 
 .content {
   background-color: white;
-  border-radius: 2px;
+  border-radius: 8px;
   display: flex;
   height: 100%;
   padding: 8px 20px 4px; }
@@ -119,7 +119,7 @@ html, body {
 
 @media only screen and (max-width: 767px) {
   .container.map-mode .map-container {
-    display: initial; } }
+    display: flex; } }
 
 @media only screen and (max-width: 767px) {
   .container.map-mode .form-container {
@@ -218,7 +218,8 @@ html, body {
 
 .map-header-container {
   align-items: center;
-  display: none; }
+  display: none;
+  width: 100%; }
   @media only screen and (max-width: 767px) {
     .map-header-container {
       display: flex; } }
@@ -269,8 +270,8 @@ html, body {
   display: none; }
 
 .empty-results-container {
-  font-family: "Courgette", serif;
   font-size: 28px;
+  font-weight: 300;
   left: 50%;
   padding-bottom: 24px;
   position: absolute;
@@ -322,8 +323,15 @@ html, body {
       height: 100%; } }
 
 .onboarding-card {
+  background-color: #26C6DA;
   cursor: pointer;
-  height: initial; }
+  height: initial;
+  opacity: 1;
+  -webkit-transition: .25s ease-in-out;
+  transition: .25s ease-in-out; }
+
+.onboarding-card:hover {
+  opacity: 0.85; }
 
 .onboarding-card + .onboarding-card {
   margin: 8px 0 0; }

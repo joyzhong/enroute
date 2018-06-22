@@ -804,9 +804,10 @@ const MapComponent = (props) => (
 
     <div className="directions-icon-container">
       <IconButton
-          style={{ marginLeft: '8px' }}
+          disabled={props.disabled}
           onClick={props.onDirectionsClick}
-          disabled={props.disabled}>
+          style={{ marginLeft: '8px' }}
+          tooltip="Directions">
         <MapsDirections
             hoverColor={muiTheme.palette.primary1Color} />
       </IconButton>

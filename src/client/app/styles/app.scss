@@ -85,7 +85,7 @@ html, body {
 
 .content {
   background-color: white;
-  border-radius: 2px;
+  border-radius: 8px;
   display: flex;
   @include respond-to((medium, large)) {
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
@@ -109,7 +109,7 @@ html, body {
 }
 
 .container.map-mode .map-container {
-  @include respond-to(small) { display: initial; }
+  @include respond-to(small) { display: flex; }
 }
 
 .container.map-mode .form-container {
@@ -217,6 +217,7 @@ html, body {
   align-items: center;
   display: none;
   @include respond-to(small) { display: flex; }
+  width: 100%;
 }
 
 .back-button-container {
@@ -253,8 +254,8 @@ html, body {
 }
 
 .empty-results-container {
-  font-family: $header-font;
   font-size: 28px;
+  font-weight: 300;
   left: 50%;
   padding-bottom: 24px;
   position: absolute;
@@ -313,8 +314,16 @@ html, body {
 }
 
 .onboarding-card {
+  background-color: $primary-color;
   cursor: pointer;
   height: initial;
+  opacity: 1;
+  -webkit-transition: .25s ease-in-out;
+  transition: .25s ease-in-out;
+}
+
+.onboarding-card:hover {
+  opacity: 0.85;
 }
 
 .onboarding-card + .onboarding-card {
