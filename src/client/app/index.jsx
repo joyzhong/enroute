@@ -123,8 +123,7 @@ class RoadtripComponent extends React.Component {
     const waypoint = this.state.results[this.state.selectedResultIndex];
     if (waypoint) {
       const waypointAddress = encodeURIComponent(
-          waypoint.name + ',' + waypoint.location.address + ',' +
-          waypoint.location.city + ',' + waypoint.location.country_code);
+          waypoint.name + ',' + waypoint.location.display_address.join());
       this.state.directionsLink = 
           `http://maps.google.com/maps/dir/${startAddress}/${waypointAddress}/${destAddress}`;
       } else {
@@ -136,7 +135,7 @@ class RoadtripComponent extends React.Component {
   updateWaypoint_ = (selectedResultIndex) => {
     this.setState({selectedResultIndex: selectedResultIndex}, () => {
       const businessCoordinate = 
-          this.state.results[this.state.selectedResultIndex].location.coordinate;
+          this.state.results[this.state.selectedResultIndex].coordinates;
       const latLng = new google.maps.LatLng(
           businessCoordinate.latitude, businessCoordinate.longitude);
       const request = {
@@ -166,8 +165,8 @@ class RoadtripComponent extends React.Component {
     const business = this.state.results[resultIndex];
     locationMarker = new google.maps.Marker({
         position: new google.maps.LatLng(
-          business.location.coordinate.latitude,
-          business.location.coordinate.longitude
+          business.coordinates.latitude,
+          business.coordinates.longitude
         ),
         map: map
     });
@@ -193,12 +192,12 @@ class RoadtripComponent extends React.Component {
       type: 'POST',
       url: '/yelp', 
       data: { term: this.state.term, latitude: latitude, longitude: longitude },
-      success: (yelpResults) => {
-        const businesses = yelpResults.businesses;
+      success: (response) => {
+        const businesses = response.jsonBody.businesses;
         const midpoints = businesses.map((result) => {
           return {
-            lat: result.location.coordinate.latitude,
-            lng: result.location.coordinate.longitude,
+            lat: result.coordinates.latitude,
+            lng: result.coordinates.longitude,
           };
         });
         const originToMidpointsDists = this.getDirectionsMatrix_(
@@ -220,7 +219,7 @@ class RoadtripComponent extends React.Component {
               });
 
               this.setState({
-                results: yelpResults.businesses,
+                results: businesses,
                 isLoading: false,
               });
             });

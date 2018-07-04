@@ -77,7 +77,7 @@ class ResultsComponent extends React.Component {
                   </TableRowColumn>
                   <TableRowColumn
                       style={{paddingLeft: '12px', paddingRight: '12px'}}>
-                    <img src={result.rating_img_url}
+                    <img src={yelpStarImgUrl(result.rating)}
                         className="yelp-star-img"
                         style={{ verticalAlign: 'middle' }} />
                         {' '}/{' '}
@@ -97,6 +97,34 @@ class ResultsComponent extends React.Component {
     );
   }
 };
+
+function yelpStarImgUrl(rating) {
+  const baseUrl = 'images/yelpStars/';
+  switch (rating) {
+    case 5:
+      return baseUrl + 'regular_5.png'
+    case 4.5:
+      return baseUrl + 'regular_4_half.png'
+    case 4:
+      return baseUrl + 'regular_4.png'
+    case 3.5:
+      return baseUrl + 'regular_3_half.png'
+    case 3:
+      return baseUrl + 'regular_3.png'
+    case 2.5:
+      return baseUrl + 'regular_2_half.png'
+    case 2:
+      return baseUrl + 'regular_2.png'
+    case 1.5:
+      return baseUrl + 'regular_1_half.png'
+    case 1:
+      return baseUrl + 'regular_1.png'
+    case 0.5:
+      return baseUrl + 'regular_0_half.png'
+    default:
+      return baseUrl + 'regular_0.png'
+  }
+}
 
 const TimeFormatSpan = (props) => (
   <span>

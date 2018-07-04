@@ -1,4 +1,4 @@
-import Yelp from 'yelp';
+import yelp from 'yelp-fusion';
 import bodyParser from 'body-parser';
 import express from 'express';
 import http from 'http';
@@ -8,21 +8,18 @@ const app = express();
 const server = http.createServer(app);
 
 // TODO: Get these vars from local files.
-const yelpApi = new Yelp({
-  consumer_key: 'rHIvh55HjWB1kmvdSHnC3Q',
-  consumer_secret: 'nbBxtVcowNmp9GvPDBQ7xaP5yI0',
-  token: 'NcbJpShmt0FxCRIYkGMACHKKenq-bkkn',
-  token_secret: 'wRdQ4b7N-eRB7K4qREltZ9C-ZeU',
-});
+const yelpClient = yelp.client(
+  's-uDnEUKhDiQmV1QS3YzfvmzSni0Ds_XJQX19HWiAVoccpjR6pdlt1tTMJXq2yN-4U1Da4eVX5Zv8fZGn7rwQDPFPxTlVma5LT3Myk3H9eamNp_d6QbiDWwkZ1I9W3Yx');
 
 app.use(bodyParser.urlencoded({extended : true}));
 
 // Handle POST requests to get a list of top Yelp places
 // by search term and (latitude, longitude).
 app.post('/yelp', function(request, response) {
-  yelpApi.search({
+  yelpClient.search({
     term: request.body.term,
-    ll: request.body.latitude + ',' + request.body.longitude
+    latitude: request.body.latitude,
+    longitude: request.body.longitude,
   }).then(function(data) {
     response.send(data);
   }).catch(function(err) {
