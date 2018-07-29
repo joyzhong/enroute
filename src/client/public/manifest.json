@@ -1,0 +1,16 @@
+{
+  "short_name": "Enroute",
+  "name": "Enroute",
+  "icons": [
+    {
+      "src": "images/icon_enroute.png",
+      "type": "image/png",
+      "sizes": "300x300"
+    }
+  ],
+  "start_url": "/?source=pwa",
+  "background_color": "#e7fbfe",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#fffad0"
+}
