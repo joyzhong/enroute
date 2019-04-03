@@ -29947,6 +29947,8 @@
 	
 	var _TextField2 = _interopRequireDefault(_TextField);
 	
+	var _colors = __webpack_require__(/*! material-ui/styles/colors */ 278);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	/** Text field with customized styling. */
@@ -29960,7 +29962,7 @@
 	    { className: 'text-field-container' },
 	    _react2.default.createElement(_TextField2.default, _extends({}, inputProps, {
 	      inputStyle: {
-	        color: props.isCurrentLocation ? blueGrey600 : 'initial',
+	        color: props.isCurrentLocation ? _colors.blueGrey600 : 'initial',
 	        paddingRight: '36px'
 	      },
 	      placeholder: '',

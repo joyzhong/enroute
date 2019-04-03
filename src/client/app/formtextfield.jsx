@@ -1,6 +1,7 @@
 import IconButton from 'material-ui/IconButton';
 import React from 'react';
 import TextField from 'material-ui/TextField';
+import {blueGrey600} from 'material-ui/styles/colors';
 
 /** Text field with customized styling. */
 const FormTextField = (props) => {

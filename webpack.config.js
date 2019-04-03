@@ -9,7 +9,7 @@ const PROD = process.env.NODE_ENV === 'production';
 
 const commonPlugins = [
   new HtmlWebpackPlugin({
-    filename: "index.html", // Writes to `config.out.path`.
+    filename: "index.html", // Writes to `config.output.path`.
     inject: 'body',
     template: MAIN_DIR + '/index.html',
   })
